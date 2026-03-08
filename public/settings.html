@@ -55,6 +55,13 @@
             flex-direction: column;
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
         }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 999;
+        }
 
         .sidebar-header {
             padding: 20px;
@@ -132,6 +139,15 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 30px;
+        }
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 6px;
         }
 
         .page-title {
@@ -430,8 +446,11 @@
             gap: 10px;
         }
         </style>
-        </head>
+            <link rel="stylesheet" href="/css/mobile-hardening.css">
+    <script src="/js/mobile-hardening.js" defer></script>
+</head>
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
@@ -464,6 +483,7 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="page-header">
+            <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
             <h1 class="page-title">
                 <i class="fas fa-cog"></i>
                 Settings
@@ -743,5 +763,6 @@
     </script>
 </body>
 </html>
+
 
 

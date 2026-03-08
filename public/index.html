@@ -1,4 +1,4 @@
-Z<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -722,6 +722,31 @@ Z<!DOCTYPE html>
         }
 
         /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .nav-buttons {
+                flex: 1 1 100%;
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav-btn {
+                flex: 1;
+                min-width: 100px;
+                justify-content: center;
+            }
+            
+            .language-toggle {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
         @media (max-width: 768px) {
             .hero {
                 padding: 35px 0;
@@ -739,69 +764,322 @@ Z<!DOCTYPE html>
             .hero-visual {
                 font-size: 3.5em;
             }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .logo-section {
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .nav-buttons {
+                width: 100%;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 10px 16px;
+            }
+            
+            .language-toggle {
+                width: 100%;
+                justify-content: center;
+                gap: 6px;
+            }
+            
+            .language-btn {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
 
             .features-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .feature-card {
+                padding: 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .feature-icon {
+                min-width: auto;
+                justify-content: center;
+                font-size: 2em;
             }
 
             .flow-diagram {
-                grid-template-columns: repeat(3, 1fr);
+                flex-direction: column;
+                gap: 20px;
             }
-
-            .flow-arrow:nth-child(2),
-            .flow-arrow:nth-child(4) {
+            
+            .flow-step {
+                margin: 0;
+                padding: 25px 20px;
+            }
+            
+            .flow-arrow {
                 display: none;
+            }
+            
+            .flow-num {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5em;
             }
 
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .stat {
+                padding: 20px 15px;
+            }
+            
+            .stat-number {
+                font-size: 2em;
+            }
+            
+            .stat-label {
+                font-size: 0.9em;
             }
 
             .testimonials-container {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .testimonial {
+                padding: 15px;
             }
 
             .footer-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
             }
-
-            .nav-buttons {
-                gap: 8px;
+            
+            .footer-social a {
+                width: 40px;
+                height: 40px;
             }
-
-            .nav-btn {
-                padding: 8px 12px;
-                font-size: 0.8em;
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .instructions-banner {
+                padding: 15px;
+                margin: 15px;
             }
         }
 
         @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .header-content {
+                padding: 0 10px;
+            }
+            
+            .logo-section img {
+                height: 30px;
+            }
+            
+            .logo-text h1 {
+                font-size: 1.1em;
+            }
+            
+            .logo-text p {
+                font-size: 0.7em;
+            }
+            
+            .nav-buttons {
+                gap: 6px;
+            }
+            
+            .nav-btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
+            }
+            
+            .language-toggle {
+                gap: 4px;
+            }
+            
+            .language-btn {
+                padding: 5px 8px;
+                font-size: 0.75em;
+            }
+
+            .hero {
+                padding: 25px 0;
+            }
+
             .hero-text h1 {
                 font-size: 1.5em;
+            }
+
+            .hero-text p {
+                font-size: 0.95em;
+            }
+            
+            .hero-visual {
+                font-size: 2.5em;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                gap: 10px;
             }
 
             .section-title {
                 font-size: 1.5em;
             }
+            
+            .feature-card {
+                padding: 15px;
+            }
+            
+            .feature-icon {
+                font-size: 1.8em;
+                margin-bottom: 10px;
+            }
+            
+            .feature-content h3 {
+                font-size: 1em;
+            }
+            
+            .feature-content p {
+                font-size: 0.85em;
+            }
 
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .stat-number {
+                font-size: 1.8em;
+            }
+            
+            .stat-label {
+                font-size: 0.85em;
+            }
+            
+            .stat-desc {
+                font-size: 0.8em;
             }
 
-            .hero-buttons {
-                flex-direction: column;
+            .testimonials-container {
+                gap: 12px;
             }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
+            
+            .testimonial-text {
+                font-size: 0.85em;
+            }
+            
+            .testimonial-author {
+                gap: 8px;
+            }
+            
+            .avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 0.8em;
+            }
+            
+            .author-info h4 {
+                font-size: 0.9em;
             }
 
             .footer-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .footer-col h3 {
+                font-size: 0.9em;
+                margin-bottom: 10px;
+            }
+            
+            .footer-col a {
+                font-size: 0.85em;
+            }
+            
+            .footer-social {
+                gap: 12px;
+            }
+            
+            .footer-social a {
+                width: 36px;
+                height: 36px;
+                font-size: 0.9em;
+            }
+            
+            .footer-bottom {
+                font-size: 0.8em;
+            }
+            
+            .cta h2 {
+                font-size: 1.4em;
+            }
+            
+            .cta p {
+                font-size: 0.95em;
+            }
+            
+            .instructions-banner h3 {
+                font-size: 1em;
+            }
+            
+            .instructions-banner ul {
+                margin-left: 15px;
+            }
+            
+            .instructions-banner li {
+                font-size: 0.85em;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .nav-btn,
+            .btn,
+            .language-btn,
+            .feature-card,
+            .flow-step,
+            .stat,
+            .testimonial,
+            .footer-col a,
+            .footer-social a {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            .nav-btn,
+            .btn,
+            .language-btn {
+                padding: 12px 20px;
             }
         }
     </style>
+    <link rel="stylesheet" href="/css/mobile-hardening.css">
+    <script src="/js/mobile-hardening.js" defer></script>
 </head>
 <body>
     <!-- HEADER -->
@@ -1131,3 +1409,4 @@ Z<!DOCTYPE html>
     </script>
 </body>
 </html>
+

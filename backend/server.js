@@ -24,6 +24,7 @@ import marketRoutes from './market-routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 
 dotenv.config();
 
@@ -38,101 +39,45 @@ app.use(cors({
   credentials: true
 }));
 
-// Market Trends Page
-app.get('/market-trends', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'market-trends.html'));
-});
+const sendPublicPage = (res, filename) => res.sendFile(path.join(PUBLIC_DIR, filename));
 
-// Settings Page
-app.get('/settings', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'settings.html'));
+// Canonical web routes (single source: root /public)
+app.get('/', (req, res) => sendPublicPage(res, 'index.html'));
+app.get('/landing', (req, res) => sendPublicPage(res, 'landing-page.html'));
+app.get('/login', (req, res) => sendPublicPage(res, 'login.html'));
+app.get('/signup', (req, res) => sendPublicPage(res, 'signup.html'));
+app.get('/dashboard', (req, res) => sendPublicPage(res, 'dashboard.html'));
+app.get('/farmer-dashboard', (req, res) => sendPublicPage(res, 'dashboard.html'));
+app.get('/profile', (req, res) => sendPublicPage(res, 'profile.html'));
+app.get('/farmer-profile', (req, res) => sendPublicPage(res, 'farmer-profile.html'));
+app.get('/feedback', (req, res) => sendPublicPage(res, 'feedback.html'));
+app.get('/community', (req, res) => sendPublicPage(res, 'community.html'));
+app.get('/community-market', (req, res) => sendPublicPage(res, 'community-market.html'));
+app.get('/market', (req, res) => sendPublicPage(res, 'market.html'));
+app.get('/market-trends', (req, res) => sendPublicPage(res, 'market-trends.html'));
+app.get('/market-trends.html', (req, res) => sendPublicPage(res, 'market-trends.html'));
+app.get('/recommendations', (req, res) => sendPublicPage(res, 'recommendations.html'));
+app.get('/crop-prediction', (req, res) => sendPublicPage(res, 'crop-prediction.html'));
+app.get('/crop-details', (req, res) => sendPublicPage(res, 'crop-details.html'));
+app.get('/settings', (req, res) => sendPublicPage(res, 'settings.html'));
+app.get('/ussd-simulator', (req, res) => sendPublicPage(res, 'ussd-simulator.html'));
+app.get('/api-tester', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'API tester page is not included in current public build.'
+  });
 });
-app.get('/recommendations', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'recommendations.html'));
+app.get('/admin', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Admin web page is not included in current public build.'
+  });
 });
-
-app.get('/crop-prediction', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'crop-prediction.html'));
-});
-
-app.get('/crop-details', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'crop-details.html'));
-});
-
-app.get('/market-trends.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'market-trends.html'));
-});
-
-app.get('/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'dashboard.html'));
-});
-
-// Landing Page (Default Homepage)
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'landing-page-optimized.html'));
-});
-
-// Legacy landing page
-app.get('/landing', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'landing-page.html'));
-});
-
-// Login Page
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'login.html'));
-});
-
-// Signup Page
-app.get('/signup', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'signup.html'));
-});
-
-// Farmer Profile Page
-app.get('/profile', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'profile.html'));
-});
-
-// Feedback Page
-app.get('/feedback', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'feedback.html'));
-});
-
-// Community Page
-app.get('/community', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'community.html'));
-});
-
-// Community & Market Page
-app.get('/community-market', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'community-market.html'));
-});
-
-// Market Page
-app.get('/market', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'market.html'));
-});
-
-// Recommendations Page
-app.get('/recommendations', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'recommendations.html'));
-});
-
-// USSD Simulator
-app.get('/ussd-simulator', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'ussd-simulator.html'));
-});
-
-// Alternative dashboards (for reference)
-app.get('/farmer-dashboard-premium', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'farmer-dashboard-premium.html'));
-});
-
-app.get('/farmer-dashboard-modern', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'farmer-dashboard-modern.html'));
-});
-
-app.get('/farmer-dashboard-legacy', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'farmer-dashboard.html'));
+app.get('/farmer-profile-dashboard', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Farmer profile dashboard page is not included in current public build.'
+  });
 });
 
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -145,17 +90,7 @@ app.use(securityHeaders);
 app.use(sanitizeInput);
 
 // Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Serve admin dashboard
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
-});
-
-// Farmer Profile Dashboard
-app.get('/farmer-profile-dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'farmer-profile-dashboard.html'));
-});
+app.use(express.static(PUBLIC_DIR));
 
 // Initialize email service
 console.log('📧 Initializing email service...');
@@ -1486,141 +1421,6 @@ const cropRules = [
     }
   }
 ];
-// ==================== ROUTES ====================
-
-// Serve the main web app
-app.get('/', (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Fahamu Shamba - Smart Farming</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-            .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-            .form-group { margin-bottom: 20px; }
-            label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
-            select, input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
-            button { background: #4CAF50; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; }
-            button:hover { background: #45a049; }
-            .result { margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 5px; }
-            .crop-name { color: #2c5f2d; font-size: 24px; font-weight: bold; }
-            .confidence { color: #666; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>🌱 Fahamu Shamba</h1>
-            <p>Get smart crop recommendations for Siaya County</p>
-            
-            <div id="prediction-form">
-                <div class="form-group">
-                    <label for="subCounty">Sub-County:</label>
-                    <select id="subCounty">
-                        <option value="">Select Sub-County</option>
-                        <option value="bondo">Bondo</option>
-                        <option value="ugunja">Ugunja</option>
-                        <option value="yala">Yala</option>
-                        <option value="gem">Gem</option>
-                        <option value="alego">Alego</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="soilType">Soil Type:</label>
-                    <select id="soilType">
-                        <option value="">Select Soil Type</option>
-                        <option value="sandy">Sandy</option>
-                        <option value="clay">Clay</option>
-                        <option value="loam">Loam</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="season">Season:</label>
-                    <select id="season">
-                        <option value="">Select Season</option>
-                        <option value="long_rains">Long Rains</option>
-                        <option value="short_rains">Short Rains</option>
-                        <option value="dry">Dry Season</option>
-                    </select>
-                </div>
-                
-                <button onclick="getPrediction()">Get Crop Recommendation</button>
-            </div>
-            
-            <div id="result" class="result" style="display: none;"></div>
-        </div>
-
-        <script>
-            async function getPrediction() {
-                const subCounty = document.getElementById('subCounty').value;
-                const soilType = document.getElementById('soilType').value;
-                const season = document.getElementById('season').value;
-                
-                if (!subCounty || !soilType || !season) {
-                    alert('Please fill in all fields');
-                    return;
-                }
-                
-                try {
-                    const response = await fetch('/api/predict', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ subCounty, soilType, season })
-                    });
-                    
-                    const data = await response.json();
-                    const resultDiv = document.getElementById('result');
-                    
-                    if (data.success) {
-                        resultDiv.innerHTML = \`
-                            <h2>Recommended Crop</h2>
-                            <div class="crop-name">\${data.crop}</div>
-                            <div class="confidence">Confidence: \${data.confidence}%</div>
-                            <p><strong>Reason:</strong> \${data.reason}</p>
-                        \`;
-                        resultDiv.style.display = 'block';
-                    } else {
-                        resultDiv.innerHTML = \`<p style="color: red;">Error: \${data.message}</p>\`;
-                        resultDiv.style.display = 'block';
-                    }
-                } catch (error) {
-                    const resultDiv = document.getElementById('result');
-                    resultDiv.innerHTML = \`<p style="color: red;">Network error: \${error.message}</p>\`;
-                    resultDiv.style.display = 'block';
-                }
-            }
-        </script>
-    </body>
-    </html>
-  `);
-});
-
-// Serve the farmer dashboard
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'farmer-dashboard.html'));
-});
-
-app.get('/farmer-dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'farmer-dashboard.html'));
-});
-
-// Serve the dashboard (legacy)
-app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
-});
-
-// Serve the API tester
-app.get('/api-tester', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'api-tester.html'));
-});
-
-// Serve the USSD simulator
-app.get('/ussd-simulator', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'ussd-simulator.html'));
-});
-
 // Enhanced Prediction API with proper error handling (using dbAsync)
 
 // guide developers & clients
@@ -2448,6 +2248,13 @@ app.use('/api', (req, res, next) => {
   req.dbAsync = dbAsync;
   next();
 }, adminRoutes);
+
+// Register farmer routes
+app.use('/api', (req, res, next) => {
+  // Make dbAsync available to routes
+  req.dbAsync = dbAsync;
+  next();
+}, farmerRoutes);
 
 // Register farmer profile routes
 app.use('/api', (req, res, next) => {

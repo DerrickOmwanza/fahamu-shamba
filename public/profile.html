@@ -45,6 +45,8 @@
         /* ===== MAIN CONTENT ===== */
         .main-content { margin-left: var(--sidebar-width); min-height: 100vh; }
         .top-header { background: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.4rem; color: var(--primary); cursor: pointer; padding: 6px; }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 999; }
         
         /* ===== PAGE CONTENT ===== */
         .page-container { padding: 30px; }
@@ -71,7 +73,7 @@
         .btn-secondary { background: var(--lighter); color: var(--primary); border: 2px solid var(--primary); }
         
         @media (max-width: 768px) {
-            .sidebar { display: none; }
+            .sidebar { width: min(84vw, 290px); }
             .main-content { margin-left: 0; }
             .form-grid { grid-template-columns: 1fr; }
             .profile-header { flex-direction: column; text-align: center; }
@@ -143,8 +145,11 @@
          .photo-upload-btn { display: inline-block; padding: 12px 24px; background: var(--primary); color: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
          .photo-upload-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
     </style>
+    <link rel="stylesheet" href="/css/mobile-hardening.css">
+    <script src="/js/mobile-hardening.js" defer></script>
 </head>
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -180,6 +185,7 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="top-header">
+            <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
             <h2 style="color: var(--primary-dark);">My Profile</h2>
             <div class="language-wrapper">
                 <span class="language-label">Language:</span>
@@ -411,3 +417,4 @@
     </script>
 </body>
 </html>
+

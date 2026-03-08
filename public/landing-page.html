@@ -350,6 +350,314 @@
             }
         }
 
+        /* ===== MOBILE RESPONSIVENESS ===== */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .nav-buttons {
+                flex: 1 1 100%;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                padding: 8px 16px;
+                font-size: 0.9em;
+                flex: 1;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* ===== HEADER/NAVBAR ===== */
+            header {
+                padding: 15px 0;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .logo-section img {
+                height: 35px;
+            }
+
+            .logo-text h1 {
+                font-size: 1.2em;
+            }
+
+            .logo-text p {
+                font-size: 0.75em;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                gap: 8px;
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                padding: 10px 16px;
+                font-size: 0.85em;
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* ===== HERO SECTION ===== */
+            .hero {
+                padding: 40px 0;
+            }
+
+            .hero h1 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+                margin-bottom: 25px;
+            }
+
+            .hero-buttons {
+                gap: 12px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                font-size: 1em;
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* ===== FEATURES SECTION ===== */
+            .features {
+                padding: 40px 0;
+            }
+
+            .section-title {
+                font-size: 1.8em;
+                margin-bottom: 40px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .feature-card {
+                padding: 20px;
+            }
+
+            .feature-icon {
+                font-size: 2.5em;
+                margin-bottom: 15px;
+            }
+
+            .feature-card h3 {
+                font-size: 1.1em;
+            }
+
+            .feature-card p {
+                font-size: 0.95em;
+            }
+
+            /* ===== HOW IT WORKS ===== */
+            .how-it-works {
+                padding: 40px 0;
+            }
+
+            .flow-diagram {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .flow-step {
+                padding: 20px;
+            }
+
+            .flow-step h3 {
+                font-size: 1.1em;
+            }
+
+            .flow-step p {
+                font-size: 0.95em;
+            }
+
+            /* ===== IMPACT SECTION ===== */
+            .impact {
+                padding: 40px 0;
+            }
+
+            .impact-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 25px;
+            }
+
+            .stat-number {
+                font-size: 2.2em;
+            }
+
+            .stat-label {
+                font-size: 1em;
+            }
+
+            /* ===== TESTIMONIALS ===== */
+            .testimonials {
+                padding: 40px 0;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .testimonial-card {
+                padding: 20px;
+            }
+
+            /* ===== CTA SECTION ===== */
+            .cta {
+                padding: 40px 0;
+            }
+
+            .cta-content h2 {
+                font-size: 1.8em;
+            }
+
+            .cta-content p {
+                font-size: 1em;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            /* ===== FOOTER ===== */
+            footer {
+                padding: 30px 0;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .footer-section h3 {
+                font-size: 1.1em;
+            }
+
+            .footer-section p,
+            .footer-section a {
+                font-size: 0.95em;
+            }
+
+            .social-icons {
+                justify-content: flex-start;
+            }
+
+            .social-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* ===== ULTRA MOBILE - EXTRA SMALL SCREENS ===== */
+            .container {
+                padding: 0 15px;
+            }
+
+            /* Header */
+            .header-content {
+                padding: 0 15px;
+            }
+
+            .logo-text h1 {
+                font-size: 1em;
+            }
+
+            .nav-btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
+            }
+
+            /* Hero */
+            .hero {
+                padding: 25px 0;
+            }
+
+            .hero h1 {
+                font-size: 1.4em;
+            }
+
+            .hero p {
+                font-size: 0.95em;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+
+            /* Section titles */
+            .section-title {
+                font-size: 1.5em;
+                margin-bottom: 30px;
+            }
+
+            /* Features */
+            .feature-card {
+                padding: 15px;
+            }
+
+            .feature-icon {
+                font-size: 2em;
+            }
+
+            .feature-card h3 {
+                font-size: 1em;
+            }
+
+            /* Stats */
+            .impact-stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-number {
+                font-size: 1.8em;
+            }
+
+            .stat-label {
+                font-size: 0.9em;
+            }
+
+            /* CTA */
+            .cta-content h2 {
+                font-size: 1.5em;
+            }
+
+            .cta-content p {
+                font-size: 0.9em;
+            }
+
+            /* Footer */
+            .footer-section h3 {
+                font-size: 1em;
+            }
+
+            .footer-section p,
+            .footer-section a {
+                font-size: 0.85em;
+            }
+        }
+
         /* ===== IMPACT SECTION ===== */
         .impact {
             padding: 80px 0;

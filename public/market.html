@@ -47,6 +47,8 @@
         /* ===== MAIN CONTENT ===== */
         .main-content { margin-left: var(--sidebar-width); min-height: 100vh; }
         .top-header { background: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.4rem; color: var(--primary); cursor: pointer; padding: 5px; }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 999; }
         
         /* ===== MARKET PAGE STYLES ===== */
         .market-header-section {
@@ -199,8 +201,11 @@
             .price-table th, .price-table td { padding: 10px 6px; }
         }
     </style>
+    <link rel="stylesheet" href="/css/mobile-hardening.css">
+    <script src="/js/mobile-hardening.js" defer></script>
 </head>
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -233,6 +238,7 @@
     <!-- Main Content -->
     <div class="main-content">
         <header class="top-header">
+            <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
             <button class="back-btn" onclick="window.location.href='/dashboard.html'">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </button>
@@ -578,4 +584,5 @@
     </script>
 </body>
 </html>
+
 

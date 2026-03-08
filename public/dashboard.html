@@ -36,11 +36,30 @@
             z-index: 1000;
         }
         .header-left { display: flex; align-items: center; gap: 15px; }
+        .mobile-menu-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
         header img { height: 40px; width: auto; }
         .header-brand h1 { font-size: 1.3em; font-weight: 700; }
         .header-right { display: flex; align-items: center; gap: 20px; }
         .profile-menu { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px 12px; }
         .wrapper { display: flex; flex: 1; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1050;
+        }
         aside {
             width: 280px;
             background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
@@ -76,18 +95,207 @@
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
         .stat { background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .stat-value { font-size: 2.5em; font-weight: 700; color: var(--primary); }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .stat-value {
+                font-size: 2em;
+            }
+            aside {
+                width: 200px;
+            }
+            main {
+                margin-left: 200px;
+                padding: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
-            aside { width: 70px; }
-            aside a { justify-content: center; }
-            aside span { display: none; }
-            main { margin-left: 70px; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            aside { 
+                width: 70px; 
+            }
+            aside a { 
+                justify-content: center; 
+                padding: 12px 15px;
+            }
+            aside span { 
+                display: none; 
+            }
+            aside i {
+                width: 20px;
+                font-size: 1.1em;
+            }
+            main { 
+                margin-left: 70px; 
+                padding: 15px;
+            }
+            .stats-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 10px;
+            }
+            .stat {
+                padding: 15px;
+            }
+            .stat-value {
+                font-size: 1.8em;
+            }
+            .welcome {
+                font-size: 1.4em;
+            }
+            header {
+                padding: 12px 15px;
+            }
+            header img {
+                height: 32px;
+            }
+            .header-brand h1 {
+                font-size: 1.1em;
+            }
+            .header-right {
+                gap: 10px;
+            }
+            .profile-menu {
+                padding: 6px 8px;
+                font-size: 0.9em;
+            }
+            .card {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            .card h2 {
+                font-size: 1.2em;
+            }
+            .card p {
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 10px 12px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .header-left {
+                gap: 10px;
+            }
+            header img {
+                height: 28px;
+            }
+            .header-brand h1 {
+                font-size: 1em;
+            }
+            .profile-menu span {
+                display: none;
+            }
+            .wrapper {
+                flex-direction: column;
+            }
+            aside {
+                position: fixed;
+                bottom: 0;
+                top: auto;
+                left: 0;
+                right: 0;
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                padding: 8px 0;
+                display: flex;
+                justify-content: space-around;
+                z-index: 1001;
+            }
+            aside ul {
+                display: flex;
+                width: 100%;
+                justify-content: space-around;
+            }
+            aside li {
+                flex: 1;
+                text-align: center;
+            }
+            aside a {
+                flex-direction: column;
+                padding: 8px 5px;
+                font-size: 0.7em;
+                gap: 4px;
+            }
+            aside a:hover {
+                padding-left: 5px;
+            }
+            aside a.active {
+                padding-left: 5px;
+            }
+            aside i {
+                font-size: 1.3em;
+            }
+            aside span {
+                display: block;
+                font-size: 0.65em;
+            }
+            .sidebar-footer {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+                margin-bottom: 60px;
+                padding: 12px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .stat {
+                padding: 12px 8px;
+            }
+            .stat-value {
+                font-size: 1.5em;
+            }
+            .stat div:last-child {
+                font-size: 0.8em;
+            }
+            .welcome {
+                font-size: 1.2em;
+                margin-bottom: 10px;
+            }
+            .card {
+                padding: 12px;
+                border-radius: 8px;
+            }
+            .card h2 {
+                font-size: 1.1em;
+            }
+            .card p {
+                font-size: 0.85em;
+                line-height: 1.5;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            aside a,
+            .profile-menu,
+            .logout-link,
+            .stat {
+                min-height: 44px;
+            }
+            button, .btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
         }
     </style>
+    <link rel="stylesheet" href="/css/mobile-hardening.css">
+    <script src="/js/mobile-hardening.js" defer></script>
 </head>
 <body>
     <header>
         <div class="header-left">
+            <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
             <img src="/fahamu-logo.png" alt="Fahamu Shamba">
             <div class="header-brand">
                 <h1>Fahamu Shamba</h1>
@@ -100,6 +308,8 @@
             </div>
         </div>
     </header>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="wrapper">
         <aside>
@@ -170,3 +380,4 @@
     </script>
 </body>
 </html>
+
