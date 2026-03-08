@@ -1,0 +1,197 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    REGISTRATION ERROR - QUICK FIX CHECKLIST
+═══════════════════════════════════════════════════════════════════════════════
+
+ISSUE: Getting "404 Not Found" error when trying to register
+
+ROOT CAUSE: Auth routes not registered in server.js
+
+═══════════════════════════════════════════════════════════════════════════════
+                              WHAT WAS DONE
+═══════════════════════════════════════════════════════════════════════════════
+
+[✓] Added imports to server.js:
+    - import { initAuthRoutes } from './auth-routes.js'
+    - import { initializeAuthTables } from './init-auth-tables.js'
+
+[✓] Added auth table initialization:
+    - initializeAuthTables(db) - Creates database tables
+
+[✓] Added auth route registration:
+    - const authRoutes = initAuthRoutes(db)
+    - app.use('/api/auth', authRoutes)
+
+═══════════════════════════════════════════════════════════════════════════════
+                            NOW YOU NEED TO DO THIS
+═══════════════════════════════════════════════════════════════════════════════
+
+STEP 1: Install Dependencies
+────────────────────────────────────────────────────────────────────────────
+Run in terminal:
+
+npm install bcryptjs jsonwebtoken
+
+Expected output:
+> added 2 packages
+
+
+STEP 2: Stop Server
+────────────────────────────────────────────────────────────────────────────
+If server is running:
+  Press Ctrl+C to stop
+  Wait 2 seconds
+
+
+STEP 3: Restart Server
+────────────────────────────────────────────────────────────────────────────
+Run:
+
+node backend/server.js
+
+Expected output in console:
+  ✅ Connected to SQLite database
+  🔐 Initializing authentication tables...
+  ✅ Authentication tables initialized
+  🚀 Registering authentication routes...
+  ✅ Authentication routes registered
+  [... other startup messages ...]
+  Server listening on port 5000
+
+
+STEP 4: Test Registration
+────────────────────────────────────────────────────────────────────────────
+Open browser:
+
+http://localhost:5000/login?mode=signup
+
+Should see:
+  - "Create Account" form
+  - "Step 1: Security" heading
+  - Phone number field
+  - Password field
+  - Confirm password field
+  - "Next" button
+
+
+STEP 5: Fill & Submit
+────────────────────────────────────────────────────────────────────────────
+In the form, enter:
+
+Phone Number:        +254712345678 (or any valid format)
+Password:            test123 (minimum 6 characters)
+Confirm Password:    test123
+
+Then click "Next"
+
+Expected: Form disappears, loading spinner appears briefly, then...
+          Step 2 form appears (Profile information)
+
+
+STEP 6: Complete Step 2
+────────────────────────────────────────────────────────────────────────────
+Fill:
+
+Full Name:           John Doe (or your name)
+County/Location:     Siaya County (or any location)
+Ward (Optional):     West Gem (optional)
+Farm Size:           2.5 (or any number)
+
+Then click "Create Account"
+
+Expected: Loading spinner
+          Auto-redirects to /farmer-dashboard
+          You're logged in!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                          VERIFICATION CHECKLIST
+═══════════════════════════════════════════════════════════════════════════════
+
+After completing steps above, verify:
+
+[  ] npm install completed without errors
+[  ] Server started with all 3 ✅ messages
+[  ] Landing page loads at http://localhost:5000/
+[  ] Login page loads at http://localhost:5000/login
+[  ] Registration form appears when clicking "Sign Up"
+[  ] Can fill phone number without error
+[  ] Can fill password without error
+[  ] "Next" button submits without error
+[  ] Step 2 (Profile) form appears
+[  ] Can complete profile setup
+[  ] Redirects to dashboard
+[  ] Browser shows "farmer-dashboard" in URL
+[  ] No errors in browser console (F12)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                         IF SOMETHING GOES WRONG
+═══════════════════════════════════════════════════════════════════════════════
+
+ERROR: "Cannot find module 'bcryptjs'"
+─────────────────────────────────────────────────────────────────────────────
+FIX: npm install bcryptjs jsonwebtoken
+
+
+ERROR: "Error: EADDRINUSE: address already in use :::5000"
+─────────────────────────────────────────────────────────────────────────────
+FIX: Another process is using port 5000
+     Option 1: Kill process on port 5000
+     Option 2: Use different port (NODE_PORT=5001 node backend/server.js)
+     Option 3: Restart computer
+
+
+ERROR: Still getting "404 Not Found"
+─────────────────────────────────────────────────────────────────────────────
+FIX: 
+     1. Check server console - should show ✅ messages
+     2. Clear browser cache (Ctrl+Shift+Delete)
+     3. Hard refresh page (Ctrl+Shift+R)
+     4. Try in incognito/private window
+     5. Check Network tab (F12) - verify request to /api/auth/register
+
+
+ERROR: "GET /api/auth/register with HTML response"
+─────────────────────────────────────────────────────────────────────────────
+FIX: You're making GET request instead of POST
+     (Should happen automatically with form, but verify in Network tab)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                         EXPECTED ENDPOINTS
+═══════════════════════════════════════════════════════════════════════════════
+
+After fix, these should work:
+
+POST /api/auth/register                → Register (phone + password)
+POST /api/auth/register-profile        → Complete registration (profile)
+POST /api/auth/login                   → Login (phone + password)
+GET /api/auth/user                     → Get current user info
+POST /api/auth/logout                  → Logout
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                           SUCCESS INDICATORS
+═══════════════════════════════════════════════════════════════════════════════
+
+You'll know it's working when you see:
+
+1. Server console shows all initialization messages
+2. Registration form submits without errors
+3. Step 2 appears after "Next"
+4. Account is created after final submit
+5. Dashboard loads
+6. Browser URL shows /farmer-dashboard
+7. No error messages on page
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+QUICK REFERENCE:
+Install → npm install bcryptjs jsonwebtoken
+Restart → node backend/server.js
+Test    → http://localhost:5000/login?mode=signup
+
+That's it! Your registration should work now. 🎉
+
+═══════════════════════════════════════════════════════════════════════════════

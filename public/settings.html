@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Fahamu Shamba</title>
+    <link rel="icon" href="/fahamu-logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/language-utils.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2d7649;
+            --primary-light: #4a9d6f;
+            --primary-dark: #1e5631;
+            --secondary: #f57c00;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #f9f7f4;
+            --lighter: #ecf0f1;
+            --dark: #2c3e50;
+            --text: #34495e;
+            --text-light: #7f8c8d;
+            --border: #e0e6ed;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background: var(--light);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .sidebar-brand h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .sidebar-brand p {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 15px 10px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Settings Sections */
+        .settings-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .section-title i {
+            color: var(--secondary);
+        }
+
+        /* Settings Items */
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--lighter);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .setting-description {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Select */
+        .setting-select {
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            background: white;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .setting-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Input */
+        .setting-input {
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            width: 200px;
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Danger Zone */
+        .danger-zone {
+            border: 2px solid var(--danger);
+            background: rgba(231, 76, 60, 0.05);
+        }
+
+        .danger-zone .section-title {
+            color: var(--danger);
+        }
+
+        .danger-zone .section-title i {
+            color: var(--danger);
+        }
+
+        .btn-danger {
+            padding: 10px 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            z-index: 9999;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+
+        /* Back to Dashboard Button */
+        .back-dashboard-btn {
+            padding: 10px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        .back-dashboard-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .back-dashboard-btn i { font-size: 1rem; }
+        
+        /* Responsive */
+         @media (max-width: 992px) {
+             .sidebar {
+                 transform: translateX(-100%);
+             }
+             .main-content {
+                 margin-left: 0;
+             }
+         }
+         @media (max-width: 768px) {
+             .back-dashboard-btn span { display: none; }
+             .back-dashboard-btn { padding: 10px 12px; }
+         }
+         
+        /* Language Label */
+        .language-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .language-label {
+            font-weight: bold;
+            color: var(--primary-dark);
+            font-size: 0.9rem;
+        }
+        /* Make dropdown text white */
+        .setting-select {
+            color: white !important;
+        }
+        .setting-select option {
+            color: #333 !important;
+            background: white;
+        }
+        .setting-select option:disabled {
+            color: white !important;
+            background: var(--primary);
+        }
+        
+        /* Custom Language Dropdown Button */
+        .language-dropdown-container { position: relative; display: inline-block; }
+        .language-dropdown-btn {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            padding: 8px 16px; background: var(--primary); color: white;
+            border: 2px solid white; border-radius: 20px; font-size: 0.9rem;
+            font-weight: 600; cursor: pointer; min-width: 140px; transition: all 0.3s ease;
+        }
+        .language-dropdown-btn:hover { background: var(--primary-dark); }
+        .language-dropdown-btn i { font-size: 0.8rem; }
+        .language-dropdown-menu {
+            display: none; position: absolute; top: 100%; left: 0; right: 0;
+            background: white; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            z-index: 1000; margin-top: 5px; overflow: hidden;
+        }
+        .language-dropdown-menu.show { display: block; }
+        .language-option {
+            padding: 12px 16px; color: var(--text); cursor: pointer;
+            transition: all 0.2s ease; font-weight: 500;
+        }
+        .language-option:hover { background: var(--primary); color: white; }
+        
+        .language-select-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        </style>
+        </head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">🌱</div>
+            <div class="sidebar-brand">
+                <h2>Fahamu Shamba</h2>
+                <p>Smart Farming</p>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="nav-item" href="/dashboard.html">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a class="nav-item" href="/community.html">
+                <i class="fas fa-users"></i>
+                <span>Community</span>
+            </a>
+            <a class="nav-item" href="/market.html">
+                <i class="fas fa-chart-bar"></i>
+                <span>Market Prices</span>
+            </a>
+            <a class="nav-item active">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-cog"></i>
+                Settings
+            </h1>
+            <a href="/dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Language Settings -->
+        <div class="settings-section">
+            <h2 class="section-title">
+                <i class="fas fa-language"></i>
+                Language & Region
+            </h2>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Display Language</div>
+                    <div class="setting-description">Choose your preferred language for the interface</div>
+                </div>
+                <div class="language-wrapper">
+                    <span class="language-label">Language:</span>
+                    <div class="language-dropdown-container">
+                        <button type="button" class="language-dropdown-btn" id="languageBtn" onclick="toggleLanguageDropdown()">
+                            <span id="languageBtnText">Choose Language</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="language-dropdown-menu" id="languageDropdownMenu">
+                            <div class="language-option" onclick="selectLanguage('english', '🇬🇧 English')">🇬🇧 English</div>
+                            <div class="language-option" onclick="selectLanguage('swahili', '🇰🇪 Kiswahili')">🇰🇪 Kiswahili</div>
+                            <div class="language-option" onclick="selectLanguage('luo', '🌍 Dholuo')">🌍 Dholuo</div>
+                        </div>
+                    </div>
+                    <select id="languageSelect" onchange="changeLanguage(this.value)" style="display:none;">
+                        <option value="english">English</option>
+                        <option value="swahili">Kiswahili</option>
+                        <option value="luo">Dholuo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">County</div>
+                    <div class="setting-description">Your farming location</div>
+                </div>
+                <select class="setting-select" id="countySelect">
+                    <option value="siaya">Siaya County</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div class="settings-section">
+            <h2 class="section-title">
+                <i class="fas fa-bell"></i>
+                Notifications
+            </h2>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">SMS Notifications</div>
+                    <div class="setting-description">Receive crop recommendations via SMS</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="smsNotifications" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Market Price Alerts</div>
+                    <div class="setting-description">Get notified when prices reach your target</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="marketAlerts" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Weather Alerts</div>
+                    <div class="setting-description">Receive weather warning notifications</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="weatherAlerts">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Community Updates</div>
+                    <div class="setting-description">Notifications for new questions and answers</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="communityUpdates">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Privacy Settings -->
+        <div class="settings-section">
+            <h2 class="section-title">
+                <i class="fas fa-shield-alt"></i>
+                Privacy & Data
+            </h2>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Profile Visibility</div>
+                    <div class="setting-description">Allow other farmers to see your profile</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="profileVisibility" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Share Success Stories</div>
+                    <div class="setting-description">Share your farming achievements with community</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="shareStories" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Analytics Tracking</div>
+                    <div class="setting-description">Help improve the app by sharing usage data</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="analyticsTracking">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="settings-section">
+            <h2 class="section-title">
+                <i class="fas fa-user-cog"></i>
+                Account
+            </h2>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Phone Number</div>
+                    <div class="setting-description">Your registered phone number</div>
+                </div>
+                <input type="text" class="setting-input" id="phoneNumber" placeholder="07XX XXX XXX" readonly>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Change Password</div>
+                    <div class="setting-description">Update your account password</div>
+                </div>
+                <button class="btn-danger" onclick="alert('Password change feature coming soon!')">Change</button>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="settings-section danger-zone">
+            <h2 class="section-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                Danger Zone
+            </h2>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Delete Account</div>
+                    <div class="setting-description">Permanently delete your account and all data</div>
+                </div>
+                <button class="btn-danger" onclick="confirmDelete()">Delete Account</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">Settings saved successfully!</div>
+
+    <script>
+        // Load current settings
+        async function loadSettings() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                // Load user data
+                const response = await fetch('/api/auth/user', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.user) {
+                        document.getElementById('phoneNumber').value = data.user.phone || '';
+                    }
+                }
+
+                // Load saved preferences
+                const savedSettings = localStorage.getItem('userSettings');
+                if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    if (settings.language) document.getElementById('languageSelect').value = settings.language;
+                    document.getElementById('smsNotifications').checked = settings.smsNotifications !== false;
+                    document.getElementById('marketAlerts').checked = settings.marketAlerts !== false;
+                    document.getElementById('weatherAlerts').checked = settings.weatherAlerts || false;
+                    document.getElementById('communityUpdates').checked = settings.communityUpdates || false;
+                    document.getElementById('profileVisibility').checked = settings.profileVisibility !== false;
+                    document.getElementById('shareStories').checked = settings.shareStories !== false;
+                    document.getElementById('analyticsTracking').checked = settings.analyticsTracking || false;
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        // Save settings
+        function saveSettings() {
+            const settings = {
+                language: document.getElementById('languageSelect').value,
+                smsNotifications: document.getElementById('smsNotifications').checked,
+                marketAlerts: document.getElementById('marketAlerts').checked,
+                weatherAlerts: document.getElementById('weatherAlerts').checked,
+                communityUpdates: document.getElementById('communityUpdates').checked,
+                profileVisibility: document.getElementById('profileVisibility').checked,
+                shareStories: document.getElementById('shareStories').checked,
+                analyticsTracking: document.getElementById('analyticsTracking').checked
+            };
+
+            localStorage.setItem('userSettings', JSON.stringify(settings));
+            showToast('Settings saved successfully!');
+            
+            // Apply language change
+            changeLanguage(settings.language);
+        }
+
+        // Change language
+        function changeLanguage(lang) {
+            setLanguage(lang);
+            translatePage(lang);
+            saveSettings();
+        }
+
+        // Show toast
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = isError ? 'toast show error' : 'toast show';
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        // Confirm delete
+        function confirmDelete() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                if (confirm('This will permanently delete all your data. Continue?')) {
+                    showToast('Account deletion feature coming soon!', true);
+                }
+            }
+        }
+
+        // Add event listeners for auto-save
+        document.querySelectorAll('.toggle, .setting-select').forEach(element => {
+            element.addEventListener('change', saveSettings);
+        });
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentLang = getCurrentLanguage();
+            // Only set value if there's a saved language
+            if (currentLang) document.getElementById('languageSelect').value = currentLang;
+            loadSettings();
+        });
+    </script>
+</body>
+</html>
+
+

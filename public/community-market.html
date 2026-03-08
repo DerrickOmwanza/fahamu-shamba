@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community & Market - Fahamu Shamba</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2E8B57;
+            --primary-dark: #1e6339;
+            --secondary: #FF9800;
+            --danger: #f44336;
+            --success: #4CAF50;
+            --warning: #FFC107;
+            --info: #2196F3;
+            --dark: #333;
+            --light: #f5f5f5;
+            --white: #fff;
+            --gray: #666;
+            --border: #ddd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            background: rgba(255,255,255,0.1);
+            padding: 5px;
+            border-radius: 25px;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: var(--white);
+            cursor: pointer;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .nav-tab.active {
+            background: var(--white);
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--gray);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        @media (max-width: 1024px) {
+            .grid-3, .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-tabs {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-tab {
+                padding: 8px 12px;
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Stats */
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+
+        /* Market Prices Table */
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .price-table th,
+        .price-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .price-table th {
+            background: var(--light);
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .price-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
+        .trend-stable {
+            color: var(--gray);
+        }
+
+        /* Question Cards */
+        .question-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .question-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .question-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--gray);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .question-excerpt {
+            color: var(--gray);
+            line-height: 1.5;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tag-primary {
+            background: rgba(46, 139, 87, 0.1);
+            color: var(--primary);
+        }
+
+        .tag-warning {
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--secondary);
+        }
+
+        .tag-info {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--info);
+        }
+
+        /* Rating Stars */
+        .rating {
+            display: flex;
+            gap: 5px;
+        }
+
+        .rating i {
+            color: var(--warning);
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .rating i:hover {
+            transform: scale(1.2);
+        }
+
+        .rating i.inactive {
+            color: var(--border);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .alert-error {
+            background: rgba(244, 67, 54, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #856404;
+            border: 1px solid var(--warning);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Buyer/Dealer Cards */
+        .contact-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .contact-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+        }
+
+        /* Success Story */
+        .story-card {
+            background: linear-gradient(135deg, #f5f5f5, #fff);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--success);
+        }
+
+        .story-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .story-author {
+            color: var(--gray);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .story-content {
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .story-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .story-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .story-stat:hover {
+            color: var(--primary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Search */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 1.5rem;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .pagination button.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-seedling"></i>
+                <span>Fahamu Shamba</span>
+            </div>
+            <nav class="nav-tabs">
+                <button class="nav-tab active" onclick="showSection('community')">
+                    <i class="fas fa-users"></i> Community
+                </button>
+                <button class="nav-tab" onclick="showSection('market')">
+                    <i class="fas fa-chart-line"></i> Market
+                </button>
+                <button class="nav-tab" onclick="showSection('feedback')">
+                    <i class="fas fa-star"></i> Feedback
+                </button>
+                <button class="nav-tab" onclick="showSection('myfarm')">
+                    <i class="fas fa-tractor"></i> My Farm
+                </button>
+            </nav>
+            <div>
+                <button class="btn btn-primary btn-sm" onclick="goToDashboard()">
+                    <i class="fas fa-home"></i> Dashboard
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Community Section -->
+        <section id="community" class="section active">
+            <div class="grid grid-4" style="margin-bottom: 1.5rem;">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalQuestions">0</div>
+                    <div class="stat-label">Questions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalAnswers">0</div>
+                    <div class="stat-label">Answers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalStories">0</div>
+                    <div class="stat-label">Success Stories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalTopics">0</div>
+                    <div class="stat-label">Discussions</div>
+                </div>
+            </div>
+
+            <!-- Ask Question Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-question-circle"></i> Ask the Community</h3>
+                    <button class="btn btn-primary btn-sm" onclick="openModal('askModal')">
+                        <i class="fas fa-plus"></i> Ask Question
+                    </button>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" id="questionSearch" placeholder="Search questions..." onkeyup="searchQuestions()">
+                    <select class="form-control" id="questionCategory" style="width: 200px;" onchange="loadQuestions()">
+                        <option value="">All Categories</option>
+                        <option value="crop">Crops</option>
+                        <option value="soil">Soil</option>
+                        <option value="pest">Pests & Diseases</option>
+                        <option value="market">Market</option>
+                        <option value="general">General</option>
+                    </select>
+                </div>
+                <div id="questionsList">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading questions...</div>
+                </div>
+            </div>
+
+            <!-- Success Stories -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-trophy"></i> Success Stories</h3>
+                    <button class="btn btn-success btn-sm" onclick="openModal('storyModal')">
+                        <i class="fas fa-plus"></i> Share Story
+                    </button>
+                </div>
+                <div id="storiesList">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading stories...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Section -->
+        <section id="market" class="section">
+            <div class="grid grid-4" style="margin-bottom: 1.5rem;">
+                <div class="stat-card">
+                    <div class="stat-value" id="marketCrops">0</div>
+                    <div class="stat-label">Crops Tracked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="marketAlerts">0</div>
+                    <div class="stat-label">Active Alerts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="marketBuyers">0</div>
+                    <div class="stat-label">Buyers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="marketDealers">0</div>
+                    <div class="stat-label">Agro-Dealers</div>
+                </div>
+            </div>
+
+            <!-- Current Prices -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-tags"></i> Today's Market Prices</h3>
+                    <button class="btn btn-primary btn-sm" onclick="openModal('priceAlertModal')">
+                        <i class="fas fa-bell"></i> Set Alert
+                    </button>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" id="priceSearch" placeholder="Search crops..." onkeyup="filterPrices()">
+                    <select class="form-control" id="priceMarket" style="width: 200px;" onchange="loadPrices()">
+                        <option value="">All Markets</option>
+                    </select>
+                </div>
+                <table class="price-table">
+                    <thead>
+                        <tr>
+                            <th>Crop</th>
+                            <th>Market</th>
+                            <th>Price (KES)</th>
+                            <th>Trend</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pricesTable">
+                        <tr><td colspan="5"><div class="loading"><i class="fas fa-spinner"></i> Loading prices...</div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Buyers & Dealers -->
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-handshake"></i> Buyers</h3>
+                        <button class="btn btn-primary btn-sm" onclick="openModal('buyerModal')">
+                            <i class="fas fa-plus"></i> Register
+                        </button>
+                    </div>
+                    <div id="buyersList">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading buyers...</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Agro-Dealers</h3>
+                        <button class="btn btn-primary btn-sm" onclick="openModal('dealerModal')">
+                            <i class="fas fa-plus"></i> Register
+                        </button>
+                    </div>
+                    <div id="dealersList">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading dealers...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feedback Section -->
+        <section id="feedback" class="section">
+            <!-- Rate Last Prediction -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-star"></i> Rate Your Last Prediction</h3>
+                </div>
+                <div id="ratePredictionForm">
+                    <div class="form-group">
+                        <label class="form-label">Which crop did you plant?</label>
+                        <select class="form-control" id="ratedCrop">
+                            <option value="">Select crop...</option>
+                            <option value="Maize">Maize</option>
+                            <option value="Beans">Beans</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Sorghum">Sorghum</option>
+                            <option value="Groundnuts">Groundnuts</option>
+                            <option value="Cowpeas">Cowpeas</option>
+                            <option value="Cassava">Cassava</option>
+                            <option value="Sweet Potatoes">Sweet Potatoes</option>
+                            <option value="Kales">Kales</option>
+                            <option value="Tomatoes">Tomatoes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">How would you rate this recommendation?</label>
+                        <div class="rating" id="ratingStars">
+                            <i class="fas fa-star" data-rating="1" onclick="setRating(1)"></i>
+                            <i class="fas fa-star" data-rating="2" onclick="setRating(2)"></i>
+                            <i class="fas fa-star" data-rating="3" onclick="setRating(3)"></i>
+                            <i class="fas fa-star" data-rating="4" onclick="setRating(4)"></i>
+                            <i class="fas fa-star" data-rating="5" onclick="setRating(5)"></i>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="submitRating()">Submit Rating</button>
+                </div>
+            </div>
+
+            <!-- Record Yield -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-chart-bar"></i> Record Your Yield</h3>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Crop</label>
+                        <select class="form-control" id="yieldCrop">
+                            <option value="">Select crop...</option>
+                            <option value="Maize">Maize</option>
+                            <option value="Beans">Beans</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Sorghum">Sorghum</option>
+                            <option value="Groundnuts">Groundnuts</option>
+                            <option value="Cowpeas">Cowpeas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Yield (kg)</label>
+                        <input type="number" class="form-control" id="yieldAmount" placeholder="e.g., 500">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Farm Size (acres)</label>
+                        <input type="number" class="form-control" id="yieldFarmSize" placeholder="e.g., 2">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Season</label>
+                        <select class="form-control" id="yieldSeason">
+                            <option value="long_rains">Long Rains</option>
+                            <option value="short_rains">Short Rains</option>
+                            <option value="dry">Dry Season</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="submitYield()">Record Yield</button>
+            </div>
+
+            <!-- Analytics -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-chart-pie"></i> Community Feedback Analytics</h3>
+                </div>
+                <div id="feedbackAnalytics">
+                    <div class="loading"><i class="fas fa-spinner"></i</div>
+                </div>
+            > Loading analytics...</div>
+        </section>
+
+        <!-- My Farm Section -->
+        <section id="myfarm" class="section">
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-history"></i> My Predictions</h3>
+                    </div>
+                    <div id="myPredictions">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-chart-line"></i> My Yields</h3>
+                    </div>
+                    <div id="myYields">
+                        <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-bell"></i> My Price Alerts</h3>
+                </div>
+                <div id="myPriceAlerts">
+                    <div class="loading"><i class="fas fa-spinner"></i> Loading...</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modals -->
+    <!-- Ask Question Modal -->
+    <div id="askModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Ask a Question</h3>
+                <button class="modal-close" onclick="closeModal('askModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" id="questionTitle" placeholder="What's your question?">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Details</label>
+                <textarea class="form-control" id="questionContent" rows="4" placeholder="Provide more details..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-control" id="questionCategoryModal">
+                    <option value="general">General</option>
+                    <option value="crop">Crops</option>
+                    <option value="soil">Soil</option>
+                    <option value="pest">Pests & Diseases</option>
+                    <option value="market">Market</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Your Name</label>
+                <input type="text" class="form-control" id="questionAuthor" placeholder="Your name (optional)">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('askModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitQuestion()">Submit Question</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Story Modal -->
+    <div id="storyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Share Your Success Story</h3>
+                <button class="modal-close" onclick="closeModal('storyModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" id="storyTitle" placeholder="e.g., How I doubled my maize yield">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Your Story</label>
+                <textarea class="form-control" id="storyContent" rows="5" placeholder="Share your farming journey..."></textarea>
+            </div>
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="form-label">Crop Grown</label>
+                    <input type="text" class="form-control" id="storyCrop" placeholder="e.g., Maize">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Yield Achieved</label>
+                    <input type="text" class="form-control" id="storyYield" placeholder="e.g., 25 bags/acre">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('storyModal')">Cancel</button>
+                <button class="btn btn-success" onclick="submitStory()">Submit Story</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Price Alert Modal -->
+    <div id="priceAlertModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Set Price Alert</h3>
+                <button class="modal-close" onclick="closeModal('priceAlertModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Crop</label>
+                <select class="form-control" id="alertCrop">
+                    <option value="">Select crop...</option>
+                    <option value="Maize">Maize</option>
+                    <option value="Beans">Beans</option>
+                    <option value="Rice">Rice</option>
+                    <option value="Sorghum">Sorghum</option>
+                    <option value="Groundnuts">Groundnuts</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Alert When</label>
+                <select class="form-control" id="alertType">
+                    <option value="above">Price goes above</option>
+                    <option value="below">Price goes below</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Threshold Price (KES)</label>
+                <input type="number" class="form-control" id="alertPrice" placeholder="e.g., 70">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('priceAlertModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitPriceAlert()">Set Alert</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buyer Modal -->
+    <div id="buyerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Register as Buyer</h3>
+                <button class="modal-close" onclick="closeModal('buyerModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Business/Buyer Name</label>
+                <input type="text" class="form-control" id="buyerName" placeholder="Your business name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Contact Person</label>
+                <input type="text" class="form-control" id="buyerContact" placeholder="Contact person name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="buyerPhone" placeholder="07XX XXX XXX">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Location</label>
+                <input type="text" class="form-control" id="buyerLocation" placeholder="e.g., Siaya Town">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Crops Interested In</label>
+                <input type="text" class="form-control" id="buyerCrops" placeholder="e.g., Maize, Beans, Rice">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('buyerModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitBuyer()">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agro-Dealer Modal -->
+    <div id="dealerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Register Agro-Dealer</h3>
+                <button class="modal-close" onclick="closeModal('dealerModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Shop Name</label>
+                <input type="text" class="form-control" id="dealerShop" placeholder="Your shop name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Owner Name</label>
+                <input type="text" class="form-control" id="dealerOwner" placeholder="Owner name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="dealerPhone" placeholder="07XX XXX XXX">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Location</label>
+                <input type="text" class="form-control" id="dealerLocation" placeholder="e.g., Bondo Town">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Products (comma separated)</label>
+                <input type="text" class="form-control" id="dealerProducts" placeholder="e.g., Seeds, Fertilizer, Pesticides">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('dealerModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitDealer()">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentRating = 0;
+        let currentUser = 'farmer_' + Math.random().toString(36).substr(2, 9);
+        let currentSection = 'community';
+
+        // Check for section from session storage
+        function getStoredSection() {
+            const stored = sessionStorage.getItem('communitySection');
+            sessionStorage.removeItem('communitySection');
+            return stored;
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            currentSection = sectionId;
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.closest('.nav-tab').classList.add('active');
+
+            // Load data for section
+            if (sectionId === 'community') {
+                loadCommunityData();
+                // Auto-refresh every 15 seconds
+                startAutoRefresh('community');
+            }
+            if (sectionId === 'market') {
+                loadMarketData();
+                startAutoRefresh('market');
+            }
+            if (sectionId === 'feedback') loadFeedbackData();
+            if (sectionId === 'myfarm') loadMyFarmData();
+        }
+
+        // Auto-refresh function
+        let refreshIntervals = {};
+        function startAutoRefresh(section) {
+            // Clear existing interval
+            if (refreshIntervals[section]) {
+                clearInterval(refreshIntervals[section]);
+            }
+            // Set new interval - 15 seconds for real-time feel
+            refreshIntervals[section] = setInterval(() => {
+                if (section === 'community') loadCommunityData();
+                if (section === 'market') loadMarketData();
+            }, 15000);
+        }
+
+        function goToDashboard() {
+            window.location.href = '/farmer-dashboard';
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // API Helper
+        async function apiCall(endpoint, options = {}) {
+            try {
+                const response = await fetch(`/api${endpoint}`, {
+                    headers: { 'Content-Type': 'application/json' },
+                    ...options
+                });
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Custom notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                z-index: 9999;
+                padding: 15px 25px;
+                border-radius: 8px;
+                background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+                color: white;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                animation: slideIn 0.3s ease;
+                max-width: 400px;
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        // Add animation styles
+        const animStyle = document.createElement('style');
+        animStyle.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(animStyle);
+
+        // Community Functions
+        async function loadCommunityData() {
+            const stats = await apiCall('/community/stats');
+            if (stats.success) {
+                document.getElementById('totalQuestions').textContent = stats.stats.totalQuestions || 0;
+                document.getElementById('totalAnswers').textContent = stats.stats.totalAnswers || 0;
+                document.getElementById('totalStories').textContent = stats.stats.approvedStories || 0;
+                document.getElementById('totalTopics').textContent = stats.stats.totalTopics || 0;
+            }
+            loadQuestions();
+            loadStories();
+        }
+
+        async function loadQuestions() {
+            const category = document.getElementById('questionCategory').value;
+            const result = await apiCall(`/community/questions?limit=10&${category ? 'category=' + category : ''}`);
+            
+            const container = document.getElementById('questionsList');
+            if (!result.success || result.questions.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-question-circle"></i><p>No questions yet. Be the first to ask!</p></div>';
+                return;
+            }
+
+            container.innerHTML = result.questions.map(q => `
+                <div class="question-card">
+                    <div class="question-title">${q.title}</div>
+                    <div class="question-meta">
+                        <span><i class="fas fa-user"></i> ${q.author_name || 'Anonymous'}</span>
+                        <span><i class="fas fa-tag"></i> <span class="tag tag-primary">${q.category}</span></span>
+                        <span><i class="fas fa-eye"></i> ${q.views} views</span>
+                        <span><i class="fas fa-comment"></i> ${q.answerCount || 0} answers</span>
+                    </div>
+                    <div class="question-excerpt">${q.content.substring(0, 150)}...</div>
+                </div>
+            `).join('');
+        }
+
+        async function loadStories() {
+            const result = await apiCall('/community/stories?limit=5');
+            const container = document.getElementById('storiesList');
+            
+            if (!result.success || result.stories.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-trophy"></i><p>No success stories yet. Share yours!</p></div>';
+                return;
+            }
+
+            container.innerHTML = result.stories.map(s => `
+                <div class="story-card">
+                    <div class="story-title">${s.title}</div>
+                    <div class="story-author">By ${s.author_name} from ${s.sub_county || 'Siaya'}</div>
+                    <div class="story-content">${s.content.substring(0, 200)}...</div>
+                    <div class="story-stats">
+                        <span class="story-stat" onclick="likeStory(${s.id})"><i class="fas fa-heart"></i> ${s.likes}</span>
+                        <span class="story-stat"><i class="fas fa-leaf"></i> ${s.crop_grown}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function submitQuestion() {
+            const title = document.getElementById('questionTitle').value;
+            const content = document.getElementById('questionContent').value;
+            const category = document.getElementById('questionCategoryModal').value;
+            const authorName = document.getElementById('questionAuthor').value;
+
+            if (!title || !content) {
+                showNotification('Please fill in title and content', 'error');
+                return;
+            }
+
+            const result = await apiCall('/community/questions', {
+                method: 'POST',
+                body: JSON.stringify({
+                    title, content, category,
+                    authorPhone: currentUser,
+                    authorName: authorName || 'Anonymous'
+                })
+            });
+
+            if (result.success) {
+                showNotification('✅ Question posted successfully! Other farmers will see it now.', 'success');
+                closeModal('askModal');
+                // Clear form
+                document.getElementById('questionTitle').value = '';
+                document.getElementById('questionContent').value = '';
+                // Refresh questions list and stats
+                loadCommunityData();
+            } else {
+                showNotification('Error: ' + result.error, 'error');
+            }
+        }
+
+        async function submitStory() {
+            const title = document.getElementById('storyTitle').value;
+            const content = document.getElementById('storyContent').value;
+            const cropGrown = document.getElementById('storyCrop').value;
+            const yieldAchieved = document.getElementById('storyYield').value;
+
+            if (!title || !content) {
+                showNotification('Please fill in title and story content', 'error');
+                return;
+            }
+
+            const result = await apiCall('/community/stories', {
+                method: 'POST',
+                body: JSON.stringify({
+                    title, content, cropGrown, yieldAchieved,
+                    authorPhone: currentUser,
+                    authorName: 'Farmer'
+                })
+            });
+
+            if (result.success) {
+                showNotification('✅ Success story submitted! It will be reviewed and published soon.', 'success');
+                closeModal('storyModal');
+                // Clear form
+                document.getElementById('storyTitle').value = '';
+                document.getElementById('storyContent').value = '';
+                document.getElementById('storyCrop').value = '';
+                document.getElementById('storyYield').value = '';
+            } else {
+                showNotification('Error: ' + result.error, 'error');
+            }
+        }
+
+        function searchQuestions() {
+            loadQuestions();
+        }
+
+        // Market Functions
+        async function loadMarketData() {
+            // Load stats
+            const stats = await apiCall('/market/stats');
+            if (stats.success) {
+                document.getElementById('marketCrops').textContent = stats.stats.trackedCrops || 0;
+                document.getElementById('marketAlerts').textContent = stats.stats.activeAlerts || 0;
+                document.getElementById('marketBuyers').textContent = stats.stats.buyers?.total || 0;
+                document.getElementById('marketDealers').textContent = stats.stats.agroDealers?.total || 0;
+            }
+
+            loadPrices();
+            loadBuyers();
+            loadDealers();
+        }
+
+        async function loadPrices() {
+            const result = await apiCall('/market/prices');
+            const container = document.getElementById('pricesTable');
+            
+            if (!result.success || result.prices.length === 0) {
+                container.innerHTML = '<tr><td colspan="5"><div class="empty-state">No prices available</div></td></tr>';
+                return;
+            }
+
+            container.innerHTML = result.prices.map(p => `
+                <tr>
+                    <td><strong>${p.crop}</strong></td>
+                    <td>${p.market}</td>
+                    <td><strong>KSh ${p.price}</strong>/${p.unit}</td>
+                    <td class="trend-${p.trend || 'stable'}">
+                        <i class="fas fa-arrow-${p.trend === 'up' ? 'up' : p.trend === 'down' ? 'down' : 'right'}"></i>
+                        ${p.trend || 'stable'}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="quickAlert('${p.crop}', ${p.price})">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadBuyers() {
+            const result = await apiCall('/market/buyers');
+            const container = document.getElementById('buyersList');
+            
+            if (!result.success || result.buyers.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-handshake"></i><p>No buyers registered yet</p></div>';
+                return;
+            }
+
+            container.innerHTML = result.buyers.slice(0, 5).map(b => `
+                <div class="contact-card">
+                    <div class="contact-name">
+                        ${b.buyer_name}
+                        ${b.is_verified ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : ''}
+                    </div>
+                    <div class="contact-detail"><i class="fas fa-phone"></i> ${b.phone}</div>
+                    <div class="contact-detail"><i class="fas fa-map-marker"></i> ${b.location || 'N/A'}</div>
+                    <div class="contact-detail"><i class="fas fa-seedling"></i> ${b.crops_interested || 'Various'}</div>
+                </div>
+            `).join('');
+        }
+
+        async function loadDealers() {
+            const result = await apiCall('/market/dealers');
+            const container = document.getElementById('dealersList');
+            
+            if (!result.success || result.dealers.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-shopping-cart"></i><p>No agro-dealers registered yet</p></div>';
+                return;
+            }
+
+            container.innerHTML = result.dealers.slice(0, 5).map(d => `
+                <div class="contact-card">
+                    <div class="contact-name">
+                        ${d.shop_name}
+                        ${d.is_verified ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : ''}
+                    </div>
+                    <div class="contact-detail"><i class="fas fa-phone"></i> ${d.phone}</div>
+                    <div class="contact-detail"><i class="fas fa-map-marker"></i> ${d.location || 'N/A'}</div>
+                    <div class="contact-detail"><i class="fas fa-box"></i> ${d.products || 'Various'}</div>
+                </div>
+            `).join('');
+        }
+
+        async function submitPriceAlert() {
+            const crop = document.getElementById('alertCrop').value;
+            const thresholdType = document.getElementById('alertType').value;
+            const thresholdPrice = document.getElementById('alertPrice').value;
+
+            if (!crop || !thresholdPrice) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const result = await apiCall('/market/alerts', {
+                method: 'POST',
+                body: JSON.stringify({
+                    phoneNumber: currentUser,
+                    crop,
+                    thresholdType,
+                    thresholdPrice: parseFloat(thresholdPrice)
+                })
+            });
+
+            if (result.success) {
+                alert('Price alert set! Current price: KSh ' + result.currentPrice);
+                closeModal('priceAlertModal');
+            } else {
+                alert('Error: ' + result.error);
+            }
+        }
+
+        async function submitBuyer() {
+            const buyerName = document.getElementById('buyerName').value;
+            const contactPerson = document.getElementById('buyerContact').value;
+            const phone = document.getElementById('buyerPhone').value;
+            const location = document.getElementById('buyerLocation').value;
+            const cropsInterested = document.getElementById('buyerCrops').value;
+
+            if (!buyerName || !phone) {
+                alert('Please fill in required fields');
+                return;
+            }
+
+            const result = await apiCall('/market/buyers', {
+                method: 'POST',
+                body: JSON.stringify({
+                    buyerName, contactPerson, phone, location, cropsInterested,
+                    county: 'Siaya', buyerType: 'trader'
+                })
+            });
+
+            if (result.success) {
+                alert('Buyer registered successfully!');
+                closeModal('buyerModal');
+                loadBuyers();
+            } else {
+                alert('Error: ' + result.error);
+            }
+        }
+
+        async function submitDealer() {
+            const shopName = document.getElementById('dealerShop').value;
+            const ownerName = document.getElementById('dealerOwner').value;
+            const phone = document.getElementById('dealerPhone').value;
+            const location = document.getElementById('dealerLocation').value;
+            const products = document.getElementById('dealerProducts').value;
+
+            if (!shopName || !phone) {
+                alert('Please fill in required fields');
+                return;
+            }
+
+            const result = await apiCall('/market/dealers', {
+                method: 'POST',
+                body: JSON.stringify({
+                    shopName, ownerName, phone, location, products,
+                    county: 'Siaya'
+                })
+            });
+
+            if (result.success) {
+                alert('Agro-dealer registered successfully!');
+                closeModal('dealerModal');
+                loadDealers();
+            } else {
+                alert('Error: ' + result.error);
+            }
+        }
+
+        function quickAlert(crop, currentPrice) {
+            document.getElementById('alertCrop').value = crop;
+            document.getElementById('alertPrice').value = currentPrice;
+            openModal('priceAlertModal');
+        }
+
+        function filterPrices() {
+            loadPrices();
+        }
+
+        // Feedback Functions
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('#ratingStars i');
+            stars.forEach((star, index) => {
+                star.classList.toggle('inactive', index >= rating);
+            });
+        }
+
+        async function submitRating() {
+            const crop = document.getElementById('ratedCrop').value;
+            
+            if (!crop || !currentRating) {
+                alert('Please select a crop and rating');
+                return;
+            }
+
+            const result = await apiCall('/feedback/rate', {
+                method: 'POST',
+                body: JSON.stringify({
+                    phoneNumber: currentUser,
+                    crop,
+                    rating: currentRating
+                })
+            });
+
+            if (result.success) {
+                alert('Thank you for your rating!');
+                loadFeedbackData();
+            } else {
+                alert('Error: ' + result.error);
+            }
+        }
+
+        async function submitYield() {
+            const crop = document.getElementById('yieldCrop').value;
+            const yieldAmount = document.getElementById('yieldAmount').value;
+            const farmSize = document.getElementById('yieldFarmSize').value;
+            const season = document.getElementById('yieldSeason').value;
+
+            if (!crop || !yieldAmount) {
+                alert('Please fill in crop and yield');
+                return;
+            }
+
+            const result = await apiCall('/feedback/yield', {
+                method: 'POST',
+                body: JSON.stringify({
+                    phoneNumber: currentUser,
+                    crop,
+                    yieldAmount: parseFloat(yieldAmount),
+                    farmSize: farmSize ? parseFloat(farmSize) : null,
+                    season,
+                    subCounty: 'Siaya'
+                })
+            });
+
+            if (result.success) {
+                alert('Yield recorded successfully!');
+                loadFeedbackData();
+            } else {
+                alert('Error: ' + result.error);
+            }
+        }
+
+        async function loadFeedbackData() {
+            const result = await apiCall('/feedback/analytics');
+            const container = document.getElementById('feedbackAnalytics');
+            
+            if (!result.success) {
+                container.innerHTML = '<div class="empty-state">No analytics available</div>';
+                return;
+            }
+
+            const a = result.analytics;
+            container.innerHTML = `
+                <div class="grid grid-4" style="margin-bottom: 1rem;">
+                    <div class="stat-card">
+                        <div class="stat-value">${a.overall.totalFeedback || 0}</div>
+                        <div class="stat-label">Total Feedback</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${a.overall.avgRating || 0}</div>
+                        <div class="stat-label">Avg Rating</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${a.overall.helpfulPercentage || 0}%</div>
+                        <div class="stat-label">Found Helpful</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${a.overall.recommendPercentage || 0}%</div>
+                        <div class="stat-label">Would Recommend</div>
+                    </div>
+                </div>
+                <h4 style="margin: 1rem 0;">Top Rated Crops</h4>
+                <table class="price-table">
+                    <thead><tr><th>Crop</th><th>Ratings</th><th>Avg Rating</th></tr></thead>
+                    <tbody>
+                        ${(a.topCrops || []).map(c => `
+                            <tr><td>${c.crop}</td><td>${c.total_ratings}</td><td>${c.avg_rating.toFixed(1)} ★</td></tr>
+                        `).join('') || '<tr><td colspan="3">No data yet</td></tr>'}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // My Farm Functions
+        async function loadMyFarmData() {
+            // My predictions
+            const predictions = await apiCall(`/predictions?phoneNumber=${currentUser}&limit=5`);
+            const predContainer = document.getElementById('myPredictions');
+            
+            if (predictions.success && predictions.predictions.length > 0) {
+                predContainer.innerHTML = predictions.predictions.map(p => `
+                    <div class="question-card">
+                        <div class="question-title">${p.predicted_crop}</div>
+                        <div class="question-meta">
+                            <span>${p.sub_county}</span> | <span>${p.soil_type}</span> | <span>${p.season}</span>
+                        </div>
+                        <div class="question-meta">
+                            <span class="tag tag-primary">${p.confidence}% confidence</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                predContainer.innerHTML = '<div class="empty-state">No predictions yet</div>';
+            }
+
+            // My yields
+            const yields = await apiCall(`/feedback/yields/${currentUser}`);
+            const yieldContainer = document.getElementById('myYields');
+            
+            if (yields.success && yields.yields.length > 0) {
+                yieldContainer.innerHTML = yields.yields.map(y => `
+                    <div class="question-card">
+                        <div class="question-title">${y.crop}</div>
+                        <div class="question-meta">
+                            <span>Yield: ${y.yield_amount} ${y.yield_unit}</span> | <span>${y.season}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                yieldContainer.innerHTML = '<div class="empty-state">No yields recorded yet</div>';
+            }
+
+            // My price alerts
+            const alerts = await apiCall(`/market/alerts/${currentUser}`);
+            const alertContainer = document.getElementById('myPriceAlerts');
+            
+            if (alerts.success && alerts.alerts.length > 0) {
+                alertContainer.innerHTML = alerts.alerts.map(a => `
+                    <div class="question-card">
+                        <div class="question-title">${a.crop}</div>
+                        <div class="question-meta">
+                            <span>Alert when: ${a.threshold_type} KSh ${a.threshold_price}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                alertContainer.innerHTML = '<div class="empty-state">No price alerts set</div>';
+            }
+        }
+
+        async function likeStory(storyId) {
+            await apiCall('/community/stories/like', {
+                method: 'POST',
+                body: JSON.stringify({ storyId })
+            });
+            loadStories();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCommunityData();
+        });
+    </script>
+</body>
+</html>
+

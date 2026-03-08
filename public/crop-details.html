@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Details & Inputs - Fahamu Shamba</title>
+    <link rel="icon" href="/fahamu-logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #2d7649; --primary-light: #4a9d6f; --primary-dark: #1e5631;
+            --secondary: #f57c00; --success: #27ae60; --warning: #f39c12;
+            --danger: #e74c3c; --info: #3498db; --light: #f9f7f4;
+            --lighter: #ecf0f1; --dark: #2c3e50; --text: #34495e;
+            --text-light: #7f8c8d; --border: #e0e6ed;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08); --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --sidebar-width: 260px;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Roboto','Segoe UI',sans-serif; background: var(--light); min-height: 100vh; color: var(--text); line-height: 1.6; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        .header { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); color: white; padding: 40px 0; margin-bottom: 40px; }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 2rem; margin-bottom: 10px; }
+        .header p { font-size: 1rem; opacity: 0.9; }
+        .back-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+        
+        .crop-header { background: white; padding: 30px; border-radius: 12px; box-shadow: var(--shadow-sm); margin-bottom: 30px; display: flex; gap: 30px; align-items: center; }
+        .crop-icon { width: 120px; height: 120px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 4rem; flex-shrink: 0; }
+        .crop-info h2 { font-size: 2rem; color: var(--primary-dark); margin-bottom: 15px; }
+        .crop-info-row { display: flex; gap: 30px; margin-bottom: 10px; }
+        .info-item { display: flex; align-items: center; gap: 10px; }
+        .info-label { font-weight: 600; color: var(--text-light); }
+        .info-value { color: var(--primary-dark); font-weight: 700; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid var(--border); }
+        .tab-btn { padding: 12px 24px; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-weight: 600; color: var(--text-light); transition: all 0.3s ease; font-size: 1rem; }
+        .tab-btn:hover { color: var(--primary); }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .product-card { background: white; border-radius: 12px; padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); transition: all 0.3s ease; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+        .product-name { font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 10px; }
+        .product-description { color: var(--text-light); font-size: 0.9rem; margin-bottom: 10px; }
+        .product-dosage { background: var(--light); padding: 10px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; color: var(--primary); }
+        
+        .tools-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .tool-card { background: white; border-radius: 12px; padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); text-align: center; transition: all 0.3s ease; }
+        .tool-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+        .tool-icon { font-size: 3rem; margin-bottom: 15px; }
+        .tool-name { font-weight: 700; color: var(--primary-dark); margin-bottom: 10px; font-size: 1.1rem; }
+        .tool-description { color: var(--text-light); font-size: 0.9rem; }
+        
+        .section-title { font-size: 1.3rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .section-title i { font-size: 1.5rem; }
+        
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-state-icon { font-size: 4rem; margin-bottom: 20px; }
+        
+        .toast { position: fixed; bottom: 30px; right: 30px; padding: 15px 25px; border-radius: 8px; background: var(--success); color: white; font-weight: 600; box-shadow: var(--shadow-md); transition: all 0.3s ease; opacity: 0; transform: translateY(100px); z-index: 2000; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.error { background: var(--danger); }
+        
+        /* Tablet (768px and below) */
+        @media (max-width: 768px) {
+            .container { padding: 20px 15px; }
+            .header { padding: 30px 0; margin-bottom: 30px; }
+            .header h1 { font-size: 1.5rem; }
+            .header p { font-size: 0.9rem; }
+            .crop-header { flex-direction: column; text-align: center; padding: 20px; gap: 20px; }
+            .crop-icon { width: 80px; height: 80px; font-size: 3rem; }
+            .crop-info h2 { font-size: 1.5rem; }
+            .crop-info-row { flex-direction: column; gap: 10px; }
+            .info-item { flex-direction: column; }
+            .products-grid { grid-template-columns: 1fr; }
+            .tools-list { grid-template-columns: 1fr; }
+            .header-content { flex-direction: column; gap: 15px; padding: 0 15px; }
+            .tabs { flex-wrap: wrap; gap: 5px; }
+            .tab-btn { padding: 10px 16px; font-size: 0.85rem; }
+            .section-title { font-size: 1.1rem; }
+            .toast { bottom: 20px; right: 20px; padding: 12px 20px; font-size: 0.85rem; }
+        }
+        
+        /* Small phones (480px and below) */
+        @media (max-width: 480px) {
+            .container { padding: 15px 10px; }
+            .header { padding: 20px 0; margin-bottom: 20px; }
+            .header h1 { font-size: 1.3rem; margin-bottom: 5px; }
+            .header p { font-size: 0.8rem; }
+            .header-content { padding: 0 10px; }
+            .back-btn { padding: 8px 12px; font-size: 0.8rem; }
+            .back-btn span { display: none; }
+            .back-btn i { margin-right: 0; }
+            .crop-header { padding: 15px; gap: 15px; }
+            .crop-icon { width: 70px; height: 70px; font-size: 2.5rem; }
+            .crop-info h2 { font-size: 1.2rem; margin-bottom: 10px; }
+            .crop-info-row { gap: 5px; margin-bottom: 8px; }
+            .info-label { font-size: 0.75rem; }
+            .info-value { font-size: 0.9rem; }
+            .tabs { gap: 0; border-bottom: 1px solid var(--border); }
+            .tab-btn { padding: 8px 12px; font-size: 0.75rem; flex: 1; text-align: center; }
+            .tab-btn i { display: block; margin-bottom: 2px; }
+            .tab-btn span { display: none; }
+            .products-grid { gap: 15px; }
+            .product-card { padding: 15px; }
+            .product-name { font-size: 1rem; }
+            .product-description { font-size: 0.8rem; }
+            .product-dosage { font-size: 0.75rem; padding: 8px 10px; }
+            .tools-list { gap: 15px; }
+            .tool-card { padding: 15px; }
+            .tool-icon { font-size: 2rem; margin-bottom: 10px; }
+            .tool-name { font-size: 0.95rem; }
+            .tool-description { font-size: 0.8rem; }
+            .section-title { font-size: 1rem; margin-bottom: 15px; }
+            .section-title i { font-size: 1.2rem; }
+            .toast { bottom: 15px; right: 15px; padding: 10px 15px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1>🌾 Crop Details & Inputs</h1>
+                <p>Everything you need for successful farming</p>
+            </div>
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Crop Header -->
+        <div class="crop-header">
+            <div class="crop-icon">🌾</div>
+            <div class="crop-info">
+                <h2 id="cropName">Loading...</h2>
+                <div class="crop-info-row">
+                    <div class="info-item">
+                        <span class="info-label">✓ Recommended For:</span>
+                        <span class="info-value" id="soilInfo">Loam Soil</span>
+                    </div>
+                </div>
+                <div class="crop-info-row">
+                    <div class="info-item">
+                        <span class="info-label">📊 Expected Yield:</span>
+                        <span class="info-value" id="yieldInfo">50-70 bags/acre</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">💰 Est. Returns:</span>
+                        <span class="info-value" id="returnsInfo">KES 50,000-70,000</span>
+                    </div>
+                </div>
+                <div class="crop-info-row">
+                    <div class="info-item">
+                        <span class="info-label">⏱️ Growing Period:</span>
+                        <span class="info-value" id="periodInfo">3-4 months</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('fertilizers')">
+                <i class="fas fa-leaf"></i> Fertilizers
+            </button>
+            <button class="tab-btn" onclick="switchTab('pesticides')">
+                <i class="fas fa-bug"></i> Pesticides
+            </button>
+            <button class="tab-btn" onclick="switchTab('fungicides')">
+                <i class="fas fa-flask"></i> Fungicides
+            </button>
+            <button class="tab-btn" onclick="switchTab('tools')">
+                <i class="fas fa-tools"></i> Tools
+            </button>
+        </div>
+        
+        <!-- Fertilizers Tab -->
+        <div id="fertilizers" class="tab-content active">
+            <h3 class="section-title"><i class="fas fa-leaf"></i> Recommended Fertilizers</h3>
+            <div class="products-grid" id="fertilizerList"></div>
+        </div>
+        
+        <!-- Pesticides Tab -->
+        <div id="pesticides" class="tab-content">
+            <h3 class="section-title"><i class="fas fa-bug"></i> Recommended Pesticides</h3>
+            <div class="products-grid" id="pesticideList"></div>
+        </div>
+        
+        <!-- Fungicides Tab -->
+        <div id="fungicides" class="tab-content">
+            <h3 class="section-title"><i class="fas fa-flask"></i> Recommended Fungicides</h3>
+            <div class="products-grid" id="fungicideList"></div>
+        </div>
+        
+        <!-- Tools Tab -->
+        <div id="tools" class="tab-content">
+            <h3 class="section-title"><i class="fas fa-tools"></i> Required Tools & Equipment</h3>
+            <div class="tools-list" id="toolList"></div>
+        </div>
+    </div>
+    
+    <div id="toast" class="toast"></div>
+    
+    <script>
+        // Crop data with all inputs information
+        const cropData = {
+            "Maize": {
+                soil: "Loamy, well-drained soil",
+                yield: "50-70 bags/acre",
+                returns: "KES 50,000-70,000",
+                period: "3-4 months",
+                fertilizers: [
+                    { name: "Urea", description: "Nitrogen for vegetative growth", dosage: "150-200 kg/ha" },
+                    { name: "DAP", description: "Phosphorus for early growth", dosage: "100-150 kg/ha" },
+                    { name: "Potassium Chloride", description: "Potassium for stalk strength", dosage: "60-80 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Cypermethrin", description: "Controls corn borers", dosage: "300-500 ml/ha" },
+                    { name: "Thiamethoxam", description: "Systemic insecticide", dosage: "100-150 g/ha" }
+                ],
+                fungicides: [
+                    { name: "Mancozeb", description: "Controls leaf blight", dosage: "1.5-2.0 kg/ha" },
+                    { name: "Azoxystrobin", description: "Controls rust", dosage: "500-750 ml/ha" }
+                ],
+                tools: [
+                    { name: "Planter", description: "Precision seeding equipment" },
+                    { name: "Corn Harvester", description: "Efficient grain collection" },
+                    { name: "Cultivator", description: "Soil preparation and weeding" }
+                ]
+            },
+            "Rice": {
+                soil: "Waterlogged, clay soil",
+                yield: "60-80 bags/acre",
+                returns: "KES 60,000-80,000",
+                period: "4-5 months",
+                fertilizers: [
+                    { name: "Urea", description: "Nitrogen fertilizer for growth", dosage: "100-150 kg/ha" },
+                    { name: "DAP", description: "Phosphorus fertilizer for root development", dosage: "60-80 kg/ha" },
+                    { name: "Potassium Sulfate", description: "Potassium for grain quality", dosage: "40-60 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Chlorpyrifos", description: "Controls stem borers", dosage: "1.5-2.0 L/ha" },
+                    { name: "Imidacloprid", description: "Effective against leafhoppers", dosage: "100-150 ml/ha" }
+                ],
+                fungicides: [
+                    { name: "Tricyclazole", description: "Controls blast disease", dosage: "0.5-1.0 kg/ha" },
+                    { name: "Carbendazim", description: "Controls sheath blight", dosage: "500 g/ha" }
+                ],
+                tools: [
+                    { name: "Paddy Transplanter", description: "Seedling transplanting" },
+                    { name: "Combine Harvester", description: "Efficient grain harvesting" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Wheat": {
+                soil: "Well-drained loam to clay loam",
+                yield: "40-60 bags/acre",
+                returns: "KES 40,000-60,000",
+                period: "4-5 months",
+                fertilizers: [
+                    { name: "Ammonium Sulfate", description: "Nitrogen source", dosage: "100-120 kg/ha" },
+                    { name: "SSP", description: "Phosphorus for root growth", dosage: "150-200 kg/ha" },
+                    { name: "MOP", description: "Potassium for grain filling", dosage: "40-60 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Lambda-cyhalothrin", description: "Controls aphids", dosage: "250-300 ml/ha" },
+                    { name: "Deltamethrin", description: "Effective against armyworms", dosage: "250-500 ml/ha" }
+                ],
+                fungicides: [
+                    { name: "Propiconazole", description: "Controls rust diseases", dosage: "500 ml/ha" },
+                    { name: "Tebuconazole", description: "Controls powdery mildew", dosage: "500-750 ml/ha" }
+                ],
+                tools: [
+                    { name: "Seed Drill", description: "Precision seeding" },
+                    { name: "Combine Harvester", description: "Grain harvesting" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Beans": {
+                soil: "Well-drained loam soil",
+                yield: "15-20 bags/acre",
+                returns: "KES 30,000-40,000",
+                period: "3-4 months",
+                fertilizers: [
+                    { name: "Rhizobium Inoculant", description: "Nitrogen fixation", dosage: "200-250 g/ha" },
+                    { name: "SSP", description: "Phosphorus for pod formation", dosage: "150-200 kg/ha" },
+                    { name: "Gypsum", description: "Calcium and sulfur source", dosage: "200-400 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Quinalphos", description: "Controls pod borers", dosage: "1.0-1.5 L/ha" },
+                    { name: "Acephate", description: "Controls leaf miners", dosage: "600-800 g/ha" }
+                ],
+                fungicides: [
+                    { name: "Carbendazim", description: "Controls root rot", dosage: "500 g/ha" },
+                    { name: "Metalaxyl", description: "Controls damping off", dosage: "2.5 g/kg seed" }
+                ],
+                tools: [
+                    { name: "Planter", description: "Seeding equipment" },
+                    { name: "Bean Harvester", description: "Pod collection" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Sorghum": {
+                soil: "Well-drained sandy loam",
+                yield: "40-50 bags/acre",
+                returns: "KES 35,000-50,000",
+                period: "3-4 months",
+                fertilizers: [
+                    { name: "Urea", description: "Nitrogen for growth", dosage: "80-120 kg/ha" },
+                    { name: "DAP", description: "Phosphorus for development", dosage: "60-100 kg/ha" },
+                    { name: "MOP", description: "Potassium for grain quality", dosage: "40-60 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Monocrotophos", description: "Controls shoot fly", dosage: "1.0-1.5 L/ha" },
+                    { name: "Spinosad", description: "Controls head bugs", dosage: "80-100 ml/ha" }
+                ],
+                fungicides: [
+                    { name: "Carbendazim", description: "Controls grain mold", dosage: "1.0 g/L water" },
+                    { name: "Copper Oxychloride", description: "Controls leaf spot", dosage: "2.5-3.0 g/L water" }
+                ],
+                tools: [
+                    { name: "Planter", description: "Seeding equipment" },
+                    { name: "Sorghum Harvester", description: "Grain harvesting" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            }
+        };
+        
+        let currentCrop = null;
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const crop = urlParams.get('crop');
+            
+            if (crop && cropData[crop]) {
+                currentCrop = crop;
+                displayCropDetails(crop);
+            } else {
+                showToast('Crop not found', 'error');
+            }
+        });
+        
+        function displayCropDetails(crop) {
+            const data = cropData[crop];
+            if (!data) return;
+            
+            // Update header
+            document.getElementById('cropName').textContent = crop;
+            document.getElementById('soilInfo').textContent = data.soil;
+            document.getElementById('yieldInfo').textContent = data.yield;
+            document.getElementById('returnsInfo').textContent = data.returns;
+            document.getElementById('periodInfo').textContent = data.period;
+            
+            // Display fertilizers
+            displayProducts(data.fertilizers, 'fertilizerList');
+            
+            // Display pesticides
+            displayProducts(data.pesticides, 'pesticideList');
+            
+            // Display fungicides
+            displayProducts(data.fungicides, 'fungicideList');
+            
+            // Display tools
+            displayTools(data.tools, 'toolList');
+        }
+        
+        function displayProducts(products, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-description">${product.description}</div>
+                    <div class="product-dosage">📏 ${product.dosage}</div>
+                </div>
+            `).join('');
+        }
+        
+        function displayTools(tools, containerId) {
+            const container = document.getElementById(containerId);
+            const icons = ['🌾', '🚜', '💨', '🔧', '⚙️'];
+            container.innerHTML = tools.map((tool, idx) => `
+                <div class="tool-card">
+                    <div class="tool-icon">${icons[idx] || '🔧'}</div>
+                    <div class="tool-name">${tool.name}</div>
+                    <div class="tool-description">${tool.description}</div>
+                </div>
+            `).join('');
+        }
+        
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.closest('.tab-btn').classList.add('active');
+        }
+        
+        function goBack() {
+            window.history.back();
+        }
+        
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

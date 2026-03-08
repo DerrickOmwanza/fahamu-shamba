@@ -1,0 +1,30 @@
+{
+  "name": "Fahamu Shamba",
+  "short_name": "Fahamu",
+  "description": "AI-Powered Crop Prediction for Farmers in Siaya County",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#2d7649",
+  "theme_color": "#1e5631",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/fahamu-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/fahamu-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["agriculture", "productivity", "weather"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
+}
+

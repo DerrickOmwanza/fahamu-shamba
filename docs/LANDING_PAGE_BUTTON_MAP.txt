@@ -1,0 +1,291 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    FAHAMU SHAMBA - LANDING PAGE BUTTON MAP
+═══════════════════════════════════════════════════════════════════════════════
+
+LANDING PAGE STRUCTURE (/)
+───────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                  HEADER                                      │
+│  🌾 Fahamu Shamba          │ [Login] [Sign Up]                             │
+│  Smart Farming             │                                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+         ↓ Links:
+         ├─ Login ────────────────→ /login?mode=login      (Shows LOGIN form)
+         └─ Sign Up ──────────────→ /login?mode=signup     (Shows REGISTER Step 1)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            HERO SECTION                                     │
+│  ┌─────────────────────────────────────────────┬──────────────────────────┐ │
+│  │ Smart Farming Decisions, Powered by AI      │                          │ │
+│  │ Get personalized crop recommendations...    │        🌾               │ │
+│  │                                              │                          │ │
+│  │ [Create Account]  [Log In]                  │                          │ │
+│  └─────────────────────────────────────────────┴──────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────┘
+         ↓ Links:
+         ├─ Create Account ───────→ /login?mode=signup     (Shows REGISTER Step 1)
+         └─ Log In ──────────────→ /login?mode=login      (Shows LOGIN form)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           FEATURES SECTION                                  │
+│  What You Get                                                               │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
+│  │ 🌱 Crops     │  │ ☁️ Weather   │  │ 📊 Market    │  │ 🧪 Soil      │   │
+│  │ Predictions  │  │ Forecasts    │  │ Insights     │  │ Analysis     │   │
+│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘   │
+└─────────────────────────────────────────────────────────────────────────────┘
+         (No buttons in this section)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         HOW IT WORKS SECTION                                │
+│  (4-step flow diagram - no buttons)                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          PROVEN RESULTS SECTION                             │
+│  (Stats and numbers - no buttons)                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         TESTIMONIALS SECTION                                │
+│  (Customer reviews - no buttons)                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                  ⭐ INSTRUCTIONS BANNER (NEW) ⭐                             │
+│                                                                              │
+│  🚀 Getting Started is Easy!                                               │
+│  Choose your path:                                                         │
+│                                                                              │
+│  • New Farmer? Click the Sign Up button to create an account.             │
+│    You'll set up your profile in just 2 minutes.                          │
+│                                                                              │
+│  • Already have an account? Click the Login button to access your         │
+│    personalized dashboard.                                                │
+│                                                                              │
+│  • First time here? Check out the Features section above to see what      │
+│    Fahamu Shamba offers.                                                   │
+│                                                                              │
+│  After logging in, you'll access your Farmer Dashboard where you can:    │
+│  - Get crop recommendations                                              │
+│  - Check weather forecasts                                               │
+│  - Track market prices                                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+         (Informational only - references buttons above)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           CTA SECTION                                       │
+│  Ready to Transform Your Farming?                                          │
+│  Join hundreds of farmers across Siaya County...                           │
+│                                                                              │
+│  [Create Free Account]  [Log In to Dashboard]                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+         ↓ Links:
+         ├─ Create Free Account ──→ /login?mode=signup     (Shows REGISTER Step 1)
+         └─ Log In to Dashboard ──→ /login?mode=login      (Shows LOGIN form)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              FOOTER                                         │
+│  About | Resources | Legal | Languages                                    │
+│  (Links to other pages - no login/signup buttons)                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                              BUTTON SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+Total Buttons That Link to Auth Pages: 6
+
+1️⃣  HEADER - LOGIN Button
+    Location:  Top right of page
+    Text:      "Login" with sign-in icon
+    Links To:  /login?mode=login
+    Shows:     LOGIN FORM
+    Tooltip:   "Already have an account? Log in here"
+
+2️⃣  HEADER - SIGN UP Button
+    Location:  Top right of page (next to Login)
+    Text:      "Sign Up" with user-plus icon
+    Links To:  /login?mode=signup
+    Shows:     REGISTRATION FORM (Step 1)
+    Tooltip:   "Create a new account to get started"
+
+3️⃣  HERO - CREATE ACCOUNT Button (Primary)
+    Location:  Hero section, left side
+    Text:      "Create Account" with user-plus icon
+    Links To:  /login?mode=signup
+    Shows:     REGISTRATION FORM (Step 1)
+    Color:     Primary Green
+    Tooltip:   "Create an account and get started"
+
+4️⃣  HERO - LOG IN Button (Secondary)
+    Location:  Hero section, left side (below Create Account)
+    Text:      "Log In" with sign-in icon
+    Links To:  /login?mode=login
+    Shows:     LOGIN FORM
+    Color:     Secondary Orange
+    Tooltip:   "Log in to your account"
+
+5️⃣  CTA - CREATE FREE ACCOUNT Button (Primary)
+    Location:  CTA section, bottom half of page
+    Text:      "Create Free Account" with user-plus icon
+    Links To:  /login?mode=signup
+    Shows:     REGISTRATION FORM (Step 1)
+    Color:     Primary Green
+    Tooltip:   "Create your free account now"
+
+6️⃣  CTA - LOG IN TO DASHBOARD Button (Secondary)
+    Location:  CTA section, bottom half of page (next to Create Free Account)
+    Text:      "Log In to Dashboard" with sign-in icon
+    Links To:  /login?mode=login
+    Shows:     LOGIN FORM
+    Color:     Secondary Orange
+    Tooltip:   "Log in to your existing account"
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                         LOGIN PAGE (/login)
+═══════════════════════════════════════════════════════════════════════════════
+
+The login page is SMART and auto-detects the URL parameter:
+
+URL: /login (default)          → Shows LOGIN FORM
+URL: /login?mode=login         → Shows LOGIN FORM
+URL: /login?mode=signup        → Shows REGISTRATION FORM (Step 1)
+
+REGISTRATION FLOW:
+Step 1: Phone + Password       → User enters security info
+Step 2: Name + Location        → User enters profile info
+Complete: Account created      → Token issued → Redirect to /farmer-dashboard
+
+LOGIN FLOW:
+Phone + Password               → User authenticates
+Success: Token issued          → Redirect to /farmer-dashboard
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                         COLOR CODING
+═══════════════════════════════════════════════════════════════════════════════
+
+🟢 PRIMARY / GREEN buttons (#2E7D32)
+   Used for: Sign Up, Create Account, Create Free Account
+   Message: Start something new
+   Icon:    User Plus (👤➕)
+
+🟠 SECONDARY / ORANGE buttons (#F57C00)
+   Used for: Login, Log In, Log In to Dashboard
+   Message: Return to existing account
+   Icon:    Sign In (🔑)
+
+⬜ BACKGROUND
+   Color:   Off-white (#F0F4F1)
+   Purpose: Calm, non-distracting
+
+🔷 INSTRUCTIONS BANNER
+   Colors:  Blue → Green gradient
+   Purpose: Welcome, helpful information
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                    USER JOURNEY DECISION TREE
+═══════════════════════════════════════════════════════════════════════════════
+
+START: User lands on landing page (/)
+│
+├─── User clicks ANY "Sign Up" or "Create Account" button
+│    ↓
+│    Navigate to → /login?mode=signup
+│    ↓
+│    Registration Form (Step 1) appears
+│    ├─ User enters phone + password
+│    ├─ Clicks "Next"
+│    ↓
+│    Registration Form (Step 2) appears
+│    ├─ User enters name + location + farm size
+│    ├─ Clicks "Create Account"
+│    ↓
+│    ✅ Account created
+│    ✅ JWT token stored in localStorage
+│    ✅ Auto-redirect to /farmer-dashboard
+│
+├─── User clicks ANY "Login" or "Log In" button
+│    ↓
+│    Navigate to → /login?mode=login
+│    ↓
+│    Login Form appears
+│    ├─ User enters phone + password
+│    ├─ Clicks "Login"
+│    ↓
+│    ✅ Account authenticated
+│    ✅ JWT token stored in localStorage
+│    ✅ Auto-redirect to /farmer-dashboard
+│
+└─── User reads instructions banner for guidance
+     ↓
+     Clarifies: "Am I new? Or do I have an account?"
+     ↓
+     Chooses appropriate button (Sign Up or Login)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                    ACCESSIBILITY NOTES
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ All buttons have:
+   - Clear, descriptive labels
+   - Hover states with shadow effects
+   - Tooltip titles for additional context
+   - Appropriate icons to reinforce meaning
+   - Touch-friendly size (minimum 44x44px)
+   - Sufficient color contrast
+
+✅ Forms have:
+   - Labels above input fields (not inside)
+   - Clear error messages
+   - Loading indicators
+   - Mobile-responsive design
+   - Keyboard navigation support
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                    TESTING CHECKLIST
+═══════════════════════════════════════════════════════════════════════════════
+
+Navigation:
+☐ Click header Login button → Shows login form
+☐ Click header Sign Up button → Shows registration form
+☐ Click hero Create Account → Shows registration form
+☐ Click hero Log In → Shows login form
+☐ Click CTA Create Free Account → Shows registration form
+☐ Click CTA Log In to Dashboard → Shows login form
+
+Registration:
+☐ Complete Step 1 (phone + password)
+☐ Complete Step 2 (name + location + farm size)
+☐ Account is created
+☐ Redirects to /farmer-dashboard
+
+Login:
+☐ Enter correct phone + password
+☐ Account authenticates
+☐ Redirects to /farmer-dashboard
+☐ Token is stored in localStorage
+
+Mobile:
+☐ Test on phone (320px width)
+☐ Buttons are touch-friendly
+☐ Text is readable
+☐ Forms are usable
+
+Usability:
+☐ Instructions banner is helpful
+☐ User knows what to click
+☐ Error messages are clear
+☐ No confusing terminology
+
+
+═══════════════════════════════════════════════════════════════════════════════
+END OF BUTTON MAP
+═══════════════════════════════════════════════════════════════════════════════

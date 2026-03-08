@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Fahamu Shamba</title>
+    <link rel="icon" href="/fahamu-logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/language-utils.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #87ceeb 0%, #4a9d6f 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo img {
+            height: 60px;
+            margin-bottom: 10px;
+        }
+        .logo h1 {
+            color: #2E7D32;
+            font-size: 24px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #2E7D32;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #1B5E20;
+            transform: translateY(-2px);
+        }
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .links a {
+            color: #2E7D32;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+        }
+        
+        /* ===== LANGUAGE SELECTOR ===== */
+        .language-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .language-label {
+            font-weight: bold;
+            color: #2E7D32;
+            font-size: 0.9rem;
+        }
+        .language-dropdown-container {
+            position: relative;
+            display: inline-block;
+        }
+        .language-dropdown-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px 14px;
+            background: #2E7D32;
+            color: white;
+            border: 2px solid white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+        .language-dropdown-btn:hover {
+            background: #1B5E20;
+        }
+        .language-dropdown-btn i {
+            font-size: 0.75rem;
+        }
+        .language-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            z-index: 1000;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .language-dropdown-menu.show {
+            display: block;
+        }
+        .language-option {
+            padding: 10px 14px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        .language-option:hover {
+            background: #2E7D32;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="language-wrapper">
+            <span class="language-label">Language:</span>
+            <div class="language-dropdown-container">
+                <button type="button" class="language-dropdown-btn" id="languageBtn" onclick="toggleLanguageDropdown()">
+                    <span id="languageBtnText">Choose Language</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="language-dropdown-menu" id="languageDropdownMenu">
+                    <div class="language-option" onclick="selectLanguage('en', '🌐 English')">🌐 English</div>
+                    <div class="language-option" onclick="selectLanguage('sw', '🌐 Kiswahili')">🌐 Kiswahili</div>
+                    <div class="language-option" onclick="selectLanguage('luo', '🌐 Dholuo')">🌐 Dholuo</div>
+                </div>
+            </div>
+            <select id="languageSelect" onchange="changeLanguage(this.value)" style="display:none;">
+                <option value="en">English</option>
+                <option value="sw">Kiswahili</option>
+                <option value="luo">Dholuo</option>
+            </select>
+        </div>
+        <div class="logo">
+            <img src="/fahamu-logo.png" alt="Fahamu Shamba">
+            <h1>Fahamu Shamba</h1>
+        </div>
+        <h2>Welcome Back!</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        <div class="links">
+            <p>Don't have an account? <a href="/signup.html">Sign Up</a></p>
+        </div>
+        <div class="back-link">
+            <a href="/"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        </div>
+    </div>
+    <script>
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const lang = getCurrentLanguage();
+            const select = document.getElementById('languageSelect');
+            if (select && lang) {
+                select.value = lang;
+                const langNames = {
+                    'en': '🌐 English',
+                    'sw': '🌐 Kiswahili',
+                    'luo': '🌐 Dholuo'
+                };
+                const btnText = document.getElementById('languageBtnText');
+                if (btnText && langNames[lang]) {
+                    btnText.textContent = langNames[lang];
+                }
+            }
+            translatePage(lang);
+        });
+        
+        // Language functions
+        function changeLanguage(lang) {
+            setLanguage(lang);
+            translatePage(lang);
+        }
+        
+        // Custom dropdown functions
+        function toggleLanguageDropdown() {
+            const menu = document.getElementById('languageDropdownMenu');
+            if (menu) menu.classList.toggle('show');
+        }
+        
+        function selectLanguage(lang, text) {
+            const btnText = document.getElementById('languageBtnText');
+            if (btnText) btnText.textContent = text;
+            const select = document.getElementById('languageSelect');
+            if (select) select.value = lang;
+            const menu = document.getElementById('languageDropdownMenu');
+            if (menu) menu.classList.remove('show');
+            changeLanguage(lang);
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const container = document.querySelector('.language-dropdown-container');
+            if (container && !container.contains(event.target)) {
+                const menu = document.getElementById('languageDropdownMenu');
+                if (menu) menu.classList.remove('show');
+            }
+        });
+        
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                alert('Please enter username and password');
+                return;
+            }
+            
+            // Store demo token and user info directly (works without backend)
+            localStorage.setItem('token', 'demo-token-' + Date.now());
+            localStorage.setItem('user', JSON.stringify({ 
+                username: username,
+                name: username.charAt(0).toUpperCase() + username.slice(1), // Capitalize first letter
+                sub_county: 'Bondo',
+                ward: 'Central Ward',
+                farm_size: 2,
+                main_crop: 'Maize'
+            }));
+            
+            // Redirect to dashboard
+            window.location.href = '/dashboard.html';
+        });
+    </script>
+</body>
+</html>

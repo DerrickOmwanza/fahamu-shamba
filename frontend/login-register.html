@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fahamu Shamba - Login & Register</title>
+    <script src="/language-utils.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background-color: #F0F4F1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .form-card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 4px rgba(76, 175, 80, 0.2);
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .error-message {
+            color: #D32F2F;
+            font-size: 13px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #757575;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #616161;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+            padding: 11px;
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .link-text {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .link-text a {
+            color: #4CAF50;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .link-text a:hover {
+            text-decoration: underline;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .step {
+            text-align: center;
+            flex: 1;
+        }
+
+        .step.active {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #E0E0E0;
+            border-radius: 50%;
+            line-height: 24px;
+            margin-bottom: 4px;
+        }
+
+        .step.active .step-number {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(76, 175, 80, 0.3);
+            border-top-color: #4CAF50;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .language-selector-top {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .language-selector-top select {
+            padding: 8px 12px;
+            border: 2px solid #4CAF50;
+            border-radius: 6px;
+            background-color: white;
+            color: #333;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .language-selector-top select:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        @media (max-width: 480px) {
+            .form-card {
+                padding: 30px 20px;
+            }
+
+            .form-header h1 {
+                font-size: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .language-selector-top {
+                top: 10px;
+                right: 10px;
+            }
+
+            .language-selector-top select {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Selector -->
+    <div class="language-selector-top">
+        <select id="languageSelectTop" onchange="changeLanguage(this.value)">
+            <option value="english">🇬🇧 English</option>
+            <option value="swahili">🇰🇪 Kiswahili</option>
+            <option value="luo">🌍 Dholuo</option>
+        </select>
+    </div>
+
+    <div class="container">
+        <!-- LOGIN FORM -->
+        <div id="loginForm" class="form-card">
+            <div class="form-header">
+                <h1>Fahamu Shamba</h1>
+                <p data-i18n="landing_subtitle">Smart Farming for Kenyan Farmers</p>
+            </div>
+
+            <form id="loginFormElement">
+                <div class="form-group">
+                    <label for="loginPhone" data-i18n="phone">Phone Number</label>
+                    <input type="tel" id="loginPhone" name="phone" data-i18n="enter_phone" placeholder="+2547XXXXXXXX" required>
+                    <div class="error-message" id="loginPhoneError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword" data-i18n="password">Password</label>
+                    <input type="password" id="loginPassword" name="password" data-i18n="enter_password" placeholder="Enter password" required>
+                    <div class="error-message" id="loginPasswordError"></div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <label for="rememberMe" data-i18n="already_have_account">Remember me</label>
+                </div>
+
+                <div class="error-message" id="loginFormError"></div>
+
+                <button type="submit" class="btn-primary" style="width: 100%;" data-i18n="login_button">Login</button>
+
+                <div class="loading" id="loginLoading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px; color: #666;" data-i18n="loading">Logging in...</p>
+                </div>
+            </form>
+
+            <div class="link-text">
+                <span data-i18n="no_account">Don't have an account?</span> <a onclick="switchToRegister()"><span data-i18n="create_account">Create one</span></a>
+            </div>
+        </div>
+
+        <!-- REGISTER FORM (Step 1) -->
+        <div id="registerForm" class="form-card hidden">
+            <div class="form-header">
+                <h1 data-i18n="create_account">Create Account</h1>
+                <p data-i18n="landing_subtitle">Join Fahamu Shamba today</p>
+            </div>
+
+            <div class="step-indicator">
+                <div class="step active">
+                    <div class="step-number">1</div>
+                    <div data-i18n="login">Security</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div data-i18n="profile_setup">Profile</div>
+                </div>
+            </div>
+
+            <form id="registerFormStep1Element">
+                <div class="form-group">
+                    <label for="registerPhone" data-i18n="phone">Phone Number</label>
+                    <input type="tel" id="registerPhone" name="phone" data-i18n="enter_phone" placeholder="+2547XXXXXXXX" required>
+                    <div class="error-message" id="registerPhoneError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword" data-i18n="password">Password</label>
+                    <input type="password" id="registerPassword" name="password" placeholder="Minimum 6 characters" required>
+                    <div class="error-message" id="registerPasswordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerConfirmPassword" data-i18n="confirm_password">Confirm Password</label>
+                    <input type="password" id="registerConfirmPassword" name="confirmPassword" data-i18n="confirm_password" placeholder="Confirm password" required>
+                    <div class="error-message" id="registerConfirmPasswordError"></div>
+                </div>
+
+                <div class="error-message" id="registerFormError"></div>
+
+                <div class="button-group">
+                    <button type="button" class="btn-outline" onclick="switchToLogin()" data-i18n="back">Back</button>
+                    <button type="submit" class="btn-primary" data-i18n="next">Next</button>
+                </div>
+
+                <div class="loading" id="registerStep1Loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px; color: #666;" data-i18n="loading">Creating account...</p>
+                </div>
+            </form>
+        </div>
+
+        <!-- REGISTER FORM (Step 2) -->
+        <div id="registerStep2Form" class="form-card hidden">
+            <div class="form-header">
+                <h1 data-i18n="profile_setup">Farm Profile</h1>
+                <p data-i18n="landing_subtitle">Tell us about your farm</p>
+            </div>
+
+            <div class="step-indicator">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div data-i18n="login">Security</div>
+                </div>
+                <div class="step active">
+                    <div class="step-number">2</div>
+                    <div data-i18n="profile_setup">Profile</div>
+                </div>
+            </div>
+
+            <form id="registerFormStep2Element">
+                <div class="form-group">
+                    <label for="farmerName" data-i18n="full_name">Full Name</label>
+                    <input type="text" id="farmerName" name="name" data-i18n="enter_name" placeholder="Your full name" required>
+                    <div class="error-message" id="farmerNameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="farmerLocation" data-i18n="county">County / Location</label>
+                    <input type="text" id="farmerLocation" name="location" data-i18n="enter_county" placeholder="e.g., Siaya County" required>
+                    <div class="error-message" id="farmerLocationError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="farmerWard" data-i18n="ward_label">Ward (Optional)</label>
+                    <input type="text" id="farmerWard" name="ward" data-i18n="enter_ward" placeholder="e.g., West Gem">
+                </div>
+
+                <div class="form-group">
+                    <label for="farmSize" data-i18n="farm_size_label">Farm Size</label>
+                    <input type="number" id="farmSize" name="farm_size" data-i18n="enter_farm_size" placeholder="e.g., 2.5" step="0.1">
+                    <div class="error-message" id="farmSizeError"></div>
+                </div>
+
+                <div class="error-message" id="registerStep2Error"></div>
+
+                <div class="button-group">
+                    <button type="button" class="btn-outline" onclick="backToStep1()" data-i18n="back">Back</button>
+                    <button type="submit" class="btn-primary" data-i18n="create_account">Create Account</button>
+                </div>
+
+                <div class="loading" id="registerStep2Loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px; color: #666;" data-i18n="loading">Finalizing...</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/auth';
+
+        // Language management
+        function changeLanguage(lang) {
+            setLanguage(lang);
+            translatePage(lang);
+        }
+
+        // Check URL parameter to auto-switch forms
+        function initializeFormMode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            
+            // Initialize language first
+            initializeLanguage();
+            
+            if (mode === 'signup') {
+                switchToRegister();
+            } else if (mode === 'login') {
+                switchToLogin();
+            }
+        }
+
+        // Form switching
+        function switchToRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('registerStep2Form').classList.add('hidden');
+        }
+
+        function switchToLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('registerStep2Form').classList.add('hidden');
+        }
+
+        function backToStep1() {
+            document.getElementById('registerStep2Form').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+        }
+
+        // Utility: Show/hide error
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            if (message) {
+                el.textContent = message;
+                el.classList.add('show');
+            } else {
+                el.classList.remove('show');
+            }
+        }
+
+        // Utility: Show/hide loading
+        function setLoading(elementId, isLoading) {
+            const el = document.getElementById(elementId);
+            el.classList.toggle('show', isLoading);
+        }
+
+        // LOGIN
+        document.getElementById('loginFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const phone = document.getElementById('loginPhone').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            showError('loginPhoneError', '');
+            showError('loginPasswordError', '');
+            showError('loginFormError', '');
+
+            if (!phone || !password) {
+                showError('loginFormError', 'All fields are required');
+                return;
+            }
+
+            setLoading('loginLoading', true);
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showError('loginFormError', data.message || 'Login failed');
+                    return;
+                }
+
+                // Save token and redirect
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                window.location.href = '/farmer-dashboard';
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('loginFormError', 'Network error. Please check your connection.');
+            } finally {
+                setLoading('loginLoading', false);
+            }
+        });
+
+        // REGISTER STEP 1
+        document.getElementById('registerFormStep1Element').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const phone = document.getElementById('registerPhone').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+            showError('registerPhoneError', '');
+            showError('registerPasswordError', '');
+            showError('registerConfirmPasswordError', '');
+            showError('registerFormError', '');
+
+            if (!phone || !password || !confirmPassword) {
+                showError('registerFormError', 'All fields are required');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('registerPasswordError', 'Password must be at least 6 characters');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('registerConfirmPasswordError', 'Passwords do not match');
+                return;
+            }
+
+            setLoading('registerStep1Loading', true);
+
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showError('registerFormError', data.message || 'Registration failed');
+                    return;
+                }
+
+                // Save userId for step 2
+                window.currentUserId = data.userId;
+                document.getElementById('registerForm').classList.add('hidden');
+                document.getElementById('registerStep2Form').classList.remove('hidden');
+            } catch (error) {
+                console.error('Registration error:', error);
+                showError('registerFormError', 'Network error. Please check your connection.');
+            } finally {
+                setLoading('registerStep1Loading', false);
+            }
+        });
+
+        // REGISTER STEP 2
+        document.getElementById('registerFormStep2Element').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userId = window.currentUserId;
+            const name = document.getElementById('farmerName').value.trim();
+            const location = document.getElementById('farmerLocation').value.trim();
+            const ward = document.getElementById('farmerWard').value.trim();
+            const farm_size = parseFloat(document.getElementById('farmSize').value);
+
+            showError('farmerNameError', '');
+            showError('farmerLocationError', '');
+            showError('registerStep2Error', '');
+
+            if (!name || !location) {
+                showError('registerStep2Error', 'Name and location are required');
+                return;
+            }
+
+            setLoading('registerStep2Loading', true);
+
+            try {
+                const response = await fetch(`${API_URL}/register-profile`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        name,
+                        location,
+                        ward: ward || null,
+                        farm_size: isNaN(farm_size) ? null : farm_size
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showError('registerStep2Error', data.message || 'Profile setup failed');
+                    return;
+                }
+
+                // Save token and redirect
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                window.location.href = '/farmer-dashboard';
+            } catch (error) {
+                console.error('Profile error:', error);
+                showError('registerStep2Error', 'Network error. Please check your connection.');
+            } finally {
+                setLoading('registerStep2Loading', false);
+            }
+        });
+
+        // Initialize form mode when page loads
+        document.addEventListener('DOMContentLoaded', initializeFormMode);
+    </script>
+</body>
+</html>

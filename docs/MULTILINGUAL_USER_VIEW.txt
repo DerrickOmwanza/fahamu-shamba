@@ -1,0 +1,375 @@
+═══════════════════════════════════════════════════════════════════════════════
+          MULTILINGUAL FEATURE - WHAT FARMERS WILL SEE
+═══════════════════════════════════════════════════════════════════════════════
+
+LANDING PAGE - HEADER VIEW (All Languages)
+───────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                               │
+│  🌾 Fahamu Shamba          [🇬🇧 EN] [🇰🇪 SW] [🌍 LUO]  [Login] [Sign Up]  │
+│  Smart Farming             ↑                                                  │
+│                            Language Toggle (New Feature)                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+                           SCENARIO 1: ENGLISH (DEFAULT)
+═══════════════════════════════════════════════════════════════════════════════
+
+HEADER
+─────────────────────────────────────────────────────────────────────────────
+🇬🇧 EN (ACTIVE - Green highlight) | 🇰🇪 SW | 🌍 LUO          [Login] [Sign Up]
+
+HERO SECTION
+─────────────────────────────────────────────────────────────────────────────
+Smart Farming Decisions, Powered by AI
+
+Get personalized crop recommendations based on your soil, weather, and market.
+Increase yields by 30% and reduce wasted inputs by 25%.
+
+[Create Account]  [Log In]
+
+
+FEATURES SECTION
+─────────────────────────────────────────────────────────────────────────────
+What You Get
+
+🌱 Crop Predictions          ☁️ Weather Forecasts
+AI-powered recommendations   Real-time weather data
+tailored to your soil type   and forecasts for all 5
+weather, and farm size.      sub-counties in Siaya.
+
+📊 Market Insights           🧪 Soil Analysis
+Track crop prices across 6   Detailed soil quality
+markets to maximize your     reports with nutrient
+profit potential.            management recommendations.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                      SCENARIO 2: KISWAHILI (Farmer clicks 🇰🇪 SW)
+═══════════════════════════════════════════════════════════════════════════════
+
+HEADER
+─────────────────────────────────────────────────────────────────────────────
+🇬🇧 EN | 🇰🇪 SW (ACTIVE - Green highlight) | 🌍 LUO      [Ingia] [Fungua Akaunti]
+
+HERO SECTION
+─────────────────────────────────────────────────────────────────────────────
+Maamuzi ya Kilimo Mahiri, Yanayowezeshwa na AI
+
+Pata mapendekezo ya mazao kulingana na udongo, hali ya hewa na soko.
+Ongeza mavuno kwa 30% na punguza upotevu wa pembejeo kwa 25%.
+
+[Fungua Akaunti]  [Ingia]
+
+
+FEATURES SECTION
+─────────────────────────────────────────────────────────────────────────────
+Kile Utapata
+
+🌱 Mapendekezo ya Mazao      ☁️ Utabiri wa Hali ya Hewa
+Mapendekezo yanayotolewa     Taarifa za hali ya hewa kwa
+na AI kulingana na aina      wakati halisi na utabiri kwa
+ya udongo, hali ya hewa      kaunti ndogo 5 za Siaya.
+na ukubwa wa shamba.
+
+📊 Habari za Soko             🧪 Uchambuzi wa Udongo
+Fuata bei za mazao katika    Ripoti za kina za ubora
+masoko 6 ili kuongeza        wa udongo na mapendekezo
+faida yako.                   ya usimamizi wa virutubishi.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                      SCENARIO 3: DHOLUO (Farmer clicks 🌍 LUO)
+═══════════════════════════════════════════════════════════════════════════════
+
+HEADER
+─────────────────────────────────────────────────────────────────────────────
+🇬🇧 EN | 🇰🇪 SW | 🌍 LUO (ACTIVE - Green highlight)       [Donyo] [Yie Akaunti]
+
+HERO SECTION
+─────────────────────────────────────────────────────────────────────────────
+Yie Pachi gi AI
+
+Kaw yie ma oketo gi udongo, polo kod chiro. Med yie gi 30% kendo podo gonyo
+gi 25%.
+
+[Yie Akaunti]  [Donyo]
+
+
+FEATURES SECTION
+─────────────────────────────────────────────────────────────────────────────
+Kinde Itimogo
+
+🌱 Yie Pachi                 ☁️ Utabiri Polo
+Yie ma AI oketo gi kit      Tije polo ma oketo gi saa
+udongo, polo kod duong      gi utabiri kuom sub-county
+shamba.                      5 e Siaya.
+
+📊 Yie Chiro                 🧪 Yie Udongo
+Rito chiro ma oketo gi       Yie maber kuom kit udongo
+chiro 6 mondo med faida.    gi yie mag gonyo nutrient.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                           LANGUAGE BUTTON BEHAVIOR
+═══════════════════════════════════════════════════════════════════════════════
+
+INITIAL STATE (Page Load)
+─────────────────────────────────────────────────────────────────────────────
+[🇬🇧 EN]           [🇰🇪 SW]         [🌍 LUO]
+ ▔▔▔▔▔▔▔▔▔           ▔▔▔▔▔▔▔▔▔          ▔▔▔▔▔▔▔▔▔
+Green gradient,     White background   White background
+white text,         gray border        gray border
+green border
+
+↓ (User clicks 🇰🇪 SW)
+
+AFTER SWITCH
+─────────────────────────────────────────────────────────────────────────────
+[🇬🇧 EN]           [🇰🇪 SW]         [🌍 LUO]
+ ▔▔▔▔▔▔▔▔▔           ▔▔▔▔▔▔▔▔▔          ▔▔▔▔▔▔▔▔▔
+White background    Green gradient,    White background
+gray border         white text,        gray border
+                    green border
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                       GETTING STARTED BANNER (Multilingual)
+═══════════════════════════════════════════════════════════════════════════════
+
+ENGLISH VIEW:
+─────────────────────────────────────────────────────────────────────────────
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 🚀 Getting Started is Easy!                                             │
+│ Choose your path:                                                       │
+│ • New Farmer? Click the Sign Up button to create an account.            │
+│   You'll set up your profile in just 2 minutes.                         │
+│ • Already have an account? Click the Login button to access your        │
+│   personalized dashboard.                                               │
+│ • First time here? Check out the Features section above to see what     │
+│   Fahamu Shamba offers.                                                 │
+│                                                                         │
+│ After logging in, you'll access your Farmer Dashboard where you can:  │
+│ - Get crop recommendations                                             │
+│ - Check weather forecasts                                              │
+│ - Track market prices                                                  │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+KISWAHILI VIEW:
+─────────────────────────────────────────────────────────────────────────────
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 🚀 Kuanza ni Rahisi!                                                    │
+│ Chagua njia yako:                                                       │
+│ • Wakulima Wapya? Bonyeza kitufe cha Fungua Akaunti ili kuunda          │
+│   akaunti. Utakamilisha profaili yako kwa dakika 2 tu.                 │
+│ • Una akaunti tayari? Bonyeza kitufe cha Ingia ili kupata dashibodi    │
+│   yako ya kibinafsi.                                                    │
+│ • Njia ya kwanza? Angalia sehemu ya Vipengele hapo juu ili kuona       │
+│   kile Fahamu Shamba kinatoa.                                           │
+│                                                                         │
+│ Baada ya kuingia, utapata Dashibodi ya Wakulima ambapo unaweza:       │
+│ - Kupata mapendekezo ya mazao                                          │
+│ - Kuangalia utabiri wa hali ya hewa                                     │
+│ - Kufuatilia bei za soko                                                │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+DHOLUO VIEW:
+─────────────────────────────────────────────────────────────────────────────
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 🚀 Kuom ni Rahisi!                                                      │
+│ Chag ranyaka:                                                           │
+│ • Janyaka Maboth? Dhi e kitufe cha Yie Akaunti mondo ipile akaunti.    │
+│   Itim profaili e dakika 2 tu.                                          │
+│ • Una akaunti tayari? Dhi e kitufe cha Donyo mondo idonyo dashibodi.  │
+│ • Kare mokwongo? Angʼo sehemu ya Vipengele mondo ione kinde Fahamu     │
+│   Shamba itimoyo.                                                       │
+│                                                                         │
+│ Erokwondo idho, ikabed e Dashibodi ambapo inaweza:                    │
+│ - Kupata yie pachi                                                      │
+│ - Rito polo                                                             │
+│ - Kurito chiro                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                           USER JOURNEY - All Languages
+═══════════════════════════════════════════════════════════════════════════════
+
+Farmer Opens Landing Page
+        ↓
+[Default English] OR [Saved Language from Previous Visit]
+        ↓
+Sees Language Toggle Buttons (🇬🇧 EN | 🇰🇪 SW | 🌍 LUO) in header
+        ↓
+        ├─→ Understands English? Stays in English, clicks "Sign Up"
+        │   ↓
+        │   Registrations form loads in English
+        │
+        ├─→ Prefers Kiswahili? Clicks 🇰🇪 SW
+        │   ↓
+        │   Entire page changes to Kiswahili (instant)
+        │   ↓
+        │   Reads instructions in Kiswahili
+        │   ↓
+        │   Clicks "Fungua Akaunti" (Sign Up)
+        │   ↓
+        │   Registration form loads in Kiswahili
+        │   ↓
+        │   Preference saved to localStorage
+        │   ↓
+        │   Next visit loads in Kiswahili automatically
+        │
+        └─→ Prefers Dholuo? Clicks 🌍 LUO
+            ↓
+            Entire page changes to Dholuo (instant)
+            ↓
+            Reads instructions in Dholuo
+            ↓
+            Clicks "Yie Akaunti" (Sign Up)
+            ↓
+            Registration form loads in Dholuo
+            ↓
+            Preference saved to localStorage
+            ↓
+            Next visit loads in Dholuo automatically
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                           NAVIGATION IN DIFFERENT LANGUAGES
+═══════════════════════════════════════════════════════════════════════════════
+
+English Navigation Buttons:
+│ Login | Sign Up │
+
+Kiswahili Navigation Buttons (🇰🇪 SW):
+│ Ingia | Fungua Akaunti │
+
+Dholuo Navigation Buttons (🌍 LUO):
+│ Donyo | Yie Akaunti │
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        CALL-TO-ACTION BUTTON LABELS
+═══════════════════════════════════════════════════════════════════════════════
+
+English:
+[Create Free Account]  [Log In to Dashboard]
+
+Kiswahili:
+[Fungua Akaunti ya Bure]  [Ingia kwenye Dashibodi]
+
+Dholuo:
+[Yie Akaunti Mabure]  [Donyo e Dashboard]
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                          FOOTER IN DIFFERENT LANGUAGES
+═══════════════════════════════════════════════════════════════════════════════
+
+English Footer:
+About | Resources | Legal | Languages
+About Fahamu Shamba | Crop Guide | Privacy Policy | 🇬🇧 English
+Our Mission | Market Trends | Terms of Service | 🇰🇪 Kiswahili
+Blog | Help Center | Contact | 🌍 Dholuo
+
+Kiswahili Footer:
+Kuhusu | Rasilimali | Kisheria | Lugha
+Kuhusu Fahamu Shamba | Mwongozo wa Mazao | Sera ya Faragha | 🇬🇧 English
+Lengo Letu | Mwito wa Soko | Masharti ya Huduma | 🇰🇪 Kiswahili
+Blogi | Kituo cha Usaidizi | Wasiliana | 🌍 Dholuo
+
+Dholuo Footer:
+Kuom | Yie | Shderia | Lugha
+Kuom Fahamu Shamba | Yie Pachi | Sera | 🇬🇧 English
+Ranyaka magi | Chiro Chako | Mahera | 🇰🇪 Kiswahili
+Blog | Helpu | Wasiliana | 🌍 Dholuo
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        INSTANT SWITCHING FLOW
+═══════════════════════════════════════════════════════════════════════════════
+
+Farmer Clicks Language Button:
+
+    ↓
+Browser loads from localStorage or default (en)
+    ↓
+[Takes 0 milliseconds - no network call]
+    ↓
+All elements with data-i18n attribute update
+    ↓
+Language buttons highlight active language
+    ↓
+Choice saved to localStorage
+    ↓
+Next page load remembers the choice
+    ↓
+[Seamless, instant experience]
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                         WHAT MAKES THIS IMPORTANT
+═══════════════════════════════════════════════════════════════════════════════
+
+WITHOUT Multilingual Support:
+─────────────────────────────────────────────────────────────────────────────
+English-only page
+    ↓
+Many Siaya farmers struggle to understand
+    ↓
+They leave the site without understanding the value
+    ↓
+Lost potential users
+    ↓
+Lower adoption rate
+
+
+WITH Multilingual Support (Your Implementation):
+─────────────────────────────────────────────────────────────────────────────
+English + Kiswahili + Dholuo support
+    ↓
+Farmers see their preferred language
+    ↓
+They understand benefits and features
+    ↓
+Instructions are clear in their language
+    ↓
+Trust and confidence increase
+    ↓
+Higher sign-up rates
+    ↓
+Better farmer adoption
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                              KEY TAKEAWAYS
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ Language buttons always visible in header
+✅ One click = instant page translation
+✅ All major sections translated (9 sections, 3 languages)
+✅ Preference saved automatically
+✅ No page reload needed
+✅ Mobile responsive
+✅ Professional styling
+✅ Consistent with app design
+✅ Easy to add more languages
+✅ Zero impact on page speed
+
+═══════════════════════════════════════════════════════════════════════════════
+                           Ready to Test?
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Start server: node backend/server.js
+2. Open: http://localhost:5000/
+3. Click language buttons (🇬🇧 EN | 🇰🇪 SW | 🌍 LUO)
+4. Watch page instantly change
+5. Refresh browser
+6. Language preference is remembered!
+
+Good luck! 🌾🌍
+
+═══════════════════════════════════════════════════════════════════════════════

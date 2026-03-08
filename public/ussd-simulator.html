@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USSD Simulator - Fahamu Shamba</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        /* Phone Simulator */
+        .phone-container {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+        }
+
+        .phone {
+            background: #000;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 8px solid #222;
+        }
+
+        .phone-screen {
+            background: #f0f0f0;
+            border-radius: 35px;
+            padding: 30px 20px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+            color: #333;
+            overflow: hidden;
+        }
+
+        .phone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #666;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .phone-content {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding-right: 5px;
+        }
+
+        .phone-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .phone-content::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+
+        .phone-content::-webkit-scrollbar-thumb {
+            background: #999;
+            border-radius: 10px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .message.incoming {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .message.outgoing {
+            background: #c8e6c9;
+            border-left: 4px solid #2e7d32;
+            text-align: right;
+        }
+
+        .message.system {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            text-align: center;
+            font-size: 12px;
+            color: #856404;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 8px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-area input:focus {
+            border-color: #667eea;
+        }
+
+        .input-area button {
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .input-area button:hover {
+            background: #764ba2;
+        }
+
+        .input-area button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-panel h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 22px;
+        }
+
+        .info-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-section h3 {
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #333;
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            padding: 4px 12px;
+            border-radius: 4px;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.connected {
+            background: #4caf50;
+        }
+
+        .status-indicator.disconnected {
+            background: #f44336;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        .quick-test {
+            background: #f9f9f9;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quick-test h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .quick-test-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .quick-btn {
+            padding: 8px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .quick-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .current-state {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .current-state strong {
+            color: #1976d2;
+        }
+
+        .flow-info {
+            background: #f3e5f5;
+            border-left: 4px solid #9c27b0;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .flow-info strong {
+            color: #6a1b9a;
+        }
+
+        .note {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #e65100;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .phone-container,
+            .control-panel {
+                min-width: 100%;
+                max-width: 100%;
+            }
+
+            .phone {
+                max-width: 100%;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
+            margin-left: 5px;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% { opacity: 0.5; }
+            40% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Phone Simulator -->
+        <div class="phone-container">
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="phone-header">
+                        <span>9:41</span>
+                        <span>📶 4G</span>
+                    </div>
+                    <div class="phone-content" id="phoneContent">
+                        <div class="message system">👋 Welcome to USSD Simulator</div>
+                    </div>
+                    <div class="input-area">
+                        <input 
+                            type="text" 
+                            id="ussdInput" 
+                            placeholder="Enter option..."
+                            autocomplete="off"
+                        >
+                        <button id="sendBtn" onclick="sendUSSD()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <h2>🛠️ USSD Control Panel</h2>
+
+            <div class="current-state">
+                <strong>Current State:</strong>
+                <div id="currentState" style="margin-top: 8px; font-family: monospace;">Not started</div>
+            </div>
+
+            <div class="flow-info">
+                <strong>📱 USSD Flow:</strong>
+                <div style="margin-top: 8px;">
+                    Language → Main Menu → Get Advice → County → Ward → Soil → Season → Size → Budget → Recommendation
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>🔗 Session Information</h3>
+                <div class="info-item">
+                    <span class="info-label">Session ID:</span>
+                    <span class="info-value" id="sessionId">Not started</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone Number:</span>
+                    <span class="info-value" id="phoneNumber">254712345678</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Language:</span>
+                    <span class="info-value" id="language">Not selected</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status:</span>
+                    <span class="info-value">
+                        <span class="status-indicator connected"></span>Ready
+                    </span>
+                </div>
+            </div>
+
+            <div class="quick-test">
+                <h4>⚡ Quick Test Scenarios</h4>
+                <div class="quick-test-buttons">
+                    <button class="quick-btn" onclick="startTest()">🔄 Start Over</button>
+                    <button class="quick-btn" onclick="selectEnglish()">1️⃣ English</button>
+                    <button class="quick-btn" onclick="selectSwahili()">2️⃣ Swahili</button>
+                    <button class="quick-btn" onclick="selectDholuo()">3️⃣ Dholuo</button>
+                    <button class="quick-btn" onclick="autoCompleteFlow()">✅ Full Flow</button>
+                    <button class="quick-btn" onclick="clearChat()">🗑️ Clear Chat</button>
+                </div>
+            </div>
+
+            <div class="info-section" id="selectedDataSection" style="display: none;">
+                <h3>📊 Selected Data</h3>
+                <div id="selectedDataList"></div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="resetSession()">Reset Session</button>
+                <button class="btn btn-secondary" onclick="togglePhoneNumber()">Change Phone</button>
+            </div>
+
+            <div class="note">
+                <strong>💡 Tip:</strong> This simulator allows you to test the USSD functionality before integrating with a real USSD provider (Safaricom, Airtel, etc.).
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sessionId = `test-${Date.now()}`;
+        let phoneNumber = '254712345678';
+        let currentText = '';
+        let selectedData = {};
+        let isLoading = false;
+
+        // Initialize
+        window.addEventListener('load', () => {
+            document.getElementById('sessionId').textContent = sessionId;
+            document.getElementById('ussdInput').focus();
+        });
+
+        // Send USSD request
+        async function sendUSSD() {
+            const input = document.getElementById('ussdInput').value.trim();
+            
+            if (!input && currentText !== '') {
+                alert('Please enter an option');
+                return;
+            }
+
+            if (isLoading) return;
+
+            isLoading = true;
+            document.getElementById('sendBtn').disabled = true;
+
+            try {
+                // Display outgoing message (user choice)
+                if (input) {
+                    addMessage('You: ' + input, 'outgoing');
+                    currentText += (currentText ? '\n' : '') + input;
+                }
+
+                // Call USSD API
+                const response = await fetch('/api/ussd', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId,
+                        phoneNumber,
+                        text: currentText,
+                        serviceCode: '123'
+                    })
+                });
+
+                const responseText = await response.text();
+                
+                // Parse USSD response
+                let isEndSession = responseText.startsWith('END');
+                let displayText = responseText.replace(/^(END|CON)\s+/, '');
+
+                // For REAL USSD experience: clear old messages and show only current prompt
+                // (This is how real feature phone USSD works - one prompt at a time)
+                if (isEndSession || displayText.includes('Session ended') || displayText.includes('Goodbye')) {
+                    // Last message - show it
+                    addMessage(displayText, 'incoming');
+                } else {
+                    // Regular flow - show only the new prompt
+                    // Clear previous messages except first welcome
+                    const allMessages = document.querySelectorAll('.message');
+                    if (allMessages.length > 1) {
+                        // Keep only welcome message, remove rest
+                        allMessages.forEach((msg, idx) => {
+                            if (idx > 0) msg.remove();
+                        });
+                    }
+                    addMessage(displayText, 'incoming');
+                }
+
+                // Update state based on response
+                updateState(displayText);
+
+                // Clear input
+                document.getElementById('ussdInput').value = '';
+                document.getElementById('ussdInput').focus();
+
+                // If session ended
+                if (isEndSession) {
+                    addMessage('Session ended. Click "Start Over" to begin again.', 'system');
+                    document.getElementById('ussdInput').disabled = true;
+                    document.getElementById('sendBtn').disabled = true;
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage(`Error: ${error.message}`, 'system');
+            } finally {
+                isLoading = false;
+                document.getElementById('sendBtn').disabled = false;
+            }
+        }
+
+        // Add message to chat
+        function addMessage(text, type = 'incoming') {
+            const content = document.getElementById('phoneContent');
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            content.appendChild(message);
+            content.scrollTop = content.scrollHeight;
+        }
+
+        // Update displayed state
+        function updateState(responseText) {
+            if (responseText.includes('Choose language')) {
+                document.getElementById('currentState').textContent = 'LANGUAGE_SELECT';
+            } else if (responseText.includes('Main Menu')) {
+                document.getElementById('currentState').textContent = 'MAIN_MENU';
+            } else if (responseText.includes('County')) {
+                document.getElementById('currentState').textContent = 'LOCATION_SELECT';
+            } else if (responseText.includes('Ward')) {
+                document.getElementById('currentState').textContent = 'WARD_SELECT';
+            } else if (responseText.includes('Soil')) {
+                document.getElementById('currentState').textContent = 'SOIL_SELECT';
+            } else if (responseText.includes('Season')) {
+                document.getElementById('currentState').textContent = 'SEASON_SELECT';
+            } else if (responseText.includes('Farm size')) {
+                document.getElementById('currentState').textContent = 'SIZE_SELECT';
+            } else if (responseText.includes('Budget')) {
+                document.getElementById('currentState').textContent = 'BUDGET_SELECT';
+            } else if (responseText.includes('Recommendation')) {
+                document.getElementById('currentState').textContent = 'RESULT_DISPLAYED';
+            }
+        }
+
+        // Quick test functions
+        function startTest() {
+            sessionId = `test-${Date.now()}`;
+            currentText = '';
+            selectedData = {};
+            clearChat();
+            document.getElementById('ussdInput').disabled = false;
+            document.getElementById('sendBtn').disabled = false;
+            document.getElementById('sessionId').textContent = sessionId;
+            document.getElementById('currentState').textContent = 'LANGUAGE_SELECT';
+            document.getElementById('language').textContent = 'Not selected';
+            document.getElementById('selectedDataSection').style.display = 'none';
+            
+            addMessage('Welcome to Fahamu Shamba\nChoose language:\n1. English\n2. Kiswahili\n3. Dholuo', 'incoming');
+            document.getElementById('ussdInput').focus();
+        }
+
+        function selectEnglish() {
+            document.getElementById('ussdInput').value = '1';
+            document.getElementById('language').textContent = 'English';
+            sendUSSD();
+        }
+
+        function selectSwahili() {
+            document.getElementById('ussdInput').value = '2';
+            document.getElementById('language').textContent = 'Kiswahili';
+            sendUSSD();
+        }
+
+        function selectDholuo() {
+            document.getElementById('ussdInput').value = '3';
+            document.getElementById('language').textContent = 'Dholuo';
+            sendUSSD();
+        }
+
+        function clearChat() {
+            document.getElementById('phoneContent').innerHTML = '';
+            addMessage('Chat cleared', 'system');
+        }
+
+        function resetSession() {
+            startTest();
+        }
+
+        function togglePhoneNumber() {
+            const newPhone = prompt('Enter phone number (254xxxxxxxxx):', phoneNumber);
+            if (newPhone) {
+                phoneNumber = newPhone;
+                document.getElementById('phoneNumber').textContent = phoneNumber;
+                addMessage(`Phone number changed to ${phoneNumber}`, 'system');
+            }
+        }
+
+        // Auto-complete flow
+        async function autoCompleteFlow() {
+            const steps = ['1', '1', '1', '2', '2', '2', '1'];
+            for (let i = 0; i < steps.length; i++) {
+                await new Promise(resolve => {
+                    setTimeout(() => {
+                        document.getElementById('ussdInput').value = steps[i];
+                        sendUSSD().then(resolve);
+                    }, 800);
+                });
+            }
+        }
+
+        // Enter key support
+        document.getElementById('ussdInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendUSSD();
+            }
+        });
+    </script>
+</body>
+</html>

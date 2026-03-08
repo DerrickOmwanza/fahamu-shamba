@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Fahamu Shamba</title>
+    <link rel="icon" href="/fahamu-logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/language-utils.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #2d7649; --primary-light: #4a9d6f; --primary-dark: #1e5631;
+            --secondary: #f57c00; --accent: #87ceeb; --success: #27ae60;
+            --warning: #f39c12; --danger: #e74c3c; --info: #3498db;
+            --light: #f9f7f4; --lighter: #ecf0f1; --dark: #2c3e50;
+            --text: #34495e; --text-light: #7f8c8d; --border: #e0e6ed;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08); --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --sidebar-width: 260px; --sidebar-collapsed: 70px;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Roboto','Segoe UI',sans-serif; background: var(--light); min-height: 100vh; color: var(--text); line-height: 1.6; }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar { position: fixed; left: 0; top: 0; width: var(--sidebar-width); height: 100vh; background: linear-gradient(180deg,var(--primary-dark) 0%,var(--primary) 100%); color: white; z-index: 1000; transition: width 0.3s ease; display: flex; flex-direction: column; box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
+        .sidebar-logo { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .sidebar-brand { overflow: hidden; white-space: nowrap; }
+        .sidebar-brand h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 2px; }
+        .sidebar-brand p { font-size: 0.7rem; opacity: 0.8; }
+        .sidebar-nav { flex: 1; padding: 15px 10px; overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 10px; color: rgba(255,255,255,0.8); text-decoration: none; margin-bottom: 5px; transition: all 0.3s ease; }
+        .nav-item:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(5px); }
+        .nav-item.active { background: rgba(255,255,255,0.25); color: white; border-left: 3px solid var(--secondary); }
+        .nav-item i { font-size: 1.2rem; width: 24px; text-align: center; }
+        .sidebar-footer { padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .user-info { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 12px; }
+        .user-avatar { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .user-name { font-weight: 600; font-size: 0.95rem; }
+        .user-phone { font-size: 0.75rem; opacity: 0.8; }
+        .logout-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: rgba(231,76,60,0.2); border: 1px solid rgba(231,76,60,0.3); color: #ff8a80; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+        .logout-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main-content { margin-left: var(--sidebar-width); min-height: 100vh; }
+        .top-header { background: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        
+        /* ===== PAGE CONTENT ===== */
+        .page-container { padding: 30px; }
+        
+        /* ===== PROFILE CARD ===== */
+         .profile-header { background: linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%); border-radius: 12px; padding: 40px; color: white; margin-bottom: 30px; display: flex; align-items: center; gap: 30px; }
+         .profile-avatar { width: 120px; height: 120px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; overflow: hidden; border: 4px solid white; }
+         .profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .profile-info h1 { font-size: 2rem; margin-bottom: 10px; }
+        .profile-info p { opacity: 0.9; font-size: 1.1rem; }
+        
+        /* ===== FORM STYLES ===== */
+        .form-container { background: white; border-radius: 12px; padding: 30px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); margin-bottom: 30px; }
+        .form-container h2 { color: var(--primary-dark); margin-bottom: 20px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; color: var(--dark); margin-bottom: 8px; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
+        
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-secondary { background: var(--lighter); color: var(--primary); border: 2px solid var(--primary); }
+        
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .form-grid { grid-template-columns: 1fr; }
+            .profile-header { flex-direction: column; text-align: center; }
+        }
+        
+        /* ===== LANGUAGE SELECTOR ===== */
+        .language-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .language-label {
+            font-weight: bold;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+        }
+        .language-select {
+            padding: 10px 35px 10px 14px;
+            border-radius: 8px;
+            border: 2px solid var(--primary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: white !important;
+            background: var(--primary);
+            cursor: pointer;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M6%208L1%203h10z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            min-width: 140px;
+        }
+        .language-select option {
+            color: #333;
+            background: white;
+        }
+        .language-select option:disabled {
+            color: white !important;
+            background: var(--primary);
+        }
+        
+        /* Custom Language Dropdown Button */
+         .language-dropdown-container { position: relative; display: inline-block; }
+         .language-dropdown-btn {
+             display: flex; align-items: center; justify-content: space-between; gap: 10px;
+             padding: 8px 16px; background: var(--primary); color: white;
+             border: 2px solid white; border-radius: 20px; font-size: 0.9rem;
+             font-weight: 600; cursor: pointer; min-width: 140px; transition: all 0.3s ease;
+         }
+         .language-dropdown-btn:hover { background: var(--primary-dark); }
+         .language-dropdown-btn i { font-size: 0.8rem; }
+         .language-dropdown-menu {
+             display: none; position: absolute; top: 100%; left: 0; right: 0;
+             background: white; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+             z-index: 1000; margin-top: 5px; overflow: hidden;
+         }
+         .language-dropdown-menu.show { display: block; }
+         .language-option {
+             padding: 12px 16px; color: var(--text); cursor: pointer;
+             transition: all 0.2s ease; font-weight: 500;
+         }
+         .language-option:hover { background: var(--primary); color: white; }
+         
+         /* ===== PHOTO UPLOAD ===== */
+         .photo-upload-section { margin-bottom: 30px; text-align: center; }
+         .photo-upload-label { display: block; font-weight: 600; color: var(--dark); margin-bottom: 15px; }
+         .photo-preview { width: 150px; height: 150px; margin: 0 auto 15px; border-radius: 50%; border: 3px solid var(--primary); overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(45,118,73,0.1); }
+         .photo-preview img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+         .photo-upload-input { display: none; }
+         .photo-upload-btn { display: inline-block; padding: 12px 24px; background: var(--primary); color: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+         .photo-upload-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">🌱</div>
+            <div class="sidebar-brand">
+                <h2>Fahamu</h2>
+                <p>Shamba</p>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a class="nav-item" href="/dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a class="nav-item" href="/recommendations.html"><i class="fas fa-leaf"></i> Recommendations</a>
+            <a class="nav-item" href="/market.html"><i class="fas fa-chart-bar"></i> Market Prices</a>
+            <a class="nav-item" href="/community.html"><i class="fas fa-users"></i> Community</a>
+            <a class="nav-item" href="/feedback.html"><i class="fas fa-star"></i> Feedback</a>
+            <a class="nav-item active" href="/profile.html"><i class="fas fa-user-circle"></i> My Profile</a>
+            <a class="nav-item" href="/settings.html"><i class="fas fa-cog"></i> Settings</a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <div>
+                    <div class="user-name" id="userName">Farmer</div>
+                    <div class="user-phone" id="userPhone">—</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-header">
+            <h2 style="color: var(--primary-dark);">My Profile</h2>
+            <div class="language-wrapper">
+                <span class="language-label">Language:</span>
+                <div class="language-dropdown-container">
+                    <button type="button" class="language-dropdown-btn" id="languageBtn" onclick="toggleLanguageDropdown()">
+                        <span id="languageBtnText">Choose Language</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown-menu" id="languageDropdownMenu">
+                        <div class="language-option" onclick="selectLanguage('en', '🌐 English')">🌐 English</div>
+                        <div class="language-option" onclick="selectLanguage('sw', '🌐 Kiswahili')">🌐 Kiswahili</div>
+                        <div class="language-option" onclick="selectLanguage('luo', '🌐 Dholuo')">🌐 Dholuo</div>
+                    </div>
+                </div>
+                <select id="languageSelect" onchange="changeLanguage(this.value)" style="display:none;">
+                    <option value="en">English</option>
+                    <option value="sw">Kiswahili</option>
+                    <option value="luo">Dholuo</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="page-container">
+            <!-- Profile Header -->
+             <div class="profile-header">
+                 <div class="profile-avatar" id="profileAvatar">👨‍🌾</div>
+                 <div class="profile-info">
+                     <h1 id="profileName">Farmer Name</h1>
+                     <p id="profileLocation">Location: —</p>
+                 </div>
+             </div>
+             
+             <!-- Personal Details Form -->
+             <div class="form-container">
+                 <h2><i class="fas fa-user"></i> Personal Details</h2>
+                 
+                 <!-- Photo Upload Section -->
+                 <div class="photo-upload-section">
+                     <label class="photo-upload-label">Profile Photo</label>
+                     <div class="photo-preview" id="photoPreview">📷</div>
+                     <input type="file" id="photoUploadInput" class="photo-upload-input" accept="image/*">
+                     <label for="photoUploadInput" class="photo-upload-btn">
+                         <i class="fas fa-camera"></i> Upload Photo
+                     </label>
+                 </div>
+                 
+                 <form id="profileForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="name" placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="phone" placeholder="e.g., 0712345678" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Sub-County</label>
+                            <select id="subcounty">
+                                <option value="">Select Sub-County</option>
+                                <option value="bondo">Bondo</option>
+                                <option value="ugunja">Ugunja</option>
+                                <option value="yala">Yala</option>
+                                <option value="gem">Gem</option>
+                                <option value="alego">Alego</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ward</label>
+                            <input type="text" id="ward" placeholder="Enter your ward">
+                        </div>
+                        <div class="form-group">
+                            <label>Farm Size (Acres)</label>
+                            <input type="number" id="farmSize" placeholder="e.g., 2">
+                        </div>
+                        <div class="form-group">
+                            <label>Main Crop</label>
+                            <select id="mainCrop">
+                                <option value="">Select Crop</option>
+                                <option value="maize">Maize</option>
+                                <option value="beans">Beans</option>
+                                <option value="rice">Rice</option>
+                                <option value="sorghum">Sorghum</option>
+                                <option value="cassava">Cassava</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentUser = null;
+         
+         // Initialize
+         document.addEventListener('DOMContentLoaded', () => {
+             loadUserData();
+             setupPhotoUpload();
+         });
+         
+         // Load user data
+         function loadUserData() {
+             const token = localStorage.getItem('token');
+             if (!token) {
+                 window.location.href = '/login.html';
+                 return;
+             }
+             
+             const cached = localStorage.getItem('user');
+             if (cached) {
+                 currentUser = JSON.parse(cached);
+                 displayUserData();
+             }
+         }
+         
+         // Display user data
+         function displayUserData() {
+             if (!currentUser) return;
+             
+             document.getElementById('userName').textContent = currentUser.name || 'Farmer';
+             document.getElementById('userPhone').textContent = currentUser.phone || '—';
+             document.getElementById('profileName').textContent = currentUser.name || 'Farmer';
+             document.getElementById('profileLocation').textContent = 'Location: ' + (currentUser.sub_county || '—');
+             
+             // Display profile photo
+             if (currentUser.profile_photo) {
+                 const avatar = document.getElementById('profileAvatar');
+                 avatar.innerHTML = '<img src="' + currentUser.profile_photo + '" alt="Profile Photo">';
+                 const preview = document.getElementById('photoPreview');
+                 preview.innerHTML = '<img src="' + currentUser.profile_photo + '" alt="Profile Photo">';
+             }
+             
+             // Fill form
+             if (currentUser.name) document.getElementById('name').value = currentUser.name;
+             if (currentUser.phone) document.getElementById('phone').value = currentUser.phone;
+             if (currentUser.sub_county) document.getElementById('subcounty').value = currentUser.sub_county;
+             if (currentUser.ward) document.getElementById('ward').value = currentUser.ward;
+             if (currentUser.farm_size) document.getElementById('farmSize').value = currentUser.farm_size;
+             if (currentUser.main_crop) document.getElementById('mainCrop').value = currentUser.main_crop;
+         }
+         
+         // Setup photo upload
+         function setupPhotoUpload() {
+             const photoInput = document.getElementById('photoUploadInput');
+             photoInput.addEventListener('change', function(e) {
+                 const file = e.target.files[0];
+                 if (file) {
+                     const reader = new FileReader();
+                     reader.onload = function(event) {
+                         const photoData = event.target.result;
+                         
+                         // Update current user
+                         currentUser.profile_photo = photoData;
+                         
+                         // Display in avatar
+                         const avatar = document.getElementById('profileAvatar');
+                         avatar.innerHTML = '<img src="' + photoData + '" alt="Profile Photo">';
+                         
+                         // Display in preview
+                         const preview = document.getElementById('photoPreview');
+                         preview.innerHTML = '<img src="' + photoData + '" alt="Profile Photo">';
+                         
+                         // Show success message
+                         alert('Photo uploaded successfully! Click "Save Changes" to save your profile.');
+                     };
+                     reader.readAsDataURL(file);
+                 }
+             });
+         }
+        
+        // Save profile
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            currentUser = {
+                ...currentUser,
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                sub_county: document.getElementById('subcounty').value,
+                ward: document.getElementById('ward').value,
+                farm_size: document.getElementById('farmSize').value,
+                main_crop: document.getElementById('mainCrop').value
+            };
+            
+            localStorage.setItem('user', JSON.stringify(currentUser));
+            alert('Profile saved successfully!');
+            displayUserData();
+        });
+        
+        function changeLanguage(lang) {
+            setLanguage(lang);
+            translatePage(lang);
+        }
+        
+        // Custom dropdown functions
+        function toggleLanguageDropdown() {
+            const menu = document.getElementById('languageDropdownMenu');
+            if (menu) menu.classList.toggle('show');
+        }
+        
+        function selectLanguage(lang, text) {
+            const btnText = document.getElementById('languageBtnText');
+            if (btnText) btnText.textContent = text;
+            const select = document.getElementById('languageSelect');
+            if (select) select.value = lang;
+            const menu = document.getElementById('languageDropdownMenu');
+            if (menu) menu.classList.remove('show');
+            changeLanguage(lang);
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const container = document.querySelector('.language-dropdown-container');
+            if (container && !container.contains(event.target)) {
+                const menu = document.getElementById('languageDropdownMenu');
+                if (menu) menu.classList.remove('show');
+            }
+        });
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html>

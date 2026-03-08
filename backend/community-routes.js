@@ -1,0 +1,337 @@
+/**
+ * Community Routes for Fahamu Shamba
+ * API endpoints for Q&A, discussions, and success stories
+ */
+
+import express from 'express';
+import communityService from './community-service.js';
+
+const router = express.Router();
+
+// Initialize community database
+let initialized = false;
+
+function ensureInitialized(req, res, next) {
+  if (!initialized) {
+    communityService.initializeCommunityDatabase();
+    initialized = true;
+  }
+  next();
+}
+
+// ==================== QUESTIONS & ANSWERS ====================
+
+// Ask a question
+router.post('/community/questions', ensureInitialized, (req, res) => {
+  try {
+    const { title, content, authorPhone, authorName, subCounty, category } = req.body;
+    
+    if (!title || !content || !authorPhone) {
+      return res.status(400).json({
+        success: false,
+        error: 'Title, content, and authorPhone are required'
+      });
+    }
+    
+    const result = communityService.askQuestion({
+      title,
+      content,
+      authorPhone,
+      authorName,
+      subCounty,
+      category
+    });
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Error posting question:', error);
+    res.status(500).json({ success: false, error: 'Failed to post question' });
+  }
+});
+
+// Get all questions
+router.get('/community/questions', ensureInitialized, (req, res) => {
+  try {
+    const { page, limit, subCounty, category, status } = req.query;
+    
+    const result = communityService.getQuestions({
+      page: parseInt(page) || 1,
+      limit: parseInt(limit) || 20,
+      subCounty,
+      category,
+      status
+    });
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching questions:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch questions' });
+  }
+});
+
+// Get single question with answers
+router.get('/community/questions/:id', ensureInitialized, (req, res) => {
+  try {
+    const result = communityService.getQuestionWithAnswers(parseInt(req.params.id));
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching question:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch question' });
+  }
+});
+
+// Answer a question
+router.post('/community/answers', ensureInitialized, (req, res) => {
+  try {
+    const { questionId, content, authorPhone, authorName } = req.body;
+    
+    if (!questionId || !content || !authorPhone) {
+      return res.status(400).json({
+        success: false,
+        error: 'questionId, content, and authorPhone are required'
+      });
+    }
+    
+    const result = communityService.answerQuestion({
+      questionId: parseInt(questionId),
+      content,
+      authorPhone,
+      authorName
+    });
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Error posting answer:', error);
+    res.status(500).json({ success: false, error: 'Failed to post answer' });
+  }
+});
+
+// Upvote question or answer
+router.post('/community/upvote', ensureInitialized, (req, res) => {
+  try {
+    const { type, id } = req.body;
+    
+    if (!type || !id) {
+      return res.status(400).json({
+        success: false,
+        error: 'type and id are required'
+      });
+    }
+    
+    if (!['question', 'answer'].includes(type)) {
+      return res.status(400).json({
+        success: false,
+        error: 'type must be "question" or "answer"'
+      });
+    }
+    
+    const result = communityService.upvoteContent(type, parseInt(id));
+    res.json(result);
+  } catch (error) {
+    console.error('Error upvoting:', error);
+    res.status(500).json({ success: false, error: 'Failed to upvote' });
+  }
+});
+
+// Verify answer (admin)
+router.post('/community/answers/verify', ensureInitialized, (req, res) => {
+  try {
+    const { answerId } = req.body;
+    
+    if (!answerId) {
+      return res.status(400).json({
+        success: false,
+        error: 'answerId is required'
+      });
+    }
+    
+    const result = communityService.verifyAnswer(parseInt(answerId));
+    res.json(result);
+  } catch (error) {
+    console.error('Error verifying answer:', error);
+    res.status(500).json({ success: false, error: 'Failed to verify answer' });
+  }
+});
+
+// ==================== SUCCESS STORIES ====================
+
+// Submit success story
+router.post('/community/stories', ensureInitialized, (req, res) => {
+  try {
+    const { title, content, authorPhone, authorName, subCounty, cropGrown, yieldAchieved, imageUrl } = req.body;
+    
+    if (!title || !content || !authorPhone) {
+      return res.status(400).json({
+        success: false,
+        error: 'Title, content, and authorPhone are required'
+      });
+    }
+    
+    const result = communityService.submitSuccessStory({
+      title,
+      content,
+      authorPhone,
+      authorName,
+      subCounty,
+      cropGrown,
+      yieldAchieved,
+      imageUrl
+    });
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Error submitting story:', error);
+    res.status(500).json({ success: false, error: 'Failed to submit story' });
+  }
+});
+
+// Get success stories
+router.get('/community/stories', ensureInitialized, (req, res) => {
+  try {
+    const { page, limit, subCounty } = req.query;
+    
+    const result = communityService.getSuccessStories({
+      page: parseInt(page) || 1,
+      limit: parseInt(limit) || 10,
+      subCounty
+    });
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching stories:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch stories' });
+  }
+});
+
+// Like success story
+router.post('/community/stories/like', ensureInitialized, (req, res) => {
+  try {
+    const { storyId } = req.body;
+    
+    if (!storyId) {
+      return res.status(400).json({
+        success: false,
+        error: 'storyId is required'
+      });
+    }
+    
+    const result = communityService.likeSuccessStory(parseInt(storyId));
+    res.json(result);
+  } catch (error) {
+    console.error('Error liking story:', error);
+    res.status(500).json({ success: false, error: 'Failed to like story' });
+  }
+});
+
+// Approve success story (admin)
+router.post('/community/stories/approve', ensureInitialized, (req, res) => {
+  try {
+    const { storyId } = req.body;
+    
+    if (!storyId) {
+      return res.status(400).json({
+        success: false,
+        error: 'storyId is required'
+      });
+    }
+    
+    const result = communityService.approveSuccessStory(parseInt(storyId));
+    res.json(result);
+  } catch (error) {
+    console.error('Error approving story:', error);
+    res.status(500).json({ success: false, error: 'Failed to approve story' });
+  }
+});
+
+// ==================== DISCUSSION BOARDS ====================
+
+// Create discussion topic
+router.post('/community/topics', ensureInitialized, (req, res) => {
+  try {
+    const { title, description, category, createdBy } = req.body;
+    
+    if (!title || !category || !createdBy) {
+      return res.status(400).json({
+        success: false,
+        error: 'title, category, and createdBy are required'
+      });
+    }
+    
+    const result = communityService.createDiscussionTopic({
+      title,
+      description,
+      category,
+      createdBy
+    });
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Error creating topic:', error);
+    res.status(500).json({ success: false, error: 'Failed to create topic' });
+  }
+});
+
+// Get discussion topics
+router.get('/community/topics', ensureInitialized, (req, res) => {
+  try {
+    const { category } = req.query;
+    const result = communityService.getDiscussionTopics(category);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching topics:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch topics' });
+  }
+});
+
+// Get posts in topic
+router.get('/community/topics/:id/posts', ensureInitialized, (req, res) => {
+  try {
+    const result = communityService.getTopicPosts(parseInt(req.params.id));
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch posts' });
+  }
+});
+
+// Post to discussion
+router.post('/community/posts', ensureInitialized, (req, res) => {
+  try {
+    const { topicId, content, authorPhone, authorName } = req.body;
+    
+    if (!topicId || !content || !authorPhone) {
+      return res.status(400).json({
+        success: false,
+        error: 'topicId, content, and authorPhone are required'
+      });
+    }
+    
+    const result = communityService.postToDiscussion({
+      topicId: parseInt(topicId),
+      content,
+      authorPhone,
+      authorName
+    });
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Error posting:', error);
+    res.status(500).json({ success: false, error: 'Failed to post' });
+  }
+});
+
+// ==================== COMMUNITY STATS ====================
+
+// Get community statistics
+router.get('/community/stats', ensureInitialized, (req, res) => {
+  try {
+    const result = communityService.getCommunityStats();
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch stats' });
+  }
+});
+
+export default router;
+

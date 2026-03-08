@@ -1,0 +1,122 @@
+{
+  "LANGUAGE_SELECT": {
+    "en": "Welcome to Fahamu Shamba\nChoose your language:\n1. English\n2. Kiswahili\n3. Dholuo",
+    "sw": "Karibu Fahamu Shamba\nChagua lugha yako:\n1. Kiingereza\n2. Kiswahili\n3. Dholuo",
+    "luo": "Oyie gi Fahamu Shamba\nYier dhok moloyo:\n1. Englis\n2. Kiswahili\n3. Dholuo"
+  },
+  "MAIN_MENU": {
+    "en": "Main Menu\n1. Get Crop Advice\n2. Market Prices\n3. Farm Profile",
+    "sw": "Menyu Kuu\n1. Pata Ushauri wa Mazao\n2. Bei za Soko\n3. Wasifu wa Shamba",
+    "luo": "Menyu Makwongo\n1. Pata Ranyisi mag Cham\n2. Thii gi Soko\n3. Profile mar Shamba"
+  },
+  "COUNTY_SELECT": {
+    "en": "Select County:\n1. Siaya\n2. Kisumu\n3. Migori",
+    "sw": "Chagua Kaunti:\n1. Siaya\n2. Kisumu\n3. Migori",
+    "luo": "Yier Kaunti:\n1. Siaya\n2. Kisumu\n3. Migori"
+  },
+  "WARD_SELECT": {
+    "en": "Select Ward:\n1. Bondo\n2. Ugunja\n3. Yala\n4. Gem\n5. Alego",
+    "sw": "Chagua Kata:\n1. Bondo\n2. Ugunja\n3. Yala\n4. Gem\n5. Alego",
+    "luo": "Yier Ward:\n1. Bondo\n2. Ugunja\n3. Yala\n4. Gem\n5. Alego"
+  },
+  "SOIL_SELECT": {
+    "en": "Select Soil Type:\n1. Clay\n2. Sandy\n3. Loam",
+    "sw": "Chagua Aina ya Udongo:\n1. Nene\n2. Kumimina\n3. Nzuri",
+    "luo": "Yier Moro mar Lod:\n1. Lod Moseche\n2. Lod Macho\n3. Lod Mabichgi"
+  },
+  "SEASON_SELECT": {
+    "en": "Select Season:\n1. Long Rains (Mar-May)\n2. Short Rains (Oct-Dec)\n3. Dry (Jun-Sep)",
+    "sw": "Chagua Msimu:\n1. Mvua Ndefu (Mar-Mei)\n2. Mvua Fupi (Okt-Des)\n3. Ukame (Jun-Sep)",
+    "luo": "Yier Dengo:\n1. Pi Mabeche (Mar-Mei)\n2. Pi Magetha (Okt-Des)\n3. Kumbe (Jun-Sep)"
+  },
+  "SIZE_SELECT": {
+    "en": "Select Farm Size:\n1. 0-1 acre\n2. 1-2 acres\n3. 2-5 acres\n4. 5+ acres",
+    "sw": "Chagua Ukubwa wa Shamba:\n1. 0-1 acre\n2. 1-2 acres\n3. 2-5 acres\n4. 5+ acres",
+    "luo": "Yier Dongo:\n1. 0-1 acre\n2. 1-2 acres\n3. 2-5 acres\n4. 5+ acres"
+  },
+  "BUDGET_SELECT": {
+    "en": "Select Budget (KSh):\n1. Less than 2000\n2. 2000-5000\n3. 5000-10000\n4. 10000+",
+    "sw": "Chagua Bajeti (KSh):\n1. Chini ya 2000\n2. 2000-5000\n3. 5000-10000\n4. 10000+",
+    "luo": "Yier Pesa (KSh):\n1. Chini 2000\n2. 2000-5000\n3. 5000-10000\n4. 10000+"
+  },
+  "RECOMMENDATION_TITLE": {
+    "en": "CROP RECOMMENDATION",
+    "sw": "MAPENDEKEZO YA ZAO",
+    "luo": "RANYISI MAR CHAM"
+  },
+  "CROP_LABEL": {
+    "en": "Top Crop: ",
+    "sw": "Zao Bora: ",
+    "luo": "Cham Maber: "
+  },
+  "CONFIDENCE_LABEL": {
+    "en": "Success Rate: ",
+    "sw": "Kiwango cha Mafanikio: ",
+    "luo": "Ranyisi mar Ber: "
+  },
+  "PRICE_LABEL": {
+    "en": "Current Market Price: ",
+    "sw": "Bei ya Soko Sasa: ",
+    "luo": "Tan mar Soko Moro: "
+  },
+  "THANK_YOU": {
+    "en": "Thank you! Visit fahamu-shamba.com for more.",
+    "sw": "Asante! Tembelea fahamu-shamba.com kwa zaidi.",
+    "luo": "Asante! Mor fahamu-shamba.com moloyo."
+  },
+  "INVALID_INPUT": {
+    "en": "Invalid option. Please try again.",
+    "sw": "Chaguo batili. Tafadhali jaribu tena.",
+    "luo": "Dwoko ma ok nyal. Tem odiechiengʼ."
+  },
+  "REGISTER_PROMPT": {
+    "en": "Enter your phone number:",
+    "sw": "Ingiza nambari yako ya simu:",
+    "luo": "Ket namba mar simu moloyo:"
+  },
+  "REGISTER_NAME": {
+    "en": "Enter your full name:",
+    "sw": "Ingiza jina lako kamili:",
+    "luo": "Ket nyingʼ moloyo:"
+  },
+  "REGISTER_SUCCESS": {
+    "en": "Account created! Check SMS for details.",
+    "sw": "Akaunti ilitengenezwa! Angalia SMS kwa maelezo.",
+    "luo": "Profile nilikre! Check SMS moloyo."
+  },
+  "PROFILE_HEADER": {
+    "en": "Your Profile:\nPhone: ",
+    "sw": "Wasifu Wako:\nSimu: ",
+    "luo": "Profile Moloyo:\nSimu: "
+  },
+  "PROFILE_FOOTER": {
+    "en": "Visit fahamu-shamba.com for full details.",
+    "sw": "Tembelea fahamu-shamba.com kwa maelezo kamili.",
+    "luo": "Mor fahamu-shamba.com moloyo."
+  },
+  "GOODBYE": {
+    "en": "Goodbye! Dial *123# again to use Fahamu Shamba.",
+    "sw": "Kwaheri! Piga *123# tena kulingana Fahamu Shamba.",
+    "luo": "Kwaheri! Piga *123# tena mondo igichako Fahamu Shamba."
+  },
+  "SESSION_TIMEOUT": {
+    "en": "Session expired. Dial *123# to start over.",
+    "sw": "Kipindi kilichoishia. Piga *123# kuanza tena.",
+    "luo": "Seshan to pile. Piga *123# mondo dhi chakre."
+  },
+  "ERROR_MESSAGE": {
+    "en": "An error occurred. Please try again.",
+    "sw": "Hitilafu ilitokea. Tafadhali jaribu tena.",
+    "luo": "Mapile olitokore. Tem odiechiengʼ."
+  },
+  "MARKET_PRICES_HEADER": {
+    "en": "Current Market Prices:",
+    "sw": "Bei za Soko Sasa:",
+    "luo": "Tan mar Soko Moro:"
+  },
+  "GETTING_ADVICE": {
+    "en": "Processing your request...",
+    "sw": "Inakagua ombi lako...",
+    "luo": "Loyo dwak moloyo..."
+  }
+}

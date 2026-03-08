@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Prices - Fahamu Shamba</title>
+    <link rel="icon" href="/fahamu-logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/language-utils.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #2d7649; --primary-light: #4a9d6f; --primary-dark: #1e5631;
+            --secondary: #f57c00; --accent: #87ceeb; --success: #27ae60;
+            --warning: #f39c12; --danger: #e74c3c; --info: #3498db;
+            --light: #f9f7f4; --lighter: #ecf0f1; --dark: #2c3e50;
+            --text: #34495e; --text-light: #7f8c8d; --border: #e0e6ed;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08); --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
+            --sidebar-width: 260px; --sidebar-collapsed: 70px;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Roboto','Segoe UI',sans-serif; background: var(--light); min-height: 100vh; color: var(--text); line-height: 1.6; }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar { position: fixed; left: 0; top: 0; width: var(--sidebar-width); height: 100vh; background: linear-gradient(180deg,var(--primary-dark) 0%,var(--primary) 100%); color: white; z-index: 1000; transition: width 0.3s ease; display: flex; flex-direction: column; box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
+        .sidebar-logo { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .sidebar-brand { overflow: hidden; white-space: nowrap; }
+        .sidebar-brand h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 2px; }
+        .sidebar-brand p { font-size: 0.7rem; opacity: 0.8; }
+        .sidebar-nav { flex: 1; padding: 15px 10px; overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 10px; color: rgba(255,255,255,0.8); text-decoration: none; margin-bottom: 5px; transition: all 0.3s ease; cursor: pointer; }
+        .nav-item:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(5px); }
+        .nav-item.active { background: rgba(255,255,255,0.25); color: white; border-left: 3px solid var(--secondary); }
+        .nav-item i { font-size: 1.2rem; width: 24px; text-align: center; }
+        .sidebar-footer { padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .user-info { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 12px; }
+        .user-avatar { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .user-name { font-weight: 600; font-size: 0.95rem; }
+        .user-phone { font-size: 0.75rem; opacity: 0.8; }
+        .logout-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: rgba(231,76,60,0.2); border: 1px solid rgba(231,76,60,0.3); color: #ff8a80; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+        .logout-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main-content { margin-left: var(--sidebar-width); min-height: 100vh; }
+        .top-header { background: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+        
+        /* ===== MARKET PAGE STYLES ===== */
+        .market-header-section {
+            background: linear-gradient(135deg,rgba(45,118,73,0.08) 0%,rgba(74,157,111,0.08) 100%);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 25px 30px;
+            border-left: 5px solid var(--secondary);
+        }
+        
+        .market-header-title { font-size: 1.8rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 10px; }
+        .market-header-subtitle { color: var(--text-light); font-size: 1rem; }
+        
+        .market-section { padding: 0 30px; margin-bottom: 25px; }
+        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        
+        .market-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+        
+        /* Price Table */
+        .price-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .price-table th, .price-table td { padding: 14px 12px; text-align: center; border-bottom: 1px solid var(--border); }
+        .price-table th { background: var(--primary); color: white; font-weight: 600; }
+        .price-table th:first-child { border-radius: 8px 0 0 0; }
+        .price-table th:last-child { border-radius: 0 8px 0 0; }
+        .price-table tr:hover { background: var(--light); }
+        .price-table td:first-child { font-weight: 600; color: var(--primary-dark); text-align: left; }
+        .price-up { color: var(--success); font-weight: 700; }
+        .price-down { color: var(--danger); font-weight: 700; }
+        
+        /* Chart Section */
+        .chart-section { background: white; border-radius: 12px; padding: 25px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); margin: 25px 30px; }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .crop-selector { display: flex; align-items: center; gap: 10px; }
+        .crop-selector label { font-weight: 600; color: var(--primary-dark); }
+        .crop-selector select { padding: 10px 16px; border: 2px solid var(--primary); border-radius: 8px; font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); background: white; cursor: pointer; }
+        .crop-selector select:focus { outline: none; border-color: var(--primary-dark); }
+        .chart-container { position: relative; height: 400px; }
+        
+        /* Update Info */
+        .update-info {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            border-left: 4px solid var(--success);
+        }
+        .update-info i { color: var(--success); margin-right: 5px; }
+        
+        /* Currency Toggle */
+        .currency-toggle { display: flex; align-items: center; gap: 8px; }
+        .currency-toggle button { padding: 8px 14px; border: 2px solid var(--border); background: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .currency-toggle button.active { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        /* Loading */
+        .loading { text-align: center; padding: 40px; color: var(--primary); }
+        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Back Button */
+        .back-btn { padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .back-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        
+        /* ===== LANGUAGE SELECTOR ===== */
+        .language-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .language-label {
+            font-weight: bold;
+            color: var(--primary-dark);
+            font-size: 0.9rem;
+        }
+        
+        /* Custom Language Dropdown Button */
+        .language-dropdown-container {
+            position: relative;
+            display: inline-block;
+        }
+        .language-dropdown-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            border: 2px solid white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 140px;
+            transition: all 0.3s ease;
+        }
+        .language-dropdown-btn:hover {
+            background: var(--primary-dark);
+        }
+        .language-dropdown-btn i {
+            font-size: 0.8rem;
+        }
+        .language-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            z-index: 1000;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .language-dropdown-menu.show {
+            display: block;
+        }
+        .language-option {
+            padding: 12px 16px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        .language-option:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); width: var(--sidebar-width) !important; }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .main-content { margin-left: 0 !important; }
+        }
+        @media (max-width: 768px) {
+            .market-header-section { padding: 20px; margin: 15px; }
+            .market-section { padding: 0 15px; }
+            .chart-container { height: 300px; }
+            .price-table { font-size: 0.85rem; }
+            .price-table th, .price-table td { padding: 10px 6px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">🌱</div>
+            <div class="sidebar-brand">
+                <h2>Fahamu Shamba</h2>
+                <p>Smart Farming</p>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="nav-item" href="/dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a class="nav-item" href="/recommendations.html"><i class="fas fa-leaf"></i> Recommendations</a>
+            <a class="nav-item active" href="/market.html"><i class="fas fa-chart-bar"></i> Market Prices</a>
+            <a class="nav-item" href="/community.html"><i class="fas fa-users"></i> Community</a>
+            <a class="nav-item" href="/feedback.html"><i class="fas fa-star"></i> Feedback</a>
+            <a class="nav-item" href="/profile.html"><i class="fas fa-user-circle"></i> My Profile</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <div>
+                    <div class="user-name" id="userName">Farmer</div>
+                    <div class="user-phone" id="userPhone">—</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="top-header">
+            <button class="back-btn" onclick="window.location.href='/dashboard.html'">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+            <h2 style="color: var(--primary-dark); font-weight: 700;">Market Prices</h2>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div class="language-wrapper">
+                    <span class="language-label">Language:</span>
+                    <div class="language-dropdown-container">
+                        <button type="button" class="language-dropdown-btn" id="languageBtn" onclick="toggleLanguageDropdown()">
+                            <span id="languageBtnText">Choose Language</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="language-dropdown-menu" id="languageDropdownMenu">
+                            <div class="language-option" onclick="selectLanguage('en', '🌐 English')">🌐 English</div>
+                            <div class="language-option" onclick="selectLanguage('sw', '🌐 Kiswahili')">🌐 Kiswahili</div>
+                            <div class="language-option" onclick="selectLanguage('luo', '🌐 Dholuo')">🌐 Dholuo</div>
+                        </div>
+                    </div>
+                    <select id="languageSelect" onchange="changeLanguage(this.value)" style="display:none;">
+                        <option value="en">English</option>
+                        <option value="sw">Kiswahili</option>
+                        <option value="luo">Dholuo</option>
+                    </select>
+                </div>
+                <div class="currency-toggle">
+                    <button class="active" onclick="setCurrency('KES')">KSh</button>
+                    <button onclick="setCurrency('USD')">USD</button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Market Header -->
+        <div class="market-header-section">
+            <div class="market-header-title">📊 Market Prices - Siaya County</div>
+            <div class="market-header-subtitle">Current weekly crop prices across all sub-counties in Siaya County</div>
+        </div>
+        
+        <!-- Prices Table -->
+        <div class="market-section">
+            <div class="market-card">
+                <div class="section-title">
+                    <i class="fas fa-table"></i> Current Weekly Prices (KSh/kg)
+                </div>
+                <div id="pricesTable">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <div>Loading market data...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Trend Chart -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <div class="section-title" style="margin-bottom: 0;">
+                    <i class="fas fa-chart-line"></i> Weekly Price Trends
+                </div>
+                <div class="crop-selector">
+                    <label for="cropSelect">Choose Crop:</label>
+                    <select id="cropSelect" onchange="loadTrends(this.value)">
+                        <option value="Maize">🌾 Maize</option>
+                        <option value="Beans">🫘 Beans</option>
+                        <option value="Sorghum">🌿 Sorghum</option>
+                        <option value="Millet">🌾 Millet</option>
+                        <option value="Rice">🍚 Rice</option>
+                        <option value="Groundnuts">🥜 Groundnuts</option>
+                    </select>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="priceChart"></canvas>
+            </div>
+        </div>
+        
+        <div style="height: 50px;"></div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let chartInstance = null;
+        let currentCurrency = 'KES';
+        let marketData = null;
+        
+        // Exchange rate (approximate)
+        const KES_TO_USD = 0.0087;
+        
+        // Navigation
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+        
+        // Currency toggle
+        function setCurrency(currency) {
+            currentCurrency = currency;
+            document.querySelectorAll('.currency-toggle button').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === currency);
+            });
+            if (marketData) {
+                displayPrices(marketData);
+            }
+        }
+        
+        // Format price
+        function formatPrice(price) {
+            if (currentCurrency === 'USD') {
+                return '$' + (price * KES_TO_USD).toFixed(2);
+            }
+            return 'KSh ' + price;
+        }
+        
+        // Load prices from API
+        async function loadPrices() {
+            try {
+                const response = await fetch('/api/market/prices');
+                const data = await response.json();
+                
+                if (data.success) {
+                    marketData = data;
+                    displayPrices(data);
+                } else {
+                    document.getElementById('pricesTable').innerHTML = 
+                        '<p style="text-align:center;color:var(--danger);">Failed to load market data</p>';
+                }
+            } catch (error) {
+                console.error('Error loading prices:', error);
+                document.getElementById('pricesTable').innerHTML = 
+                    '<p style="text-align:center;color:var(--danger);">Failed to load market data</p>';
+            }
+        }
+        
+        // Display prices table
+        function displayPrices(data) {
+            const crops = data.prices;
+            const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego'];
+            
+            let html = '<table class="price-table"><thead><tr><th>Crop</th>';
+            subcounties.forEach(sc => {
+                html += `<th>${sc.charAt(0).toUpperCase() + sc.slice(1)}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            crops.forEach(crop => {
+                html += `<tr><td>${crop.crop}</td>`;
+                subcounties.forEach(sc => {
+                    const price = crop[sc] || 0;
+                    const trend = crop.trend || 'stable';
+                    const icon = trend === 'up' ? ' <i class="fas fa-arrow-up price-up"></i>' : 
+                                 trend === 'down' ? ' <i class="fas fa-arrow-down price-down"></i>' : '';
+                    html += `<td>${formatPrice(price)}${icon}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            html += `<div class="update-info">
+                <i class="fas fa-clock"></i> Last updated: ${data.lastUpdated} | 
+                <i class="fas fa-sync"></i> Next update: Weekly (Every Monday)
+            </div>`;
+            
+            document.getElementById('pricesTable').innerHTML = html;
+        }
+        
+        // Load trend chart
+        async function loadTrends(crop = 'Maize') {
+            try {
+                const response = await fetch(`/api/market/trends?crop=${encodeURIComponent(crop)}`);
+                const data = await response.json();
+                
+                if (data.success && data.trends) {
+                    renderChart(crop, data.trends);
+                } else {
+                    // Use demo data if no trends available
+                    renderChart(crop, generateDemoTrends(crop));
+                }
+            } catch (error) {
+                console.error('Error loading trends:', error);
+                renderChart(crop, generateDemoTrends(crop));
+            }
+        }
+        
+        // Generate demo trends
+        function generateDemoTrends(crop) {
+            const weeks = [];
+            const basePrice = crop === 'Maize' ? 55 : crop === 'Beans' ? 90 : 70;
+            
+            for (let i = 8; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - (i * 7));
+                const weekStart = date.toISOString().split('T')[0];
+                
+                const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego'];
+                const trends = subcounties.map(sc => ({
+                    subcounty: sc,
+                    week_start: weekStart,
+                    price: basePrice + Math.floor(Math.random() * 10) - 5
+                }));
+                weeks.push(...trends);
+            }
+            return weeks;
+        }
+        
+        // Render chart
+        function renderChart(crop, trends) {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            
+            const weeks = [...new Set(trends.map(t => t.week_start))].sort();
+            const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego'];
+            const colors = {
+                'bondo': 'rgba(46, 125, 50, 1)',
+                'ugunja': 'rgba(74, 157, 111, 1)',
+                'yala': 'rgba(245, 124, 0, 1)',
+                'gem': 'rgba(52, 152, 219, 1)',
+                'alego': 'rgba(155, 89, 182, 1)'
+            };
+            
+            const datasets = subcounties.map(sc => ({
+                label: sc.charAt(0).toUpperCase() + sc.slice(1),
+                data: weeks.map(week => {
+                    const entry = trends.find(t => t.week_start === week && t.subcounty === sc);
+                    return entry ? entry.price : null;
+                }),
+                borderColor: colors[sc],
+                backgroundColor: colors[sc].replace('1)', '0.1)'),
+                fill: false,
+                tension: 0.4,
+                borderWidth: 2
+            }));
+            
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: { labels: weeks, datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Weekly ${crop} Prices Across Siaya Sub-Counties`,
+                            font: { size: 16, weight: 'bold' },
+                            color: '#2d7649'
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: { padding: 20, usePointStyle: true }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Price (KSh/kg)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Week Starting'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Load user data
+        function loadUserData() {
+            const cached = localStorage.getItem('user');
+            if (cached) {
+                try {
+                    const user = JSON.parse(cached);
+                    document.getElementById('userName').textContent = user.name || 'Farmer';
+                    document.getElementById('userPhone').textContent = user.phone || '—';
+                } catch (e) {
+                    document.getElementById('userName').textContent = 'Farmer';
+                }
+            } else {
+                document.getElementById('userName').textContent = 'Farmer';
+            }
+        }
+        
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            const lang = getCurrentLanguage();
+            const select = document.getElementById('languageSelect');
+            // Only set value if there's a saved language
+            if (select && lang) {
+                select.value = lang;
+                // Update button text based on saved language
+                const langNames = {
+                    'en': '🌐 English',
+                    'sw': '🌐 Kiswahili',
+                    'luo': '🌐 Dholuo'
+                };
+                const btnText = document.getElementById('languageBtnText');
+                if (btnText && langNames[lang]) {
+                    btnText.textContent = langNames[lang];
+                }
+            }
+            translatePage(lang);
+            loadUserData();
+            loadPrices();
+            loadTrends('Maize');
+        });
+        
+        // Language functions
+        function changeLanguage(lang) {
+            setLanguage(lang);
+            translatePage(lang);
+        }
+        
+        // Custom dropdown functions
+        function toggleLanguageDropdown() {
+            const menu = document.getElementById('languageDropdownMenu');
+            if (menu) menu.classList.toggle('show');
+        }
+        
+        function selectLanguage(lang, text) {
+            const btnText = document.getElementById('languageBtnText');
+            if (btnText) btnText.textContent = text;
+            const select = document.getElementById('languageSelect');
+            if (select) select.value = lang;
+            const menu = document.getElementById('languageDropdownMenu');
+            if (menu) menu.classList.remove('show');
+            changeLanguage(lang);
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const container = document.querySelector('.language-dropdown-container');
+            if (container && !container.contains(event.target)) {
+                const menu = document.getElementById('languageDropdownMenu');
+                if (menu) menu.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
+

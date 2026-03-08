@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/signup", "destination": "/signup.html" },
+    { "source": "/recommendations", "destination": "/recommendations.html" },
+    { "source": "/market", "destination": "/market.html" },
+    { "source": "/community", "destination": "/community.html" },
+    { "source": "/feedback", "destination": "/feedback.html" },
+    { "source": "/profile", "destination": "/profile.html" },
+    { "source": "/settings", "destination": "/settings.html" },
+    { "source": "/ussd-simulator", "destination": "/ussd-simulator.html" },
+    { "source": "/api/market/prices", "destination": "/api/market/prices.js" },
+    { "source": "/api/market/trends", "destination": "/api/market/trends.js" },
+    { "source": "/api/market/update", "destination": "/api/market/update.js" }
+  ],
+  "crons": [
+    {
+      "path": "/api/market/update",
+      "schedule": "0 0 * * 1"
+    }
+  ]
+}
+
