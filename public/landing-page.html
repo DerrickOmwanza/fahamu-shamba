@@ -1177,6 +1177,7 @@
 
     <script>
         const LANDING_LANG_STORAGE_KEY = 'preferredLang';
+        const LANDING_LANG_INIT_KEY = 'preferredLangInitializedV2';
         const LANDING_SELECTOR_LABELS = {
             en: { placeholder: 'Choose Language', en: 'English', sw: 'Kiswahili', luo: 'Dholuo' },
             sw: { placeholder: 'Chagua Lugha', en: 'Kiingereza', sw: 'Kiswahili', luo: 'Dholuo' },
@@ -1332,9 +1333,33 @@
             cta.scrollIntoView({ behavior: 'smooth' });
         }
 
+        function getInitialLanguage() {
+            const selector = document.getElementById('langSelect');
+            const hasInitialized = localStorage.getItem(LANDING_LANG_INIT_KEY) === '1';
+            const storedLang = localStorage.getItem(LANDING_LANG_STORAGE_KEY);
+            const supported = ['en', 'sw', 'luo'];
+
+            // Force Swahili on first visit for this landing-page language version.
+            if (!hasInitialized) {
+                localStorage.setItem(LANDING_LANG_STORAGE_KEY, 'sw');
+                localStorage.setItem(LANDING_LANG_INIT_KEY, '1');
+                if (selector) selector.value = 'sw';
+                return 'sw';
+            }
+
+            if (supported.includes(storedLang)) {
+                if (selector) selector.value = storedLang;
+                return storedLang;
+            }
+
+            localStorage.setItem(LANDING_LANG_STORAGE_KEY, 'sw');
+            if (selector) selector.value = 'sw';
+            return 'sw';
+        }
+
         window.addEventListener('load', async () => {
             const selector = document.getElementById('langSelect');
-            const savedLang = localStorage.getItem(LANDING_LANG_STORAGE_KEY) || 'sw';
+            const savedLang = getInitialLanguage();
             if (selector) selector.value = savedLang;
 
             try {
@@ -1351,6 +1376,7 @@
         });
 
         document.getElementById('langSelect')?.addEventListener('change', async function () {
+            localStorage.setItem(LANDING_LANG_INIT_KEY, '1');
             await loadLandingLanguage(this.value);
         });
 
