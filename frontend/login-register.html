@@ -384,9 +384,9 @@
 
             <form id="loginFormElement">
                 <div class="form-group">
-                    <label for="loginPhone" data-i18n="username_or_phone">Username or Phone Number</label>
-                    <input type="text" id="loginPhone" name="phone" data-i18n="enter_username_or_phone" placeholder="Username or +2547XXXXXXXX" required>
-                    <div class="error-message" id="loginPhoneError"></div>
+                    <label for="loginUsername" data-i18n="username">Username</label>
+                    <input type="text" id="loginUsername" name="username" data-i18n="enter_username" placeholder="Enter your username" required>
+                    <div class="error-message" id="loginUsernameError"></div>
                 </div>
 
                 <div class="form-group">
@@ -592,14 +592,14 @@
         document.getElementById('loginFormElement').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const identifier = document.getElementById('loginPhone').value.trim();
+            const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
 
-            showError('loginPhoneError', '');
+            showError('loginUsernameError', '');
             showError('loginPasswordError', '');
             showError('loginFormError', '');
 
-            if (!identifier || !password) {
+            if (!username || !password) {
                 showError('loginFormError', 'All fields are required');
                 return;
             }
@@ -607,22 +607,10 @@
             setLoading('loginLoading', true);
 
             try {
-                // Determine if identifier is phone or username
-                const isPhoneNumber = /^(\+?254|0)[0-9]{9,}$/.test(identifier);
-                
-                const loginData = { password };
-                if (isPhoneNumber) {
-                    // Normalize phone to +254 format
-                    let phone = identifier;
-                    if (phone.startsWith('0')) {
-                        phone = '+254' + phone.substring(1);
-                    } else if (phone.startsWith('254')) {
-                        phone = '+' + phone;
-                    }
-                    loginData.phone = phone;
-                } else {
-                    loginData.username = identifier.toLowerCase();
-                }
+                const loginData = {
+                    username: username.toLowerCase(),
+                    password
+                };
 
                 console.log('Sending login data:', loginData);
 
