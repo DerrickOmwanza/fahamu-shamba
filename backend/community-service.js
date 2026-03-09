@@ -183,7 +183,7 @@ export function getQuestions(options = {}) {
   
   return {
     success: true,
-    questions: questionsWithAnswers,
+    data: questionsWithAnswers,
     pagination: {
       page,
       limit,
@@ -304,7 +304,7 @@ export function getSuccessStories(options = {}) {
   
   return {
     success: true,
-    stories
+    data: stories
   };
 }
 
@@ -425,6 +425,17 @@ export function getCommunityStats() {
   const stories = getDb().prepare("SELECT COUNT(*) as count FROM success_stories WHERE status = 'approved'").get();
   const topics = getDb().prepare('SELECT COUNT(*) as count FROM discussion_topics').get();
   
+  // Get total members (unique phone numbers from questions and stories)
+  const membersQuery = getDb().prepare(`
+    SELECT COUNT(DISTINCT phone) as count 
+    FROM (
+      SELECT author_phone as phone FROM community_questions
+      UNION 
+      SELECT author_phone as phone FROM success_stories
+    )
+  `);
+  const members = membersQuery.get();
+  
   const recentQuestions = getDb().prepare(`
     SELECT q.*, q.author_name as author_name 
     FROM community_questions q 
@@ -437,7 +448,8 @@ export function getCommunityStats() {
       totalQuestions: questions.count,
       totalAnswers: answers.count,
       approvedStories: stories.count,
-      totalTopics: topics.count
+      totalTopics: topics.count,
+      totalMembers: members.count
     },
     recentQuestions
   };

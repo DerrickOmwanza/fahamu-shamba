@@ -104,6 +104,43 @@ router.post('/feedback/submit', ensureInitialized, (req, res) => {
   }
 });
 
+// Simple feedback submission (for quick feedback and detailed feedback)
+router.post('/feedback', ensureInitialized, (req, res) => {
+  try {
+    const { helpful, comments, feedback_type, rating } = req.body;
+    
+    // Extract user from token
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        error: 'No token provided'
+      });
+    }
+    
+    const decoded = req.verifyToken(token);
+    if (!decoded) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid token'
+      });
+    }
+    
+    const result = feedbackService.submitSimpleFeedback({
+      phoneNumber: decoded.phone,
+      helpful,
+      comments,
+      feedback_type,
+      rating
+    });
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Error submitting simple feedback:', error);
+    res.status(500).json({ success: false, error: 'Failed to submit feedback' });
+  }
+});
+
 // Get user's feedback history
 router.get('/feedback/user/:phoneNumber', ensureInitialized, (req, res) => {
   try {
@@ -219,6 +256,21 @@ router.get('/feedback/analytics', ensureInitialized, (req, res) => {
   } catch (error) {
     console.error('Error fetching analytics:', error);
     res.status(500).json({ success: false, error: 'Failed to fetch analytics' });
+  }
+});
+
+// Get recent feedback
+router.get('/feedback/recent', ensureInitialized, (req, res) => {
+  try {
+    const { limit } = req.query;
+    
+    const result = feedbackService.getRecentFeedback({
+      limit: parseInt(limit) || 10
+    });
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching recent feedback:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch recent feedback' });
   }
 });
 

@@ -199,6 +199,31 @@ export function submitFeedback(data) {
   };
 }
 
+// Submit simple feedback (quick feedback and detailed feedback)
+export function submitSimpleFeedback(data) {
+  const { phoneNumber, helpful, comments, feedback_type, rating } = data;
+  
+  const stmt = getDb().prepare(`
+    INSERT INTO enhanced_feedback (
+      phone_number, rating, was_helpful, suggestions, feedback_type
+    ) VALUES (?, ?, ?, ?, ?)
+  `);
+  
+  const result = stmt.run(
+    phoneNumber,
+    rating || null,
+    helpful !== undefined ? (helpful ? 1 : 0) : null,
+    comments || null,
+    feedback_type || 'general'
+  );
+  
+  return {
+    success: true,
+    feedbackId: result.lastInsertRowid,
+    message: 'Feedback submitted successfully'
+  };
+}
+
 // Get feedback by phone number
 export function getUserFeedback(phoneNumber, limit = 10) {
   const feedback = getDb().prepare(`
@@ -476,6 +501,30 @@ export function getFeedbackAnalytics() {
       recentFeedback: recent,
       yieldStats
     }
+  };
+}
+
+// Get recent feedback
+export function getRecentFeedback(options = {}) {
+  const { limit = 10 } = options;
+  
+  const feedback = getDb().prepare(`
+    SELECT 
+      id,
+      phone_number,
+      rating,
+      was_helpful,
+      suggestions as comments,
+      feedback_type,
+      created_at
+    FROM enhanced_feedback
+    ORDER BY created_at DESC
+    LIMIT ?
+  `).all(limit);
+  
+  return {
+    success: true,
+    data: feedback
   };
 }
 
