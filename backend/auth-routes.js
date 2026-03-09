@@ -192,7 +192,7 @@ export function initAuthRoutes(db) {
       if (!user) {
         return res.status(401).json({
           status: 'error',
-          message: 'Invalid phone or password'
+          message: 'Invalid username or password'
         });
       }
 
@@ -202,7 +202,7 @@ export function initAuthRoutes(db) {
       if (!isPasswordValid) {
         return res.status(401).json({
           status: 'error',
-          message: 'Invalid phone or password'
+          message: 'Invalid username or password'
         });
       }
 
