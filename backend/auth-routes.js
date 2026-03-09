@@ -90,17 +90,25 @@ export function initAuthRoutes(db) {
         });
       }
 
+      // Normalize phone to +254 format
+      let normalizedPhone = phone.trim();
+      if (normalizedPhone.startsWith('0')) {
+        normalizedPhone = '+254' + normalizedPhone.substring(1);
+      } else if (normalizedPhone.startsWith('254')) {
+        normalizedPhone = '+' + normalizedPhone;
+      }
+
       // Normalize username to lowercase
       const normalizedUsername = username.trim().toLowerCase();
 
       // Check if phone or username already exists
       const stmt = db.prepare('SELECT id, phone, username FROM users WHERE phone = ? OR LOWER(username) = ?');
-      const existingUser = stmt.get(phone, normalizedUsername);
+      const existingUser = stmt.get(normalizedPhone, normalizedUsername);
 
       if (existingUser) {
         return res.status(400).json({
           status: 'error',
-          message: existingUser.phone === phone
+          message: existingUser.phone === normalizedPhone
             ? 'Phone number already registered'
             : 'Username already taken'
         });
@@ -113,7 +121,7 @@ export function initAuthRoutes(db) {
       const insertStmt = db.prepare(
         'INSERT INTO users (phone, username, password_hash, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
       );
-      const result = insertStmt.run(phone, normalizedUsername, passwordHash);
+      const result = insertStmt.run(normalizedPhone, normalizedUsername, passwordHash);
 
       res.status(201).json({
         status: 'success',
