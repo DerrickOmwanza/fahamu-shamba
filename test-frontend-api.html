@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Frontend API Communication</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>Testing Frontend API Communication</h1>
+    
+    <div id="results"></div>
+    
+    <script>
+        const resultsDiv = document.getElementById('results');
+        
+        function addResult(message, isSuccess = true) {
+            const div = document.createElement('div');
+            div.className = `result ${isSuccess ? 'success' : 'error'}`;
+            div.textContent = message;
+            resultsDiv.appendChild(div);
+        }
+        
+        // Test 1: Market Prices API
+        async function testMarketPrices() {
+            try {
+                const response = await fetch('http://localhost:5000/api/market/prices');
+                const data = await response.json();
+                
+                if (data.success && data.prices && data.prices.length > 0) {
+                    addResult(`✅ Market Prices API: Success - ${data.prices.length} crops found`);
+                    console.log('Market Prices Data:', data);
+                } else {
+                    addResult('❌ Market Prices API: No data returned', false);
+                }
+            } catch (error) {
+                addResult(`❌ Market Prices API: ${error.message}`, false);
+            }
+        }
+        
+        // Test 2: Market Trends API
+        async function testMarketTrends() {
+            try {
+                const response = await fetch('http://localhost:5000/api/market-trends?crop=Maize');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    addResult('✅ Market Trends API: Success');
+                    console.log('Market Trends Data:', data);
+                } else {
+                    addResult('❌ Market Trends API: No data returned', false);
+                }
+            } catch (error) {
+                addResult(`❌ Market Trends API: ${error.message}`, false);
+            }
+        }
+        
+        // Run tests
+        testMarketPrices();
+        testMarketTrends();
+    </script>
+</body>
+</html>

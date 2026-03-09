@@ -316,11 +316,78 @@
         .metric-value { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
         .metric-sub { font-size: 0.82rem; opacity: 0.85; }
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
-        .stat { background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 18px; box-shadow: var(--shadow-sm); }
+        .stat { background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 18px; box-shadow: var(--shadow-sm); transition: all 0.3s ease; }
+        .stat:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
         .trend-up { color: #1e8e3e; font-weight: 700; font-size: 0.85rem; }
         .trend-down { color: #c0392b; font-weight: 700; font-size: 0.85rem; }
         .trend-neutral { color: #5f6c75; font-weight: 700; font-size: 0.85rem; }
+        
+        /* Enhanced Card Styles */
+        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .card-icon { font-size: 1.5rem; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(45,118,73,0.1); color: var(--primary); }
+        .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+        
+        /* Active Crops Card */
+        .active-crops-card { border-left: 4px solid #2d7649; }
+        .crop-stats { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+        .crop-count { font-size: 0.9rem; color: var(--text-light); font-weight: 600; }
+        .crop-progress { margin-bottom: 14px; }
+        .progress-item { margin-bottom: 10px; }
+        .crop-label { font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+        .progress-bar { width: 100%; height: 8px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 4px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #2d7649, #4caf50); border-radius: 4px; transition: width 0.5s ease; }
+        .progress-text { font-size: 0.75rem; color: var(--text-light); }
+        .next-action { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(255,193,7,0.15); border-radius: 8px; border: 1px solid rgba(255,193,7,0.3); }
+        .action-icon { font-size: 1.2rem; }
+        .action-text { font-size: 0.85rem; font-weight: 600; color: #8a6d3b; }
+        
+        /* Weather Card */
+        .weather-card-enhanced { border-left: 4px solid #2196f3; }
+        .weather-icon-display { background: rgba(33,150,243,0.15); color: #2196f3; }
+        .weather-stats { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+        .weather-trend { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: rgba(33,150,243,0.1); border-radius: 16px; }
+        .trend-arrow { font-size: 1.2rem; }
+        .trend-text { font-size: 0.85rem; font-weight: 600; color: #1976d2; }
+        .mini-forecast { display: flex; gap: 8px; margin-bottom: 12px; }
+        .forecast-item { flex: 1; text-align: center; padding: 8px; background: rgba(33,150,243,0.08); border-radius: 8px; border: 1px solid rgba(33,150,243,0.2); }
+        .forecast-time { font-size: 0.75rem; color: #666; display: block; margin-bottom: 4px; }
+        .forecast-icon { font-size: 1.5rem; margin-bottom: 4px; display: block; }
+        .forecast-temp { font-size: 0.9rem; font-weight: 700; color: #1976d2; }
+        .weather-advisory { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(245,124,0,0.15); border-radius: 8px; border: 1px solid rgba(245,124,0,0.3); }
+        .advisory-icon { font-size: 1.2rem; }
+        .advisory-text { font-size: 0.85rem; font-weight: 600; color: #8a5a00; }
+        
+        /* Market Value Card */
+        .market-card-enhanced { border-left: 4px solid #4caf50; }
+        .market-stats { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+        .market-trend { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: rgba(76,175,80,0.1); border-radius: 16px; }
+        .trend-indicator { font-size: 1.2rem; }
+        .price-trend { margin-bottom: 12px; }
+        .trend-chart { width: 100%; height: 30px; background: rgba(76,175,80,0.1); border-radius: 4px; position: relative; }
+        .best-market { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(76,175,80,0.1); border-radius: 8px; border: 1px solid rgba(76,175,80,0.2); }
+        .market-icon { font-size: 1.2rem; }
+        .market-text { font-size: 0.85rem; font-weight: 600; color: #2e7d32; }
+        
+        /* Community Card */
+        .community-card-enhanced { border-left: 4px solid #9c27b0; }
+        .community-stats { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+        .community-activity { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: rgba(156,39,176,0.1); border-radius: 16px; }
+        .activity-icon { font-size: 0.85rem; font-weight: 700; color: #7b1fa2; }
+        .activity-text { font-size: 0.85rem; color: #6a1b9a; }
+        .community-feed { margin-bottom: 12px; }
+        .feed-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(156,39,176,0.08); border-radius: 8px; border: 1px solid rgba(156,39,176,0.2); margin-bottom: 6px; }
+        .feed-icon { font-size: 1.2rem; }
+        .feed-text { font-size: 0.85rem; color: #6a1b9a; }
+        .community-action { text-align: center; }
+        .action-btn { display: inline-block; padding: 8px 16px; background: linear-gradient(135deg, #9c27b0, #7b1fa2); color: white; border-radius: 20px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.3s ease; }
+        .action-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(156,39,176,0.4); }
+        
+        /* Sparkline Chart Animation */
+        @keyframes sparklineDraw {
+            from { stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+            to { stroke-dasharray: 1000; stroke-dashoffset: 0; }
+        }
         .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-sm); padding: 22px; margin-bottom: 16px; }
         .card h2 { color: var(--primary-dark); margin-bottom: 10px; }
         .card p { color: var(--text-light); }
@@ -489,23 +556,131 @@
             </section>
 
             <section class="stats-grid">
-                <div class="stat">
-                    <div class="stat-value">3</div>
-                    <div>Active Crops</div>
+                <!-- Active Crops Card -->
+                <div class="stat active-crops-card">
+                    <div class="card-header">
+                        <div class="card-icon">🌽</div>
+                        <div class="card-title">Active Crops</div>
+                    </div>
+                    <div class="crop-stats">
+                        <div class="stat-value">3</div>
+                        <div class="crop-count">Active</div>
+                    </div>
+                    <div class="crop-progress">
+                        <div class="progress-item">
+                            <div class="crop-label">Maize</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 40%"></div>
+                            </div>
+                            <div class="progress-text">40% - Vegetative</div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="crop-label">Tomatoes</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
+                            <div class="progress-text">65% - Flowering</div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="crop-label">Beans</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 25%"></div>
+                            </div>
+                            <div class="progress-text">25% - Germination</div>
+                        </div>
+                    </div>
+                    <div class="next-action">
+                        <div class="action-icon">💡</div>
+                        <div class="action-text">Next: Irrigation needed tomorrow</div>
+                    </div>
                 </div>
-                <div class="stat">
-                    <div class="stat-value">26°C</div>
-                    <div>Weather</div>
+                
+                <!-- Weather Card -->
+                <div class="stat weather-card-enhanced">
+                    <div class="card-header">
+                        <div class="card-icon weather-icon-display">☀️</div>
+                        <div class="card-title">Weather</div>
+                    </div>
+                    <div class="weather-stats">
+                        <div class="stat-value">26°C</div>
+                        <div class="weather-trend">
+                            <span class="trend-arrow">📈</span>
+                            <span class="trend-text">Rising</span>
+                        </div>
+                    </div>
+                    <div class="mini-forecast">
+                        <div class="forecast-item">
+                            <span class="forecast-time">Now</span>
+                            <span class="forecast-icon">☀️</span>
+                            <span class="forecast-temp">26°</span>
+                        </div>
+                        <div class="forecast-item">
+                            <span class="forecast-time">3h</span>
+                            <span class="forecast-icon">⛅</span>
+                            <span class="forecast-temp">28°</span>
+                        </div>
+                        <div class="forecast-item">
+                            <span class="forecast-time">6h</span>
+                            <span class="forecast-icon">🌧️</span>
+                            <span class="forecast-temp">24°</span>
+                        </div>
+                    </div>
+                    <div class="weather-advisory">
+                        <div class="advisory-icon">⚠️</div>
+                        <div class="advisory-text">Light rain expected in 6 hours</div>
+                    </div>
                 </div>
-                <div class="stat">
-                    <div class="stat-value">KSh 12,500</div>
-                    <div>Market Value</div>
-                    <div id="marketTrend" class="trend-neutral">Steady market</div>
+                
+                <!-- Market Value Card -->
+                <div class="stat market-card-enhanced">
+                    <div class="card-header">
+                        <div class="card-icon">💰</div>
+                        <div class="card-title">Market Value</div>
+                    </div>
+                    <div class="market-stats">
+                        <div class="stat-value">KSh 12,500</div>
+                        <div class="market-trend">
+                            <span class="trend-indicator up">📈</span>
+                            <span class="trend-text">Rising</span>
+                        </div>
+                    </div>
+                    <div class="price-trend">
+                        <div class="trend-chart" id="marketTrendChart">
+                            <!-- Sparkline will be generated by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="best-market">
+                        <div class="market-icon">📍</div>
+                        <div class="market-text">Best: Siaya town - KSh 13,000</div>
+                    </div>
                 </div>
-                <div class="stat">
-                    <div class="stat-value">156</div>
-                    <div>Community</div>
-                    <div id="communityActivity" class="trend-neutral">No recent update</div>
+                
+                <!-- Community Card -->
+                <div class="stat community-card-enhanced">
+                    <div class="card-header">
+                        <div class="card-icon">👥</div>
+                        <div class="card-title">Community</div>
+                    </div>
+                    <div class="community-stats">
+                        <div class="stat-value">156</div>
+                        <div class="community-activity">
+                            <span class="activity-icon">+2</span>
+                            <span class="activity-text">farmers checked weather today</span>
+                        </div>
+                    </div>
+                    <div class="community-feed">
+                        <div class="feed-item">
+                            <div class="feed-icon">👨‍🌾</div>
+                            <div class="feed-text">John from Gem harvested beans today</div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-icon">📢</div>
+                            <div class="feed-text">Market prices updated for maize</div>
+                        </div>
+                    </div>
+                    <div class="community-action">
+                        <div class="action-btn">Join Discussion</div>
+                    </div>
                 </div>
             </section>
 
@@ -526,6 +701,176 @@
             uv: null,
             location: 'siaya'
         };
+
+        // Market trend data simulation
+        let marketTrendData = [12000, 12200, 11800, 12500, 12300, 12700, 12500];
+
+        function generateSparkline() {
+            const container = document.getElementById('marketTrendChart');
+            if (!container) return;
+
+            const width = container.clientWidth;
+            const height = 30;
+            const padding = 4;
+            const innerWidth = width - (padding * 2);
+            const innerHeight = height - (padding * 2);
+
+            // Calculate min and max values
+            const minVal = Math.min(...marketTrendData);
+            const maxVal = Math.max(...marketTrendData);
+            const range = maxVal - minVal || 1;
+
+            // Generate path data
+            let pathData = '';
+            marketTrendData.forEach((value, index) => {
+                const x = padding + (index / (marketTrendData.length - 1)) * innerWidth;
+                const y = padding + innerHeight - ((value - minVal) / range) * innerHeight;
+                
+                if (index === 0) {
+                    pathData += `M ${x} ${y}`;
+                } else {
+                    pathData += ` L ${x} ${y}`;
+                }
+            });
+
+            // Determine trend color
+            const isUp = marketTrendData[marketTrendData.length - 1] > marketTrendData[0];
+            const color = isUp ? '#4caf50' : '#f44336';
+
+            // Create SVG
+            container.innerHTML = `
+                <svg width="${width}" height="${height}" style="display:block;">
+                    <path d="${pathData}" stroke="${color}" stroke-width="2" fill="none" style="animation: sparklineDraw 1s ease-out"/>
+                    <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="${color}" stop-opacity="0.3"/>
+                        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+                    </linearGradient>
+                    <path d="${pathData} L ${width} ${height} L 0 ${height} Z" fill="url(#gradient)" opacity="0.3"/>
+                </svg>
+            `;
+        }
+
+        function updateMarketTrend() {
+            // Simulate market data changes
+            const lastValue = marketTrendData[marketTrendData.length - 1];
+            const change = (Math.random() - 0.5) * 500;
+            const newValue = Math.max(10000, Math.min(15000, lastValue + change));
+            
+            marketTrendData.push(newValue);
+            if (marketTrendData.length > 7) {
+                marketTrendData.shift();
+            }
+
+            // Update market value display
+            const marketValue = document.querySelector('.market-stats .stat-value');
+            if (marketValue) {
+                marketValue.textContent = `KSh ${Math.round(newValue)}`;
+            }
+
+            // Update trend indicator
+            const isUp = marketTrendData[marketTrendData.length - 1] > marketTrendData[0];
+            const trendIndicator = document.querySelector('.market-trend .trend-indicator');
+            const trendText = document.querySelector('.market-trend .trend-text');
+            
+            if (trendIndicator) {
+                trendIndicator.textContent = isUp ? '📈' : '📉';
+                trendIndicator.style.color = isUp ? '#4caf50' : '#f44336';
+            }
+            
+            if (trendText) {
+                trendText.textContent = isUp ? 'Rising' : 'Falling';
+                trendText.style.color = isUp ? '#2e7d32' : '#c62828';
+            }
+
+            // Regenerate sparkline
+            generateSparkline();
+        }
+
+        function updateCommunityFeed() {
+            const feedItems = [
+                'John from Gem harvested beans today',
+                'Market prices updated for maize',
+                'New farming tips available in recommendations',
+                'Community meeting scheduled for tomorrow',
+                'Rain forecast may affect planting schedules'
+            ];
+            
+            const randomItem = feedItems[Math.floor(Math.random() * feedItems.length)];
+            const feedText = document.querySelector('.feed-text');
+            if (feedText) {
+                feedText.textContent = randomItem;
+            }
+
+            // Update community count
+            const currentCount = parseInt(document.querySelector('.community-stats .stat-value').textContent);
+            const newCount = currentCount + Math.floor(Math.random() * 5);
+            document.querySelector('.community-stats .stat-value').textContent = newCount;
+        }
+
+        function updateActiveCrops() {
+            // Simulate crop progress updates
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach((bar, index) => {
+                const currentWidth = parseInt(bar.style.width) || 0;
+                const increment = Math.random() * 2 + 0.5; // 0.5% to 2.5% progress
+                const newWidth = Math.min(100, currentWidth + increment);
+                bar.style.width = `${newWidth.toFixed(1)}%`;
+                
+                // Update progress text
+                const progressText = bar.parentElement.nextElementSibling;
+                if (progressText) {
+                    let stage = 'Germination';
+                    if (newWidth > 30) stage = 'Vegetative';
+                    if (newWidth > 60) stage = 'Flowering';
+                    if (newWidth > 85) stage = 'Harvesting';
+                    progressText.textContent = `${newWidth.toFixed(1)}% - ${stage}`;
+                }
+            });
+
+            // Update next action
+            const actionText = document.querySelector('.next-action .action-text');
+            if (actionText) {
+                const actions = [
+                    'Next: Irrigation needed tomorrow',
+                    'Next: Fertilization recommended',
+                    'Next: Pest control check',
+                    'Next: Weed removal',
+                    'Next: Soil testing'
+                ];
+                const randomAction = actions[Math.floor(Math.random() * actions.length)];
+                actionText.textContent = randomAction;
+            }
+        }
+
+        function updateWeatherCard() {
+            // Update weather icon based on current weather
+            const weatherIcon = document.querySelector('.weather-icon-display');
+            const currentTemp = document.querySelector('.weather-stats .stat-value');
+            
+            if (weatherIcon) {
+                // Simulate weather changes
+                const weatherTypes = ['☀️', '⛅', '☁️', '🌧️', '⛈️', '🌫️'];
+                const randomWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
+                weatherIcon.textContent = randomWeather;
+            }
+
+            if (currentTemp) {
+                const currentTempValue = parseInt(currentTemp.textContent.replace('°C', ''));
+                const newTemp = currentTempValue + (Math.random() - 0.5) * 4;
+                currentTemp.textContent = `${newTemp.toFixed(1)}°C`;
+            }
+
+            // Update mini forecast
+            const forecastItems = document.querySelectorAll('.forecast-item');
+            forecastItems.forEach((item, index) => {
+                const tempElement = item.querySelector('.forecast-temp');
+                if (tempElement) {
+                    const currentTemp = parseInt(tempElement.textContent.replace('°', ''));
+                    const newTemp = currentTemp + (Math.random() - 0.5) * 6;
+                    tempElement.textContent = `${newTemp.toFixed(0)}°`;
+                }
+            });
+        }
 
         function toggleMobileSidebar() {
             const sidebar = document.getElementById('sidebar');

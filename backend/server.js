@@ -23,6 +23,7 @@ import feedbackRoutes from './feedback-routes.js';
 import communityService from './community-service.js';
 import feedbackService from './feedback-service.js';
 import marketRoutes from './market-routes.js';
+import marketPricesApi from './market-prices-api.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -2473,6 +2474,9 @@ app.use('/api', feedbackRoutes);
 
 // Register market routes
 app.use('/api', marketRoutes);
+
+// Register market prices API (frontend-compatible)
+app.use('/', marketPricesApi);
 
 // Test endpoint
 app.get('/api/test', (req, res) => {

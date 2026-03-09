@@ -84,6 +84,25 @@
         .price-up { color: var(--success); font-weight: 700; }
         .price-down { color: var(--danger); font-weight: 700; }
         
+        /* Top 3 Crops Card */
+        .top-crops-section { padding: 0 30px; margin-bottom: 25px; }
+        .top-crops-card {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--success);
+        }
+        .top-crops-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .top-crops-title { font-size: 1.2rem; font-weight: 700; color: var(--primary-dark); display: flex; align-items: center; gap: 10px; }
+        .top-crop-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--success); box-shadow: var(--shadow-sm); }
+        .top-crop-info { display: flex; align-items: center; gap: 15px; }
+        .crop-icon { font-size: 1.5rem; }
+        .crop-name { font-weight: 700; font-size: 1.1rem; color: var(--primary-dark); }
+        .crop-price { font-size: 1.2rem; font-weight: 700; color: var(--success); }
+        .crop-rank { background: var(--success); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; margin-right: 10px; }
+        
         /* Chart Section */
         .chart-section { background: white; border-radius: 12px; padding: 25px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); margin: 25px 30px; }
         .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
@@ -92,6 +111,8 @@
         .crop-selector select { padding: 10px 16px; border: 2px solid var(--primary); border-radius: 8px; font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); background: white; cursor: pointer; }
         .crop-selector select:focus { outline: none; border-color: var(--primary-dark); }
         .chart-container { position: relative; height: 400px; }
+        .chart-fallback { text-align: center; padding: 40px; color: var(--text-light); font-size: 1.1rem; }
+        .chart-fallback i { font-size: 2rem; color: var(--primary); margin-bottom: 15px; display: block; }
         
         /* Update Info */
         .update-info {
@@ -276,6 +297,26 @@
             <div class="market-header-subtitle">Current weekly crop prices across all sub-counties in Siaya County</div>
         </div>
         
+        <!-- Top 3 Crops This Week -->
+        <div class="top-crops-section">
+            <div class="top-crops-card">
+                <div class="top-crops-header">
+                    <div class="top-crops-title">
+                        <i class="fas fa-trophy"></i> Top 3 Crops This Week
+                    </div>
+                    <div class="update-info" style="margin: 0; border-left: none; background: transparent; color: var(--text-light);">
+                        <i class="fas fa-info-circle"></i> Based on average prices across all sub-counties
+                    </div>
+                </div>
+                <div id="topCropsList">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <div>Loading top crops...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Prices Table -->
         <div class="market-section">
             <div class="market-card">
@@ -378,10 +419,13 @@
                 }
 
                 displayPrices(marketData);
+                loadTopCrops(marketData);
             } catch (error) {
                 console.error('Error loading prices:', error);
                 document.getElementById('pricesTable').innerHTML = 
                     '<p style="text-align:center;color:var(--danger);">Failed to load market data</p>';
+                document.getElementById('topCropsList').innerHTML = 
+                    '<p style="text-align:center;color:var(--danger);">Failed to load top crops</p>';
             }
         }
 
@@ -448,6 +492,85 @@
             document.getElementById('pricesTable').innerHTML = html;
         }
         
+        // Load top 3 crops this week
+        function loadTopCrops(data) {
+            if (!data || !data.prices || data.prices.length === 0) {
+                document.getElementById('topCropsList').innerHTML = 
+                    '<p style="text-align:center;color:var(--danger);">No crop data available this week</p>';
+                return;
+            }
+
+            // Calculate average price for each crop across all sub-counties
+            const cropsWithAverages = data.prices.map(crop => {
+                const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego'];
+                const prices = subcounties.map(sc => crop[sc] || 0);
+                const validPrices = prices.filter(p => p > 0);
+                
+                const avgPrice = validPrices.length > 0 
+                    ? validPrices.reduce((sum, price) => sum + price, 0) / validPrices.length 
+                    : 0;
+
+                return {
+                    ...crop,
+                    avgPrice: Math.round(avgPrice),
+                    validPrices: validPrices.length
+                };
+            });
+
+            // Filter out crops with no data and sort by average price
+            const validCrops = cropsWithAverages.filter(crop => crop.avgPrice > 0);
+            const sortedCrops = validCrops.sort((a, b) => b.avgPrice - a.avgPrice);
+            const top3Crops = sortedCrops.slice(0, 3);
+
+            if (top3Crops.length === 0) {
+                document.getElementById('topCropsList').innerHTML = 
+                    '<p style="text-align:center;color:var(--danger);">No crop data available this week</p>';
+                return;
+            }
+
+            displayTopCrops(top3Crops);
+        }
+
+        // Display top 3 crops
+        function displayTopCrops(crops) {
+            let html = '';
+            
+            crops.forEach((crop, index) => {
+                const rank = index + 1;
+                const rankColor = rank === 1 ? '#FFD700' : rank === 2 ? '#C0C0C0' : '#CD7F32';
+                const rankBg = rank === 1 ? '#FFD700' : rank === 2 ? '#C0C0C0' : '#CD7F32';
+                
+                // Crop icon mapping
+                const cropIcons = {
+                    'Maize': '🌽',
+                    'Beans': '🫘',
+                    'Sorghum': '🌿',
+                    'Millet': '🌾',
+                    'Rice': '🍚',
+                    'Groundnuts': '🥜',
+                    'Cassava': '🥔',
+                    'Kales': '🥬'
+                };
+                
+                const icon = cropIcons[crop.crop] || '🌾';
+                
+                html += `
+                    <div class="top-crop-item">
+                        <div class="top-crop-info">
+                            <div class="crop-rank" style="background: ${rankBg}; color: ${rankColor === '#FFD700' ? '#8B5A2B' : 'white'}">
+                                ${rank}
+                            </div>
+                            <div class="crop-icon">${icon}</div>
+                            <div class="crop-name">${crop.crop}</div>
+                        </div>
+                        <div class="crop-price">${formatPrice(crop.avgPrice)}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('topCropsList').innerHTML = html;
+        }
+
         // Load trend chart
         async function loadTrends(crop = 'Maize') {
             try {
