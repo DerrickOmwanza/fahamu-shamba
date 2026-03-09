@@ -22,6 +22,19 @@
         .sidebar-logo { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
         .sidebar-brand h2 { font-size: 1.2rem; margin-bottom: 2px; }
         .sidebar-brand p { font-size: 0.75rem; opacity: 0.85; }
+        .sidebar-close-btn {
+            margin-left: auto;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.35);
+            background: rgba(0,0,0,0.2);
+            color: #fff;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
         .sidebar-nav { flex: 1; padding: 15px 10px; overflow-y: auto; }
         .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 10px; color: rgba(255,255,255,0.85); text-decoration: none; margin-bottom: 5px; transition: all 0.25s ease; }
         .nav-item:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(4px); }
@@ -100,6 +113,9 @@
         .card h2 { color: var(--primary-dark); margin-bottom: 10px; }
         .card p { color: var(--text-light); }
 
+        @media (max-width: 1280px) {
+            .sidebar-close-btn { display: inline-flex; }
+        }
         @media (max-width: 992px) {
             .sidebar { transform: translateX(-100%); width: var(--sidebar-width) !important; }
             .sidebar.mobile-open { transform: translateX(0); }
@@ -139,6 +155,9 @@
                 <h2>Fahamu Shamba</h2>
                 <p>Smart Farming</p>
             </div>
+            <button class="sidebar-close-btn" onclick="closeMobileSidebar()" aria-label="Close menu">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
         <nav class="sidebar-nav">
             <a class="nav-item active" href="/dashboard.html"><i class="fas fa-home"></i><span>Dashboard</span></a>
@@ -302,6 +321,13 @@
             const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('mobile-open');
             overlay.classList.toggle('mobile-open');
+        }
+
+        function closeMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('mobile-open');
         }
 
         function loadUserData() {
@@ -506,6 +532,15 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadUserData();
             loadWeatherDashboard();
+
+            document.addEventListener('click', (event) => {
+                const sidebar = document.getElementById('sidebar');
+                const menuBtn = document.querySelector('.mobile-menu-btn');
+                if (!sidebar.classList.contains('mobile-open')) return;
+                if (sidebar.contains(event.target)) return;
+                if (menuBtn && menuBtn.contains(event.target)) return;
+                closeMobileSidebar();
+            });
         });
     </script>
 </body>
