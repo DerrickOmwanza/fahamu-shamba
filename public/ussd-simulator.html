@@ -48,7 +48,7 @@
             background: #f0f0f0;
             border-radius: 35px;
             padding: 30px 20px;
-            min-height: 600px;
+            height: clamp(460px, 72vh, 620px);
             display: flex;
             flex-direction: column;
             font-size: 14px;
@@ -121,6 +121,11 @@
         .input-area {
             display: flex;
             gap: 8px;
+            position: sticky;
+            bottom: 0;
+            background: #f0f0f0;
+            padding-top: 8px;
+            z-index: 2;
         }
 
         .input-area input {
@@ -359,6 +364,7 @@
             .container {
                 flex-direction: column;
                 gap: 20px;
+                padding-bottom: max(12px, env(safe-area-inset-bottom));
             }
 
             .phone-container,
@@ -369,6 +375,30 @@
 
             .phone {
                 max-width: 100%;
+            }
+
+            .phone-screen {
+                height: min(70dvh, 540px);
+                padding: 18px 14px;
+            }
+
+            .phone-header {
+                margin-bottom: 10px;
+                padding-bottom: 8px;
+            }
+
+            .phone-content {
+                margin-bottom: 8px;
+            }
+
+            .input-area input,
+            .input-area button {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .control-panel {
+                padding: 18px;
             }
         }
 
