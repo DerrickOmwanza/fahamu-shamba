@@ -29,22 +29,29 @@ fahamu-shamba1-main/
 ## 📷 Image Specifications
 
 ### Recommended Properties:
-- **Format**: WebP (lightweight) or PNG/JPG as fallback
+- **Format**: AVIF (preferred), WebP, JPG, or PNG
 - **Dimensions**: 1920×1080px (desktop), optimize for mobile (720px)
 - **File Size**: 100-300 KB per image (compressed)
 - **Resolution**: 72 DPI (web optimized)
 - **Color Space**: sRGB
 
+### Format Priority:
+The dashboard automatically uses the best format available:
+1. **AVIF** (smallest files, best quality)
+2. **WebP** (good compression)
+3. **JPG** (universal compatibility)
+4. **PNG** (highest quality, largest files)
+
 ### Image Suggestions:
 
-| Image | Condition | Suggested Scene |
-|-------|-----------|-----------------|
-| **sunny.webp** | Clear, sunny weather | Bright blue sky, sunny farmland, crops in sunlight |
-| **cloudy.webp** | Overcast, clouds | Grey clouds, overcast field, soft lighting |
-| **rainy.webp** | Rain, drizzle | Raindrops, wet field, rain overlay on crops |
-| **stormy.webp** | Thunderstorm | Dark clouds, lightning sky, dramatic atmosphere |
-| **foggy.webp** | Fog, mist | Misty morning, foggy field, reduced visibility |
-| **snowy.webp** | Snow (optional) | Snow-covered field, winter scene |
+| Image | Condition | Suggested Scene | Formats |
+|-------|-----------|-----------------|---------|
+| **sunny.avif/.webp/.jpg/.png** | Clear, sunny weather | Bright blue sky, sunny farmland, crops in sunlight | AVIF/WebP/JPG/PNG |
+| **cloudy.avif/.webp/.jpg/.png** | Overcast, clouds | Grey clouds, overcast field, soft lighting | AVIF/WebP/JPG/PNG |
+| **rainy.avif/.webp/.jpg/.png** | Rain, drizzle | Raindrops, wet field, rain overlay on crops | AVIF/WebP/JPG/PNG |
+| **stormy.avif/.webp/.jpg/.png** | Thunderstorm | Dark clouds, lightning sky, dramatic atmosphere | AVIF/WebP/JPG/PNG |
+| **foggy.avif/.webp/.jpg/.png** | Fog, mist | Misty morning, foggy field, reduced visibility | AVIF/WebP/JPG/PNG |
+| **snowy.avif/.webp/.jpg/.png** | Snow (optional) | Snow-covered field, winter scene | AVIF/WebP/JPG/PNG |
 
 ---
 

@@ -9,22 +9,22 @@ OPTION 1: EASY (5 minutes)
 
 1. Go to Unsplash.com or Pexels.com
 
-2. Search for and download these 6 images:
-   - "sunny weather blue sky" → sunny.webp
-   - "overcast cloudy field" → cloudy.webp
-   - "rainy weather rain drops" → rainy.webp
-   - "thunderstorm dark sky" → stormy.webp
-   - "foggy mist morning" → foggy.webp
-   - "snowy field snow" → snowy.webp (optional)
+2. Search for and download these 6 images in your preferred format (AVIF, WebP, JPG, or PNG):
+   - "sunny weather blue sky" → sunny.avif/.webp/.jpg/.png
+   - "overcast cloudy field" → cloudy.avif/.webp/.jpg/.png
+   - "rainy weather rain drops" → rainy.avif/.webp/.jpg/.png
+   - "thunderstorm dark sky" → stormy.avif/.webp/.jpg/.png
+   - "foggy mist morning" → foggy.avif/.webp/.jpg/.png
+   - "snowy field snow" → snowy.avif/.webp/.jpg/.png (optional)
 
 3. Compress images:
-   - Use squoosh.app to convert to WebP (80-150 KB each)
-   - Or use tinypng.com to compress PNG/JPG
+   - Use squoosh.app to convert to AVIF/WebP (50-80% smaller than JPG/PNG)
+   - Or use tinypng.com to compress JPG/PNG
 
 4. Create folder in your project:
    c:/Users/ADMIN/fahamu-shamba1-main/public/images/
 
-5. Copy all 6 images into that folder
+5. Copy all 6 images into that folder (use your existing AVIF, JPG, PNG formats)
 
 6. Git commit:
    git add public/images/
@@ -50,12 +50,12 @@ After setup, your project should have:
 public/
 ├── dashboard.html
 ├── images/
-│   ├── sunny.webp
-│   ├── cloudy.webp
-│   ├── rainy.webp
-│   ├── stormy.webp
-│   ├── foggy.webp
-│   └── snowy.webp (optional)
+│   ├── sunny.avif/.webp/.jpg/.png       ← Your format choice
+│   ├── cloudy.avif/.webp/.jpg/.png      ← Your format choice
+│   ├── rainy.avif/.webp/.jpg/.png       ← Your format choice
+│   ├── stormy.avif/.webp/.jpg/.png      ← Your format choice
+│   ├── foggy.avif/.webp/.jpg/.png       ← Your format choice
+│   └── snowy.avif/.webp/.jpg/.png       ← Your format choice (optional)
 └── weather-dashboard-renderer.js
 
 
@@ -77,7 +77,7 @@ Search terms:
 IMAGE SPECS
 ===========
 
-- Format: WebP (preferred) or PNG/JPG
+- Format: AVIF (preferred), WebP, JPG, or PNG
 - Size: 1920×1080px or larger
 - File size: 100-300 KB each
 - Compressed: Yes (use squoosh.app or tinypng.com)
@@ -89,7 +89,7 @@ HOW IT WORKS
 When weather changes:
 1. Backend returns weather condition (e.g., "Rain")
 2. JavaScript applies CSS class (e.g., .rainy-bg)
-3. Background image from /images/rainy.webp displays
+3. Background image from /images/rainy.* displays (uses best format available)
 4. Dark overlay (30% opacity) ensures text readability
 5. Hero card, hourly strip, and detail cards overlay the image
 6. Smooth fade transition (0.5s) when switching
@@ -147,7 +147,7 @@ VERIFICATION
 
 After setup, check:
 [ ] /public/images/ folder created
-[ ] All 6 images added (lowercase filenames)
+[ ] All 6 images added (your preferred formats: AVIF, JPG, PNG)
 [ ] Images are compressed (< 300 KB each)
 [ ] Committed to git
 [ ] Pushed to GitHub
@@ -161,6 +161,6 @@ YOU'RE ALL SET!
 Your Fahamu Shamba farmer dashboard is now ready with
 Google Weather-style design and dynamic backgrounds.
 
-Commit: cd2795d
+Commit: d06c54b
 
 Enjoy! 🌾
