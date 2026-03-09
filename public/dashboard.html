@@ -505,7 +505,7 @@
                 renderMetrics();
 
                 document.getElementById('weatherNote').textContent = '';
-                renderWeatherMode('week');
+                renderWeatherMode('day');
             } catch (err) {
                 document.getElementById('weatherNote').textContent = 'Using offline-ready weather fallback.';
                 weatherState.current = { temp: 25, humidity: 80, wind_speed: 7.2, wind_deg: 45, description: 'Overcast' };
@@ -525,7 +525,7 @@
                 document.getElementById('weatherNowDesc').textContent = weatherState.current.description;
                 document.getElementById('weatherNowMeta').textContent = `${subcounty} • Humidity ${weatherState.current.humidity}% • Wind ${weatherState.current.wind_speed} km/h`;
                 renderMetrics();
-                renderWeatherMode('week');
+                renderWeatherMode('day');
             }
         }
 
