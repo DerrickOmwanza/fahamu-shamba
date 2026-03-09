@@ -94,6 +94,19 @@
         .weather-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
         .weather-tab { border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.1); color: #fff; padding: 8px 12px; border-radius: 20px; font-weight: 600; cursor: pointer; }
         .weather-tab.active { background: #fff; color: var(--primary-dark); }
+        .weather-farmer-tip { margin-top: 6px; font-size: 0.9rem; color: #d7e8ff; font-weight: 600; }
+        .strip-title { margin: 10px 0 8px; font-size: 0.92rem; font-weight: 700; color: #dce9ff; }
+        .forecast-strip { overflow-x: auto; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; background: rgba(255,255,255,0.08); padding: 8px; margin-bottom: 12px; }
+        .forecast-track { display: grid; grid-template-columns: repeat(24, minmax(90px, 1fr)); gap: 8px; min-width: 2150px; }
+        .forecast-hour { padding: 8px; border-radius: 10px; background: rgba(9,13,40,0.33); text-align: center; }
+        .forecast-hour-time { font-size: 0.75rem; opacity: 0.9; }
+        .forecast-hour-icon { margin: 2px 0; }
+        .forecast-hour-temp { font-weight: 700; }
+        .forecast-hour-rain { font-size: 0.75rem; color: #9fd2ff; }
+        .week-row { display: grid; grid-template-columns: repeat(7, minmax(110px, 1fr)); gap: 8px; margin-bottom: 10px; }
+        .week-cell { border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); border-radius: 10px; padding: 8px; text-align: center; }
+        .week-day { font-size: 0.78rem; opacity: 0.9; }
+        .week-temp { font-weight: 700; font-size: 0.84rem; }
         .weather-alert {
             margin-bottom: 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.35);
             background: rgba(245,124,0,0.2); font-weight: 600; font-size: 0.87rem; display: none;
@@ -143,11 +156,18 @@
         }
         .weather-radar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0; }
         .radar-item { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px; text-align: center; }
+        .radar-item.dimmed { opacity: 0.45; }
+        .weather-radar-tabs { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+        .radar-tab-btn { border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #fff; border-radius: 16px; padding: 6px 10px; cursor: pointer; font-weight: 700; }
+        .radar-tab-btn.active { background: #ffd84f; border-color: #ffd84f; color: #1f2452; }
         .radar-circle { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 8px; background-size: cover; background-position: center; }
         .radar-circle.precip { background-image: radial-gradient(circle at 30% 35%, #7bd4ff, #2f6f92 60%, #1f3344); }
         .radar-circle.wind { background-image: radial-gradient(circle at 60% 30%, #b7f3ff, #4ea4b4 60%, #22444d); }
         .radar-circle.temp { background-image: radial-gradient(circle at 70% 30%, #ffe48a, #f6b85f 58%, #754c37); }
         .weather-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; }
+        .weather-metrics.collapsed { display: none; }
+        .details-head { display: flex; justify-content: space-between; align-items: center; margin: 8px 0 10px; }
+        .details-toggle { border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.13); color: #fff; border-radius: 18px; padding: 6px 10px; font-weight: 700; cursor: pointer; }
         .metric-card { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 12px; }
         .metric-title { font-size: 0.85rem; opacity: 0.9; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
         .metric-value { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
@@ -171,6 +191,7 @@
             .sidebar-overlay.mobile-open { display: block; }
             .main-content { margin-left: 0 !important; }
             .weather-grid { grid-template-columns: repeat(4, minmax(100px, 1fr)); }
+            .week-row { grid-template-columns: repeat(4, minmax(110px, 1fr)); }
             .weather-radar { grid-template-columns: 1fr 1fr 1fr; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
@@ -185,6 +206,7 @@
             .weather-card { padding: 14px; }
             .weather-now-temp { font-size: 1.8rem; }
             .weather-grid { grid-template-columns: repeat(2, minmax(100px, 1fr)); }
+            .week-row { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
             .weather-radar { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
             .radar-circle { width: 58px; height: 58px; }
             .weather-metrics { grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -268,6 +290,7 @@
                         <div>
                             <div style="font-weight:700;" id="weatherNowDesc">Loading weather...</div>
                             <div class="weather-now-meta" id="weatherNowMeta">Siaya • Humidity --% • Wind -- km/h</div>
+                            <div class="weather-farmer-tip" id="weatherFarmerTip">Checking live advisory...</div>
                         </div>
                     </div>
                     <div style="text-align:right; font-size:0.85rem; opacity:0.9;">
@@ -290,25 +313,41 @@
                     <button class="weather-tab" data-mode="month" onclick="renderWeatherMode('month')">Month</button>
                 </div>
                 <div class="weather-alert" id="weatherAlert"></div>
+                <div class="strip-title">Next 72 Hours</div>
+                <div class="forecast-strip">
+                    <div class="forecast-track" id="forecast72Track"></div>
+                </div>
+                <div class="strip-title">7-Day Forecast</div>
+                <div class="week-row" id="weekForecastRow"></div>
                 <div class="weather-grid" id="weatherForecastGrid"></div>
                 <div class="hourly-plot">
                     <div class="hourly-row" id="hourlyTimeline"></div>
                 </div>
+                <div class="weather-radar-tabs">
+                    <button class="radar-tab-btn active" onclick="setRadarView('all', this)">All</button>
+                    <button class="radar-tab-btn" onclick="setRadarView('precip', this)">Precipitation</button>
+                    <button class="radar-tab-btn" onclick="setRadarView('wind', this)">Wind</button>
+                    <button class="radar-tab-btn" onclick="setRadarView('temp', this)">Temperature</button>
+                </div>
                 <div class="weather-radar">
-                    <div class="radar-item">
+                    <div class="radar-item" data-radar="precip">
                         <div class="radar-circle precip"></div>
                         <div style="font-size:0.82rem;font-weight:600;">Precipitation</div>
                     </div>
-                    <div class="radar-item">
+                    <div class="radar-item" data-radar="wind">
                         <div class="radar-circle wind"></div>
                         <div style="font-size:0.82rem;font-weight:600;">Wind Force</div>
                     </div>
-                    <div class="radar-item">
+                    <div class="radar-item" data-radar="temp">
                         <div class="radar-circle temp"></div>
                         <div style="font-size:0.82rem;font-weight:600;">Temperatures</div>
                     </div>
                 </div>
-                <div class="weather-metrics">
+                <div class="details-head">
+                    <div class="strip-title" style="margin:0;">Weather Details</div>
+                    <button class="details-toggle" id="detailsToggleBtn" onclick="toggleWeatherDetails()">Hide details</button>
+                </div>
+                <div class="weather-metrics" id="weatherMetricsPanel">
                     <div class="metric-card">
                         <div class="metric-title">🌧 Rainfall</div>
                         <div class="metric-value" id="metricRainfall">-- mm</div>
@@ -479,6 +518,60 @@
             }).join('');
         }
 
+        function render72HourStrip() {
+            const track = document.getElementById('forecast72Track');
+            const hours = (weatherState.hourly || []).slice(0, 24);
+            if (!hours.length) {
+                track.innerHTML = '<div class="forecast-hour">No 72-hour forecast yet</div>';
+                return;
+            }
+            track.innerHTML = hours.map(h => {
+                const time = new Date(h.dt_txt || h.date).toLocaleString([], { weekday: 'short', hour: 'numeric' });
+                const rain = Math.round((h.pop || 0) * 100);
+                return `
+                    <div class="forecast-hour">
+                        <div class="forecast-hour-time">${time}</div>
+                        <div class="forecast-hour-icon">${weatherIcon(h.description)}</div>
+                        <div class="forecast-hour-temp">${h.temp}C</div>
+                        <div class="forecast-hour-rain">${rain}% rain</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderWeekRow() {
+            const row = document.getElementById('weekForecastRow');
+            const days = (weatherState.daily || []).slice(0, 7);
+            if (!days.length) {
+                row.innerHTML = '<div class="week-cell">No weekly forecast yet</div>';
+                return;
+            }
+            row.innerHTML = days.map((d, idx) => `
+                <div class="week-cell">
+                    <div class="week-day">${formatDayLabel(d.date, idx)}</div>
+                    <div style="margin:2px 0;">${weatherIcon(d.description)}</div>
+                    <div class="week-temp">${d.temperature.max} / ${d.temperature.min}</div>
+                    <div class="forecast-hour-rain">${d.rain_probability || 0}% rain</div>
+                </div>
+            `).join('');
+        }
+
+        function toggleWeatherDetails() {
+            const panel = document.getElementById('weatherMetricsPanel');
+            const btn = document.getElementById('detailsToggleBtn');
+            panel.classList.toggle('collapsed');
+            btn.textContent = panel.classList.contains('collapsed') ? 'Show details' : 'Hide details';
+        }
+
+        function setRadarView(type, btn) {
+            document.querySelectorAll('.radar-tab-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            document.querySelectorAll('.weather-radar .radar-item').forEach(item => {
+                const match = type === 'all' || item.dataset.radar === type;
+                item.classList.toggle('dimmed', !match);
+            });
+        }
+
         function renderWeatherMode(mode = 'day') {
             document.querySelectorAll('.weather-tab').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.mode === mode);
@@ -556,15 +649,19 @@
                 ? Math.round(hourly.slice(0, 8).reduce((a, b) => a + Number((b.pop || 0) * 100), 0) / hourly.slice(0, 8).length)
                 : 0;
             const alert = document.getElementById('weatherAlert');
+            const tip = document.getElementById('weatherFarmerTip');
             if (avgPop >= 70) {
                 alert.style.display = 'block';
                 alert.textContent = `Weather Alert: ${avgPop}% rain probability in the next hours. Delay spraying and secure harvested crops.`;
+                tip.textContent = 'High rain chance today. Prioritize drainage and protect harvested produce.';
             } else if (avgPop >= 45) {
                 alert.style.display = 'block';
                 alert.textContent = `Weather Advisory: ${avgPop}% rain probability. Plan field work with caution.`;
+                tip.textContent = 'Moderate rain expected. Good for planting, but time fertilizer carefully.';
             } else {
                 alert.style.display = 'none';
                 alert.textContent = '';
+                tip.textContent = 'Lower rain risk. Suitable window for harvesting and field preparation.';
             }
 
             document.getElementById('metricRainfall').textContent = `${rainSum.toFixed(1)} mm`;
@@ -611,6 +708,8 @@
                 document.getElementById('weatherNowMeta').textContent = `${data.location || subcounty} • Humidity ${c.humidity || '--'}% • Wind ${Number(c.wind_speed || 0).toFixed(1)} km/h`;
                 document.getElementById('weatherUpdated').textContent = new Date().toLocaleTimeString();
                 renderMetrics();
+                render72HourStrip();
+                renderWeekRow();
                 document.getElementById('chipTempSiaya').textContent = subcounty === 'siaya' ? `${c.temp ?? '--'}°` : document.getElementById('chipTempSiaya').textContent;
                 document.getElementById('chipTempBondo').textContent = subcounty === 'bondo' ? `${c.temp ?? '--'}°` : document.getElementById('chipTempBondo').textContent;
                 document.getElementById('chipTempUgunja').textContent = subcounty === 'ugunja' ? `${c.temp ?? '--'}°` : document.getElementById('chipTempUgunja').textContent;
@@ -641,6 +740,8 @@
                 document.getElementById('chipTempBondo').textContent = subcounty === 'bondo' ? `${weatherState.current.temp}°` : document.getElementById('chipTempBondo').textContent;
                 document.getElementById('chipTempUgunja').textContent = subcounty === 'ugunja' ? `${weatherState.current.temp}°` : document.getElementById('chipTempUgunja').textContent;
                 renderMetrics();
+                render72HourStrip();
+                renderWeekRow();
                 renderWeatherMode('day');
             }
         }
