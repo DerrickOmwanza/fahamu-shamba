@@ -31,8 +31,16 @@ export function initAuthRoutes(db) {
   };
 
   // Helper: Generate JWT token
-  const generateToken = (userId) => {
-    return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '7d' });
+  const generateToken = (user) => {
+    return jwt.sign({ 
+      userId: user.id,
+      phone: user.phone,
+      username: user.username,
+      name: user.name,
+      location: user.location || null,
+      ward: user.ward || null,
+      farm_size: user.farm_size || null
+    }, JWT_SECRET, { expiresIn: '7d' });
   };
 
   // Helper: Validate phone format
@@ -82,9 +90,12 @@ export function initAuthRoutes(db) {
         });
       }
 
+      // Normalize username to lowercase
+      const normalizedUsername = username.trim().toLowerCase();
+
       // Check if phone or username already exists
-      const stmt = db.prepare('SELECT id, phone, username FROM users WHERE phone = ? OR username = ?');
-      const existingUser = stmt.get(phone, username);
+      const stmt = db.prepare('SELECT id, phone, username FROM users WHERE phone = ? OR LOWER(username) = ?');
+      const existingUser = stmt.get(phone, normalizedUsername);
 
       if (existingUser) {
         return res.status(400).json({
@@ -102,7 +113,7 @@ export function initAuthRoutes(db) {
       const insertStmt = db.prepare(
         'INSERT INTO users (phone, username, password_hash, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
       );
-      const result = insertStmt.run(phone, username.trim(), passwordHash);
+      const result = insertStmt.run(phone, normalizedUsername, passwordHash);
 
       res.status(201).json({
         status: 'success',
@@ -152,12 +163,20 @@ export function initAuthRoutes(db) {
       const updateStmt = db.prepare('UPDATE users SET name = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
       updateStmt.run(name, userId);
 
-      // Generate JWT token
-      const token = generateToken(userId);
-
       // Fetch updated user
       const getUserStmt = db.prepare('SELECT id, phone, username, name FROM users WHERE id = ?');
       const updatedUser = getUserStmt.get(userId);
+
+      // Generate JWT token with user data
+      const token = generateToken({
+        id: updatedUser.id,
+        phone: updatedUser.phone,
+        username: updatedUser.username,
+        name: name,
+        location: location,
+        ward: ward || null,
+        farm_size: farm_size || null
+      });
 
       res.status(201).json({
         status: 'success',
@@ -187,24 +206,32 @@ export function initAuthRoutes(db) {
   router.post('/login', async (req, res) => {
     try {
       const { username, phone, password } = req.body;
-      const identifier = (username || phone || '').trim();
+      const phoneIdentifier = phone ? phone.trim() : '';
+      const usernameIdentifier = username ? username.trim().toLowerCase() : '';
 
       // Validate input
-      if (!identifier || !password) {
+      if (!phoneIdentifier && !usernameIdentifier) {
         return res.status(400).json({
           status: 'error',
           message: 'Username and password are required'
         });
       }
 
-      console.log(`Login attempt with identifier: ${identifier}`);
+      if (!password) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Password is required'
+        });
+      }
+
+      console.log(`Login attempt with username: ${usernameIdentifier}, phone: ${phoneIdentifier}`);
 
       // Find user
-      const stmt = db.prepare('SELECT id, phone, username, password_hash, name FROM users WHERE username = ? OR phone = ?');
-      const user = stmt.get(identifier, identifier);
+      const stmt = db.prepare('SELECT id, phone, username, password_hash, name FROM users WHERE LOWER(username) = ? OR phone = ?');
+      const user = stmt.get(usernameIdentifier, phoneIdentifier);
 
       if (!user) {
-        console.log(`User not found for identifier: ${identifier}`);
+        console.log(`User not found for username: ${usernameIdentifier}, phone: ${phoneIdentifier}`);
         return res.status(401).json({
           status: 'error',
           message: 'Invalid username or password'
@@ -225,12 +252,19 @@ export function initAuthRoutes(db) {
         });
       }
 
-      // Generate token
-      const token = generateToken(user.id);
-
-      // Fetch farm profile
+      // Generate token with user data (fetch farm first, then use it)
       const farmStmt = db.prepare('SELECT location, ward, farm_size, farm_size_unit FROM farms WHERE user_id = ?');
       const farm = farmStmt.get(user.id);
+      
+      const token = generateToken({
+        id: user.id,
+        phone: user.phone,
+        username: user.username,
+        name: user.name,
+        location: farm ? farm.location : null,
+        ward: farm ? farm.ward : null,
+        farm_size: farm ? farm.farm_size : null
+      });
 
       res.json({
         status: 'success',
@@ -276,18 +310,38 @@ export function initAuthRoutes(db) {
         });
       }
 
-      const userStmt = db.prepare('SELECT id, phone, username, name FROM users WHERE id = ?');
-      const user = userStmt.get(decoded.userId);
-
-      if (!user) {
-        return res.status(404).json({
-          status: 'error',
-          message: 'User not found'
-        });
+      // Try to get user from database, but don't fail if database is empty on Vercel
+      let user = null;
+      let farm = null;
+      try {
+        const userStmt = db.prepare('SELECT id, phone, username, name FROM users WHERE id = ?');
+        user = userStmt.get(decoded.userId);
+        
+        if (user) {
+          const farmStmt = db.prepare('SELECT location, ward, farm_size, farm_size_unit FROM farms WHERE user_id = ?');
+          farm = farmStmt.get(user.id);
+        }
+      } catch (dbError) {
+        console.log('Database query error (may be Vercel ephemeral storage):', dbError.message);
       }
 
-      const farmStmt = db.prepare('SELECT location, ward, farm_size, farm_size_unit FROM farms WHERE user_id = ?');
-      const farm = farmStmt.get(user.id);
+      // If user not in database but token is valid, return token payload
+      if (!user) {
+        return res.json({
+          status: 'success',
+          user: {
+            id: decoded.userId,
+            phone: decoded.phone || null,
+            username: decoded.username || null,
+            name: decoded.name || null,
+            location: decoded.location || null,
+            ward: decoded.ward || null,
+            farm_size: decoded.farm_size || null,
+            farm_size_unit: 'acres'
+          },
+          note: 'User data from token (database may be reset on Vercel)'
+        });
+      }
 
       res.json({
         status: 'success',
