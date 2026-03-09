@@ -20,8 +20,8 @@ function getDb() {
 }
 
 // Initialize community tables
-export function initializeCommunityDatabase() {
-  const database = getDb();
+export function initializeCommunityDatabase(dbConnection) {
+  const database = dbConnection || getDb();
   
   // Questions table
   database.exec(`

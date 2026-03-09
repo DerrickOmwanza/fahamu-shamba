@@ -20,6 +20,8 @@ import { initializeAuthTables } from './init-auth-tables.js';
 import { handleUSSD } from './ussd-service.js';
 import communityRoutes from './community-routes.js';
 import feedbackRoutes from './feedback-routes.js';
+import communityService from './community-service.js';
+import feedbackService from './feedback-service.js';
 import marketRoutes from './market-routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -101,7 +103,7 @@ initializeEmailService();
 const databasePath = IS_VERCEL
   ? (process.env.SQLITE_DB_PATH || '/tmp/fahamu_shamba.db')
   : path.join(__dirname, 'fahamu_shamba.db');
-const db = new Database(databasePath);
+const db = new Database(databasePath, {}); // Add empty options object
 console.log(`✅ Connected to SQLite database at ${databasePath}`);
 
 // Wrapper for better-sqlite3 to match async patterns (MUST be before initializeDatabase)
@@ -147,7 +149,22 @@ try {
   console.error('⚠️ Error initializing auth tables:', error.message);
 }
 
-// Initialize authentication routes
+// Initialize community and feedback databases with the main db connection
+console.log('👥 Initializing community database...');
+try {
+  communityService.initializeCommunityDatabase(db);
+  console.log('✅ Community database initialized');
+} catch (error) {
+  console.error('⚠️ Error initializing community database:', error.message);
+}
+
+console.log('📝 Initializing feedback database...');
+try {
+  feedbackService.initializeFeedbackDatabase(db);
+  console.log('✅ Feedback database initialized');
+} catch (error) {
+  console.error('⚠️ Error initializing feedback database:', error.message);
+}
 console.log('🚀 Registering authentication routes...');
 const authRoutes = initAuthRoutes(db);
 app.use('/api/auth', authRoutes);

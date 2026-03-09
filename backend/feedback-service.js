@@ -20,8 +20,8 @@ function getDb() {
 }
 
 // Initialize enhanced feedback tables
-export function initializeFeedbackDatabase() {
-  const database = getDb();
+export function initializeFeedbackDatabase(dbConnection) {
+  const database = dbConnection || getDb();
   
   // Enhanced feedback with ratings
   database.exec(`
