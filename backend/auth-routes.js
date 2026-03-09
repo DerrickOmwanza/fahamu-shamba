@@ -8,6 +8,18 @@ const router = express.Router();
 export function initAuthRoutes(db) {
   const JWT_SECRET = process.env.JWT_SECRET || 'farmer_secret_key_change_in_production';
 
+  // Middleware: Verify JWT token (must be defined BEFORE routes that use it)
+  router.use((req, res, next) => {
+    req.verifyToken = (token) => {
+      try {
+        return jwt.verify(token, JWT_SECRET);
+      } catch (err) {
+        return null;
+      }
+    };
+    next();
+  });
+
   // Helper: Hash password
   const hashPassword = async (password) => {
     return await bcryptjs.hash(password, 10);
@@ -234,18 +246,6 @@ export function initAuthRoutes(db) {
         message: 'Login failed. Please try again.'
       });
     }
-  });
-
-  // Middleware: Verify JWT token
-  router.use((req, res, next) => {
-    req.verifyToken = (token) => {
-      try {
-        return jwt.verify(token, JWT_SECRET);
-      } catch (err) {
-        return null;
-      }
-    };
-    next();
   });
 
   // GET /api/auth/user - Fetch current user (requires token in Authorization header)
