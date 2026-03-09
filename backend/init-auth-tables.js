@@ -19,6 +19,7 @@ export function initializeAuthTables(db) {
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         phone VARCHAR(20) UNIQUE NOT NULL,
+        username VARCHAR(50) UNIQUE,
         password_hash VARCHAR(255) NOT NULL,
         name VARCHAR(100),
         email VARCHAR(100),
@@ -31,7 +32,16 @@ export function initializeAuthTables(db) {
     // Create index on phone for fast lookups
     db.exec(`
       CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone);
+      CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
     `);
+
+    // Backward-compatible migration for existing DBs created before username field.
+    const userColumns = db.prepare(`PRAGMA table_info(users)`).all().map(col => col.name);
+    if (!userColumns.includes('username')) {
+      db.exec(`ALTER TABLE users ADD COLUMN username VARCHAR(50);`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);`);
+      console.log('✅ Added username column to existing users table');
+    }
 
     console.log('✅ users table created');
 

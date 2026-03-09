@@ -206,6 +206,7 @@
                 <input type="password" id="password" placeholder="Enter your password" required>
             </div>
             <button type="submit" class="btn">Login</button>
+        </form>
         <div class="links">
             <p>Don't have an account? <a href="/signup.html">Sign Up</a></p>
         </div>
@@ -264,30 +265,42 @@
             }
         });
         
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
+            const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
+            const submitBtn = document.querySelector('#loginForm .btn');
             
             if (!username || !password) {
                 alert('Please enter username and password');
                 return;
             }
-            
-            // Store demo token and user info directly (works without backend)
-            localStorage.setItem('token', 'demo-token-' + Date.now());
-            localStorage.setItem('user', JSON.stringify({ 
-                username: username,
-                name: username.charAt(0).toUpperCase() + username.slice(1), // Capitalize first letter
-                sub_county: 'Bondo',
-                ward: 'Central Ward',
-                farm_size: 2,
-                main_crop: 'Maize'
-            }));
-            
-            // Redirect to dashboard
-            window.location.href = '/dashboard.html';
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Logging in...';
+
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+                if (!response.ok || result.status !== 'success') {
+                    throw new Error(result.message || 'Login failed');
+                }
+
+                localStorage.setItem('token', result.token);
+                localStorage.setItem('user', JSON.stringify(result.user || {}));
+                window.location.href = '/dashboard.html';
+            } catch (error) {
+                alert(error.message || 'Invalid username or password');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Login';
+            }
         });
     </script>
 </body>

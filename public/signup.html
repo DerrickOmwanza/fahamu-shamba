@@ -218,10 +218,11 @@
                 <select id="subcounty" required>
                     <option value="">Select Sub-County</option>
                     <option value="bondo">Bondo</option>
+                    <option value="ugenya">Ugenya</option>
                     <option value="ugunja">Ugunja</option>
-                    <option value="yala">Yala</option>
                     <option value="gem">Gem</option>
-                    <option value="alego">Alego</option>
+                    <option value="alego">Alego Usonga</option>
+                    <option value="rarieda">Rarieda</option>
                 </select>
             </div>
             <div class="form-group">
@@ -259,6 +260,7 @@
         <div class="back-link">
             <a href="/"><i class="fas fa-arrow-left"></i> Back to Home</a>
         </div>
+    </div>
     <script>
         // Initialize language on page load
         document.addEventListener('DOMContentLoaded', () => {
@@ -310,12 +312,20 @@
             }
         });
         
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
+        function normalizeKenyaPhone(phone) {
+            const digits = (phone || '').replace(/\D/g, '');
+            if (digits.startsWith('0') && digits.length === 10) return `254${digits.slice(1)}`;
+            if (digits.startsWith('7') && digits.length === 9) return `254${digits}`;
+            if (digits.startsWith('254') && digits.length === 12) return digits;
+            return phone;
+        }
+
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const name = document.getElementById('name').value;
             const username = document.getElementById('username').value;
-            const phone = document.getElementById('phone').value;
+            const phone = normalizeKenyaPhone(document.getElementById('phone').value);
             const subcounty = document.getElementById('subcounty').value;
             const ward = document.getElementById('ward').value;
             const farmSize = document.getElementById('farmSize').value;
@@ -332,26 +342,49 @@
                 alert('Please choose a username!');
                 return;
             }
-            
-            // Store user info directly (works without backend)
-            localStorage.setItem('user', JSON.stringify({ 
-                name, 
-                username,
-                phone, 
-                sub_county: subcounty, 
-                ward, 
-                farm_size: farmSize, 
-                main_crop: mainCrop,
-                profile_photo: null // For future photo upload
-            }));
-            
-            // Store password temporarily (for demo - should use backend in production)
-            localStorage.setItem('userPassword', password);
-            
-            alert('Account created successfully! Please log in with your username and password.');
-            
-            // Redirect to login
-            window.location.href = '/login.html';
+
+            const submitBtn = document.querySelector('#signupForm .btn');
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Creating account...';
+
+                const registerRes = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, username, password })
+                });
+                const registerData = await registerRes.json();
+                if (!registerRes.ok || registerData.status !== 'success') {
+                    throw new Error(registerData.message || 'Registration failed');
+                }
+
+                const profileRes = await fetch('/api/auth/register-profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: registerData.userId,
+                        name,
+                        location: subcounty,
+                        ward,
+                        farm_size: Number(farmSize) || null
+                    })
+                });
+                const profileData = await profileRes.json();
+                if (!profileRes.ok || profileData.status !== 'success') {
+                    throw new Error(profileData.message || 'Profile setup failed');
+                }
+
+                localStorage.setItem('token', profileData.token);
+                localStorage.setItem('user', JSON.stringify(profileData.user || {}));
+                alert('Account created successfully. Please login with your username and password.');
+                window.location.href = '/login.html';
+            } catch (error) {
+                alert(error.message || 'Failed to create account');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            }
         });
     </script>
 </body>

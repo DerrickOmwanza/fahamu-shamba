@@ -34,16 +34,18 @@ export function initAuthRoutes(db) {
     return password.length >= 6; // Minimum 6 chars for MVP
   };
 
+  const isValidUsername = (username) => /^[a-zA-Z0-9._-]{3,30}$/.test((username || '').trim());
+
   // POST /api/auth/register - Step 1: Phone + Password
   router.post('/register', async (req, res) => {
     try {
-      const { phone, password } = req.body;
+      const { phone, username, password } = req.body;
 
       // Validate input
-      if (!phone || !password) {
+      if (!phone || !username || !password) {
         return res.status(400).json({
           status: 'error',
-          message: 'Phone and password are required'
+          message: 'Phone, username, and password are required'
         });
       }
 
@@ -61,14 +63,23 @@ export function initAuthRoutes(db) {
         });
       }
 
-      // Check if phone already exists
-      const stmt = db.prepare('SELECT id FROM users WHERE phone = ?');
-      const existingUser = stmt.get(phone);
+      if (!isValidUsername(username)) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Username must be 3-30 characters and use letters, numbers, ., _, or -'
+        });
+      }
+
+      // Check if phone or username already exists
+      const stmt = db.prepare('SELECT id, phone, username FROM users WHERE phone = ? OR username = ?');
+      const existingUser = stmt.get(phone, username);
 
       if (existingUser) {
         return res.status(400).json({
           status: 'error',
-          message: 'Phone number already registered'
+          message: existingUser.phone === phone
+            ? 'Phone number already registered'
+            : 'Username already taken'
         });
       }
 
@@ -77,9 +88,9 @@ export function initAuthRoutes(db) {
 
       // Create user
       const insertStmt = db.prepare(
-        'INSERT INTO users (phone, password_hash, created_at, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
+        'INSERT INTO users (phone, username, password_hash, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
       );
-      const result = insertStmt.run(phone, passwordHash);
+      const result = insertStmt.run(phone, username.trim(), passwordHash);
 
       res.status(201).json({
         status: 'success',
@@ -133,7 +144,7 @@ export function initAuthRoutes(db) {
       const token = generateToken(userId);
 
       // Fetch updated user
-      const getUserStmt = db.prepare('SELECT id, phone, name FROM users WHERE id = ?');
+      const getUserStmt = db.prepare('SELECT id, phone, username, name FROM users WHERE id = ?');
       const updatedUser = getUserStmt.get(userId);
 
       res.status(201).json({
@@ -143,6 +154,7 @@ export function initAuthRoutes(db) {
         user: {
           id: updatedUser.id,
           phone: updatedUser.phone,
+          username: updatedUser.username,
           name: updatedUser.name,
           location,
           ward: ward || null,
@@ -162,19 +174,20 @@ export function initAuthRoutes(db) {
   // POST /api/auth/login
   router.post('/login', async (req, res) => {
     try {
-      const { phone, password } = req.body;
+      const { username, phone, password } = req.body;
+      const identifier = (username || phone || '').trim();
 
       // Validate input
-      if (!phone || !password) {
+      if (!identifier || !password) {
         return res.status(400).json({
           status: 'error',
-          message: 'Phone and password are required'
+          message: 'Username and password are required'
         });
       }
 
       // Find user
-      const stmt = db.prepare('SELECT id, phone, password_hash, name FROM users WHERE phone = ?');
-      const user = stmt.get(phone);
+      const stmt = db.prepare('SELECT id, phone, username, password_hash, name FROM users WHERE username = ? OR phone = ?');
+      const user = stmt.get(identifier, identifier);
 
       if (!user) {
         return res.status(401).json({
@@ -206,6 +219,7 @@ export function initAuthRoutes(db) {
         user: {
           id: user.id,
           phone: user.phone,
+          username: user.username,
           name: user.name,
           location: farm ? farm.location : null,
           ward: farm ? farm.ward : null,
@@ -255,7 +269,7 @@ export function initAuthRoutes(db) {
         });
       }
 
-      const userStmt = db.prepare('SELECT id, phone, name FROM users WHERE id = ?');
+      const userStmt = db.prepare('SELECT id, phone, username, name FROM users WHERE id = ?');
       const user = userStmt.get(decoded.userId);
 
       if (!user) {
@@ -273,6 +287,7 @@ export function initAuthRoutes(db) {
         user: {
           id: user.id,
           phone: user.phone,
+          username: user.username,
           name: user.name,
           location: farm ? farm.location : null,
           ward: farm ? farm.ward : null,

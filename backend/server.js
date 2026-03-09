@@ -556,9 +556,11 @@ const subCountyCoordinates = {
   'siaya': { lat: -0.0611, lon: 34.2881 },
   'bondo': { lat: -0.2386, lon: 34.2699 },
   'ugunja': { lat: -0.2833, lon: 34.2833 },
-  'yala': { lat: -0.1000, lon: 34.5333 },
+  'ugenya': { lat: -0.1000, lon: 34.5333 },
+  'yala': { lat: -0.1000, lon: 34.5333 }, // alias for backward compatibility
   'gem': { lat: -0.0833, lon: 34.4833 },
-  'alego': { lat: -0.1667, lon: 34.3667 }
+  'alego': { lat: -0.1667, lon: 34.3667 },
+  'rarieda': { lat: -0.3300, lon: 34.4920 }
 };
 
 // Current weather endpoint
@@ -570,7 +572,7 @@ app.get('/api/weather/current/:subcounty', async (req, res) => {
     if (!coords) {
       return res.status(404).json({ 
         success: false,
-        error: 'Sub-county not found. Available sub-counties: bondo, ugunja, yala, gem, alego' 
+        error: 'Sub-county not found. Available sub-counties: bondo, ugunja, ugenya, gem, alego, rarieda'
       });
     }
 
@@ -629,7 +631,7 @@ app.get('/api/weather/live/:subcounty', async (req, res) => {
   if (!coords) {
     return res.status(404).json({
       success: false,
-      error: 'Sub-county not found. Use siaya, bondo, ugunja, yala, gem, alego'
+      error: 'Sub-county not found. Use siaya, bondo, ugunja, ugenya, gem, alego, rarieda'
     });
   }
 

@@ -91,6 +91,7 @@
         .weather-now-temp { font-size: 2.3rem; font-weight: 700; line-height: 1; }
         .weather-now-meta { opacity: 0.95; font-size: 0.92rem; }
         .weather-location { padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.12); color: #fff; font-weight: 600; }
+        .weather-location option { color: #1f2452; background: #ffffff; }
         .weather-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
         .weather-tab { border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.1); color: #fff; padding: 8px 12px; border-radius: 20px; font-weight: 600; cursor: pointer; }
         .weather-tab.active { background: #fff; color: var(--primary-dark); }
@@ -273,15 +274,13 @@
 
             <section class="weather-card">
                 <div class="city-strip" id="cityStrip">
-                    <button class="city-chip active" data-subcounty="siaya" onclick="switchSubcounty('siaya')">
-                        <strong>Siaya</strong><span id="chipTempSiaya">--°</span>
-                    </button>
-                    <button class="city-chip" data-subcounty="bondo" onclick="switchSubcounty('bondo')">
-                        <strong>Bondo</strong><span id="chipTempBondo">--°</span>
-                    </button>
-                    <button class="city-chip" data-subcounty="ugunja" onclick="switchSubcounty('ugunja')">
-                        <strong>Ugunja</strong><span id="chipTempUgunja">--°</span>
-                    </button>
+                    <button class="city-chip active" data-subcounty="siaya" onclick="switchSubcounty('siaya')"><strong>Siaya</strong><span class="chip-temp">--°</span></button>
+                    <button class="city-chip" data-subcounty="bondo" onclick="switchSubcounty('bondo')"><strong>Bondo</strong><span class="chip-temp">--°</span></button>
+                    <button class="city-chip" data-subcounty="ugunja" onclick="switchSubcounty('ugunja')"><strong>Ugunja</strong><span class="chip-temp">--°</span></button>
+                    <button class="city-chip" data-subcounty="ugenya" onclick="switchSubcounty('ugenya')"><strong>Ugenya</strong><span class="chip-temp">--°</span></button>
+                    <button class="city-chip" data-subcounty="gem" onclick="switchSubcounty('gem')"><strong>Gem</strong><span class="chip-temp">--°</span></button>
+                    <button class="city-chip" data-subcounty="alego" onclick="switchSubcounty('alego')"><strong>Alego</strong><span class="chip-temp">--°</span></button>
+                    <button class="city-chip" data-subcounty="rarieda" onclick="switchSubcounty('rarieda')"><strong>Rarieda</strong><span class="chip-temp">--°</span></button>
                     <div class="unit-chip">°C</div>
                 </div>
                 <div class="weather-top">
@@ -300,9 +299,10 @@
                             <option value="siaya">Siaya</option>
                             <option value="bondo">Bondo</option>
                             <option value="ugunja">Ugunja</option>
-                            <option value="yala">Yala</option>
+                            <option value="ugenya">Ugenya</option>
                             <option value="gem">Gem</option>
                             <option value="alego">Alego</option>
+                            <option value="rarieda">Rarieda</option>
                         </select>
                     </div>
                 </div>
@@ -495,6 +495,11 @@
             });
         }
 
+        function updateChipTemperature(subcounty, tempValue) {
+            const chip = document.querySelector(`.city-chip[data-subcounty="${subcounty}"] .chip-temp`);
+            if (chip) chip.textContent = `${tempValue ?? '--'}°`;
+        }
+
         function renderHourlyTimeline() {
             const target = document.getElementById('hourlyTimeline');
             const hours = (weatherState.hourly || []).slice(0, 12);
@@ -570,6 +575,32 @@
                 const match = type === 'all' || item.dataset.radar === type;
                 item.classList.toggle('dimmed', !match);
             });
+        }
+
+        async function requireAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return null;
+            }
+
+            try {
+                const response = await fetch('/api/auth/user', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const payload = await response.json();
+                if (!response.ok || payload.status !== 'success') {
+                    throw new Error(payload.message || 'Invalid session');
+                }
+
+                localStorage.setItem('user', JSON.stringify(payload.user || {}));
+                return payload.user;
+            } catch (error) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login.html';
+                return null;
+            }
         }
 
         function renderWeatherMode(mode = 'day') {
@@ -710,9 +741,7 @@
                 renderMetrics();
                 render72HourStrip();
                 renderWeekRow();
-                document.getElementById('chipTempSiaya').textContent = subcounty === 'siaya' ? `${c.temp ?? '--'}°` : document.getElementById('chipTempSiaya').textContent;
-                document.getElementById('chipTempBondo').textContent = subcounty === 'bondo' ? `${c.temp ?? '--'}°` : document.getElementById('chipTempBondo').textContent;
-                document.getElementById('chipTempUgunja').textContent = subcounty === 'ugunja' ? `${c.temp ?? '--'}°` : document.getElementById('chipTempUgunja').textContent;
+                updateChipTemperature(subcounty, c.temp ?? '--');
 
                 document.getElementById('weatherNote').textContent = '';
                 renderWeatherMode('day');
@@ -736,9 +765,7 @@
                 document.getElementById('weatherNowTemp').textContent = `${weatherState.current.temp}°C`;
                 document.getElementById('weatherNowDesc').textContent = weatherState.current.description;
                 document.getElementById('weatherNowMeta').textContent = `${subcounty} • Humidity ${weatherState.current.humidity}% • Wind ${weatherState.current.wind_speed} km/h`;
-                document.getElementById('chipTempSiaya').textContent = subcounty === 'siaya' ? `${weatherState.current.temp}°` : document.getElementById('chipTempSiaya').textContent;
-                document.getElementById('chipTempBondo').textContent = subcounty === 'bondo' ? `${weatherState.current.temp}°` : document.getElementById('chipTempBondo').textContent;
-                document.getElementById('chipTempUgunja').textContent = subcounty === 'ugunja' ? `${weatherState.current.temp}°` : document.getElementById('chipTempUgunja').textContent;
+                updateChipTemperature(subcounty, weatherState.current.temp);
                 renderMetrics();
                 render72HourStrip();
                 renderWeekRow();
@@ -746,9 +773,11 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
+            const user = await requireAuth();
+            if (!user) return;
             loadUserData();
-            loadWeatherDashboard();
+            loadWeatherDashboard((user.location || 'siaya').toLowerCase());
 
             document.addEventListener('click', (event) => {
                 const sidebar = document.getElementById('sidebar');
