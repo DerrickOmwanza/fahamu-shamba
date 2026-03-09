@@ -603,7 +603,9 @@ function handleRegisterName(session, input) {
       INSERT OR IGNORE INTO users (phone, name, password_hash, created_at, updated_at)
       VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `);
-    stmt.run(session.phoneNumber, name, ''); // Empty password hash for USSD users
+    // Persist the phone entered during registration flow (not the transport/session phone).
+    const registeredPhone = session.data.phone || session.phoneNumber;
+    stmt.run(registeredPhone, name, ''); // Empty password hash for USSD users
     db.close();
   } catch (error) {
     console.error('Error registering user:', error);

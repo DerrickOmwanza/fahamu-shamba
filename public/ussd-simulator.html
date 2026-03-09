@@ -473,6 +473,22 @@
                 <div id="selectedDataList"></div>
             </div>
 
+            <div class="info-section" id="registrationSection" style="display: none;">
+                <h3>Registered Account</h3>
+                <div class="info-item">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value" id="registeredPhone">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value" id="registeredName">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status:</span>
+                    <span class="info-value" id="registrationStatus">Not registered</span>
+                </div>
+            </div>
+
             <div class="button-group">
                 <button class="btn btn-primary" onclick="resetSession()">Reset Session</button>
                 <button class="btn btn-secondary" onclick="togglePhoneNumber()">Change Phone</button>
@@ -490,6 +506,8 @@
         let phoneNumber = '254712345678';
         let currentText = '';
         let selectedData = {};
+        let registrationDraftPhone = '';
+        let registrationDraftName = '';
         let isLoading = false;
 
         // Initialize
@@ -529,6 +547,12 @@
                 // Display outgoing message (user choice)
                 if (input) {
                     addMessage('You: ' + input, 'outgoing');
+                    const state = document.getElementById('currentState').textContent.trim();
+                    if (state === 'REGISTER_PHONE') {
+                        registrationDraftPhone = input;
+                    } else if (state === 'REGISTER_NAME') {
+                        registrationDraftName = input;
+                    }
                     currentText += (currentText ? '\n' : '') + input;
                 }
 
@@ -607,6 +631,10 @@
                 document.getElementById('currentState').textContent = 'LANGUAGE_SELECT';
             } else if (responseText.includes('Main Menu')) {
                 document.getElementById('currentState').textContent = 'MAIN_MENU';
+            } else if (responseText.includes('Enter your phone number') || responseText.includes('Ingiza nambari yako ya simu') || responseText.includes('Ket namba mar simu')) {
+                document.getElementById('currentState').textContent = 'REGISTER_PHONE';
+            } else if (responseText.includes('Enter your full name') || responseText.includes('Ingiza jina lako kamili') || responseText.includes('Ket nying')) {
+                document.getElementById('currentState').textContent = 'REGISTER_NAME';
             } else if (responseText.includes('County')) {
                 document.getElementById('currentState').textContent = 'LOCATION_SELECT';
             } else if (responseText.includes('Ward')) {
@@ -622,6 +650,17 @@
             } else if (responseText.includes('Recommendation')) {
                 document.getElementById('currentState').textContent = 'RESULT_DISPLAYED';
             }
+
+            if (
+                responseText.includes('Account created') ||
+                responseText.includes('Akaunti ilitengenezwa') ||
+                responseText.includes('Profile nilikre')
+            ) {
+                document.getElementById('registrationSection').style.display = 'block';
+                document.getElementById('registeredPhone').textContent = registrationDraftPhone || phoneNumber;
+                document.getElementById('registeredName').textContent = registrationDraftName || 'N/A';
+                document.getElementById('registrationStatus').textContent = 'Registered';
+            }
         }
 
         // Quick test functions
@@ -636,6 +675,10 @@
             document.getElementById('currentState').textContent = 'LANGUAGE_SELECT';
             document.getElementById('language').textContent = 'Not selected';
             document.getElementById('selectedDataSection').style.display = 'none';
+            document.getElementById('registrationSection').style.display = 'none';
+            document.getElementById('registrationStatus').textContent = 'Not registered';
+            registrationDraftPhone = '';
+            registrationDraftName = '';
             
             addMessage(`Dialed ${STANDARD_USSD_CODE}\nWelcome to Fahamu Shamba\nChoose language:\n1. English\n2. Kiswahili\n3. Dholuo`, 'incoming');
             document.getElementById('ussdInput').focus();
