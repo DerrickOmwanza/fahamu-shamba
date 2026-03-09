@@ -679,9 +679,9 @@
             document.getElementById('registrationStatus').textContent = 'Not registered';
             registrationDraftPhone = '';
             registrationDraftName = '';
-            
-            addMessage(`Dialed ${STANDARD_USSD_CODE}\nWelcome to Fahamu Shamba\nChoose language:\n1. English\n2. Kiswahili\n3. Dholuo`, 'incoming');
-            document.getElementById('ussdInput').focus();
+
+            // Start a real USSD session request so language prompt appears only once.
+            sendUSSD();
         }
 
         function selectEnglish() {
