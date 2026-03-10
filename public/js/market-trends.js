@@ -93,7 +93,7 @@ async function loadMarketOverview() {
     const container = document.getElementById('marketOverview');
     
     try {
-        const response = await fetch(`${API_BASE}/api/market/prices`);
+        const response = await fetch(`${API_BASE}/api/market-prices`);
         if (!response.ok) throw new Error(`API returned ${response.status}`);
         
         const data = await response.json();
@@ -140,7 +140,7 @@ async function loadMarketData() {
     const container = document.getElementById('marketData');
     
     try {
-        const response = await fetch(`${API_BASE}/api/market/prices`);
+        const response = await fetch(`${API_BASE}/api/market-prices`);
         if (!response.ok) {
             throw new Error(`API returned ${response.status}`);
         }

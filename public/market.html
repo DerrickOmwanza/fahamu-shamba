@@ -397,7 +397,7 @@
         async function loadPrices() {
             try {
                 // Primary route (market module), fallback to legacy demo route.
-                let response = await fetch('/api/market/prices');
+                let response = await fetch('/api/market-prices');
                 let data = await response.json();
 
                 if (!data.success) {

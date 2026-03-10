@@ -38,7 +38,8 @@ router.get('/api/market/prices', ensureInitialized, (req, res) => {
       'Ugunja Market': 'ugunja', 
       'Yala Market': 'yala',
       'Gem Market': 'gem',
-      'Siaya Town Market': 'alego' // Using alego as default for Siaya Town
+      'Siaya Town Market': 'alego', // Using alego as default for Siaya Town
+      'Siaya Town': 'alego' // Also handle without "Market" suffix
     };
 
     // Create a map to group by crop
