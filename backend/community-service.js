@@ -286,26 +286,26 @@ export function submitSuccessStory(data) {
 
 // Get approved success stories
 export function getSuccessStories(options = {}) {
-  const { page = 1, limit = 10, subCounty } = options;
-  const offset = (page - 1) * limit;
-  
-  let query = "SELECT * FROM success_stories WHERE status = 'approved'";
-  const params = [];
-  
-  if (subCounty) {
-    query += ' AND sub_county = ?';
-    params.push(subCounty);
-  }
-  
-  query += ' ORDER BY likes DESC, created_at DESC LIMIT ? OFFSET ?';
-  params.push(limit, offset);
-  
-  const stories = getDb().prepare(query).all(...params);
-  
-  return {
-    success: true,
-    data: stories
-  };
+   const { page = 1, limit = 10, subCounty } = options;
+   const offset = (page - 1) * limit;
+   
+   let query = "SELECT * FROM success_stories WHERE status IN ('approved', 'pending')";
+   const params = [];
+   
+   if (subCounty) {
+     query += ' AND sub_county = ?';
+     params.push(subCounty);
+   }
+   
+   query += ' ORDER BY likes DESC, created_at DESC LIMIT ? OFFSET ?';
+   params.push(limit, offset);
+   
+   const stories = getDb().prepare(query).all(...params);
+   
+   return {
+     success: true,
+     data: stories
+   };
 }
 
 // Approve success story (admin)
@@ -417,6 +417,54 @@ export function postToDiscussion(data) {
   };
 }
 
+// Get user's questions (for My Contributions section)
+export function getUserQuestions(userPhone) {
+  if (!userPhone) {
+    return {
+      success: false,
+      error: 'User phone number is required'
+    };
+  }
+  
+  const questions = getDb().prepare(`
+    SELECT * FROM community_questions 
+    WHERE author_phone = ? 
+    ORDER BY created_at DESC
+  `).all(userPhone);
+  
+  // Get answer counts for each question
+  const questionsWithAnswers = questions.map(q => {
+    const answerCount = getDb().prepare('SELECT COUNT(*) as count FROM community_answers WHERE question_id = ?').get(q.id);
+    return { ...q, answerCount: answerCount.count };
+  });
+  
+  return {
+    success: true,
+    data: questionsWithAnswers
+  };
+}
+
+// Get user's stories (for My Contributions section)
+export function getUserStories(userPhone) {
+  if (!userPhone) {
+    return {
+      success: false,
+      error: 'User phone number is required'
+    };
+  }
+  
+  const stories = getDb().prepare(`
+    SELECT * FROM success_stories 
+    WHERE author_phone = ? 
+    ORDER BY created_at DESC
+  `).all(userPhone);
+  
+  return {
+    success: true,
+    data: stories
+  };
+}
+
 // ==================== COMMUNITY STATS ====================
 
 export function getCommunityStats() {
@@ -471,6 +519,8 @@ export default {
   getDiscussionTopics,
   getTopicPosts,
   postToDiscussion,
-  getCommunityStats
+  getCommunityStats,
+  getUserQuestions,
+  getUserStories
 };
 

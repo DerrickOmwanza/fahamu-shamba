@@ -69,6 +69,46 @@ router.get('/community/questions', ensureInitialized, (req, res) => {
   }
 });
 
+// Get user's questions (for My Contributions section)
+router.get('/community/my-questions', ensureInitialized, (req, res) => {
+  try {
+    const { phone } = req.query;
+    
+    if (!phone) {
+      return res.status(400).json({
+        success: false,
+        error: 'User phone number is required'
+      });
+    }
+    
+    const result = communityService.getUserQuestions(phone);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching user questions:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch user questions' });
+  }
+});
+
+// Get user's stories (for My Contributions section)
+router.get('/community/my-stories', ensureInitialized, (req, res) => {
+  try {
+    const { phone } = req.query;
+    
+    if (!phone) {
+      return res.status(400).json({
+        success: false,
+        error: 'User phone number is required'
+      });
+    }
+    
+    const result = communityService.getUserStories(phone);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching user stories:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch user stories' });
+  }
+});
+
 // Get single question with answers
 router.get('/community/questions/:id', ensureInitialized, (req, res) => {
   try {

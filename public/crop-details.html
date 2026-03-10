@@ -215,7 +215,7 @@
     <div id="toast" class="toast"></div>
     
     <script>
-        // Crop data with all inputs information
+        // Crop data with all inputs information - Extended to include all crops from backend
         const cropData = {
             "Maize": {
                 soil: "Loamy, well-drained soil",
@@ -334,6 +334,246 @@
                 tools: [
                     { name: "Planter", description: "Seeding equipment" },
                     { name: "Sorghum Harvester", description: "Grain harvesting" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Groundnuts": {
+                soil: "Sandy loam, well-drained",
+                yield: "15-25 bags/acre",
+                returns: "KES 40,000-60,000",
+                period: "4-5 months",
+                fertilizers: [
+                    { name: "Single Super Phosphate", description: "Phosphorus for pod development", dosage: "150-200 kg/ha" },
+                    { name: "Urea", description: "Nitrogen for vegetative growth", dosage: "50-80 kg/ha" },
+                    { name: "Gypsum", description: "Calcium for pod filling", dosage: "300-400 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Chlorpyrifos", description: "Controls termites", dosage: "2.0-2.5 L/ha" },
+                    { name: "Imidacloprid", description: "Controls aphids", dosage: "100-150 ml/ha" }
+                ],
+                fungicides: [
+                    { name: "Mancozeb", description: "Controls leaf spot", dosage: "1.5-2.0 kg/ha" },
+                    { name: "Carbendazim", description: "Controls collar rot", dosage: "500 g/ha" }
+                ],
+                tools: [
+                    { name: "Planter", description: "Seeding equipment" },
+                    { name: "Groundnut Harvester", description: "Pod collection" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Cassava": {
+                soil: "Sandy loam, well-drained",
+                yield: "80-120 bags/acre",
+                returns: "KES 25,000-40,000",
+                period: "8-12 months",
+                fertilizers: [
+                    { name: "NPK 17:17:17", description: "Balanced fertilizer", dosage: "100-150 kg/ha" },
+                    { name: "Urea", description: "Nitrogen for growth", dosage: "50-80 kg/ha" },
+                    { name: "MOP", description: "Potassium for root development", dosage: "60-80 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Cypermethrin", description: "Controls mealybugs", dosage: "300-500 ml/ha" },
+                    { name: "Imidacloprid", description: "Controls whiteflies", dosage: "100-150 ml/ha" }
+                ],
+                fungicides: [
+                    { name: "Mancozeb", description: "Controls leaf blight", dosage: "1.5-2.0 kg/ha" },
+                    { name: "Copper Oxychloride", description: "Controls bacterial blight", dosage: "2.5-3.0 g/L water" }
+                ],
+                tools: [
+                    { name: "Cutting Planter", description: "Stem cutting equipment" },
+                    { name: "Cassava Harvester", description: "Root harvesting" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Sweet Potatoes": {
+                soil: "Sandy loam, well-drained",
+                yield: "100-150 bags/acre",
+                returns: "KES 30,000-50,000",
+                period: "3-4 months",
+                fertilizers: [
+                    { name: "NPK 17:17:17", description: "Balanced fertilizer", dosage: "100-150 kg/ha" },
+                    { name: "Urea", description: "Nitrogen for vine growth", dosage: "50-80 kg/ha" },
+                    { name: "MOP", description: "Potassium for tuber development", dosage: "80-100 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Cypermethrin", description: "Controls weevils", dosage: "300-500 ml/ha" },
+                    { name: "Chlorpyrifos", description: "Controls nematodes", dosage: "1.5-2.0 L/ha" }
+                ],
+                fungicides: [
+                    { name: "Mancozeb", description: "Controls leaf spot", dosage: "1.5-2.0 kg/ha" },
+                    { name: "Carbendazim", description: "Controls root rot", dosage: "500 g/ha" }
+                ],
+                tools: [
+                    { name: "Vine Planter", description: "Vine cutting equipment" },
+                    { name: "Sweet Potato Harvester", description: "Tuber harvesting" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Tomatoes": {
+                soil: "Loamy, well-drained",
+                yield: "150-200 bags/acre",
+                returns: "KES 80,000-120,000",
+                period: "3-4 months",
+                fertilizers: [
+                    { name: "NPK 17:17:17", description: "Balanced fertilizer", dosage: "150-200 kg/ha" },
+                    { name: "Urea", description: "Nitrogen for vegetative growth", dosage: "80-100 kg/ha" },
+                    { name: "Potassium Sulfate", description: "Potassium for fruit quality", dosage: "60-80 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Cypermethrin", description: "Controls fruit borers", dosage: "300-500 ml/ha" },
+                    { name: "Imidacloprid", description: "Controls aphids", dosage: "100-150 ml/ha" }
+                ],
+                fungicides: [
+                    { name: "Mancozeb", description: "Controls early blight", dosage: "1.5-2.0 kg/ha" },
+                    { name: "Carbendazim", description: "Controls fruit rot", dosage: "500 g/ha" }
+                ],
+                tools: [
+                    { name: "Transplanter", description: "Seedling transplanting" },
+                    { name: "Tomato Harvester", description: "Fruit harvesting" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Soybean": {
+                soil: "Loamy, well-drained",
+                yield: "20-30 bags/acre",
+                returns: "KES 35,000-55,000",
+                period: "3-4 months",
+                fertilizers: [
+                    { name: "Rhizobium Inoculant", description: "Nitrogen fixation", dosage: "200-250 g/ha" },
+                    { name: "SSP", description: "Phosphorus for root development", dosage: "150-200 kg/ha" },
+                    { name: "MOP", description: "Potassium for pod filling", dosage: "40-60 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Cypermethrin", description: "Controls pod borers", dosage: "300-500 ml/ha" },
+                    { name: "Imidacloprid", description: "Controls aphids", dosage: "100-150 ml/ha" }
+                ],
+                fungicides: [
+                    { name: "Mancozeb", description: "Controls rust", dosage: "1.5-2.0 kg/ha" },
+                    { name: "Carbendazim", description: "Controls root rot", dosage: "500 g/ha" }
+                ],
+                tools: [
+                    { name: "Planter", description: "Seeding equipment" },
+                    { name: "Soybean Harvester", description: "Pod collection" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Kales": {
+                soil: "Loamy, fertile",
+                yield: "200-300 bags/acre",
+                returns: "KES 40,000-60,000",
+                period: "2-3 months",
+                fertilizers: [
+                    { name: "Urea", description: "Nitrogen for leaf growth", dosage: "100-150 kg/ha" },
+                    { name: "DAP", description: "Phosphorus for root development", dosage: "80-100 kg/ha" },
+                    { name: "MOP", description: "Potassium for leaf quality", dosage: "40-60 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Cypermethrin", description: "Controls aphids", dosage: "300-500 ml/ha" },
+                    { name: "Chlorpyrifos", description: "Controls cutworms", dosage: "1.5-2.0 L/ha" }
+                ],
+                fungicides: [
+                    { name: "Mancozeb", description: "Controls leaf spot", dosage: "1.5-2.0 kg/ha" },
+                    { name: "Carbendazim", description: "Controls damping off", dosage: "500 g/ha" }
+                ],
+                tools: [
+                    { name: "Transplanter", description: "Seedling transplanting" },
+                    { name: "Harvesting Knife", description: "Leaf cutting" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Cowpeas": {
+                soil: "Sandy loam, well-drained",
+                yield: "15-25 bags/acre",
+                returns: "KES 25,000-40,000",
+                period: "3-4 months",
+                fertilizers: [
+                    { name: "Rhizobium Inoculant", description: "Nitrogen fixation", dosage: "200-250 g/ha" },
+                    { name: "SSP", description: "Phosphorus for pod formation", dosage: "100-150 kg/ha" },
+                    { name: "Gypsum", description: "Calcium for pod development", dosage: "200-300 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Cypermethrin", description: "Controls pod borers", dosage: "300-500 ml/ha" },
+                    { name: "Imidacloprid", description: "Controls aphids", dosage: "100-150 ml/ha" }
+                ],
+                fungicides: [
+                    { name: "Mancozeb", description: "Controls leaf spot", dosage: "1.5-2.0 kg/ha" },
+                    { name: "Carbendazim", description: "Controls root rot", dosage: "500 g/ha" }
+                ],
+                tools: [
+                    { name: "Planter", description: "Seeding equipment" },
+                    { name: "Cowpea Harvester", description: "Pod collection" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Millet": {
+                soil: "Sandy loam, well-drained",
+                yield: "20-30 bags/acre",
+                returns: "KES 20,000-35,000",
+                period: "3-4 months",
+                fertilizers: [
+                    { name: "Urea", description: "Nitrogen for growth", dosage: "60-80 kg/ha" },
+                    { name: "DAP", description: "Phosphorus for development", dosage: "50-80 kg/ha" },
+                    { name: "MOP", description: "Potassium for grain quality", dosage: "30-50 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Cypermethrin", description: "Controls shoot fly", dosage: "300-500 ml/ha" },
+                    { name: "Chlorpyrifos", description: "Controls stem borers", dosage: "1.5-2.0 L/ha" }
+                ],
+                fungicides: [
+                    { name: "Mancozeb", description: "Controls rust", dosage: "1.5-2.0 kg/ha" },
+                    { name: "Carbendazim", description: "Controls grain mold", dosage: "500 g/ha" }
+                ],
+                tools: [
+                    { name: "Planter", description: "Seeding equipment" },
+                    { name: "Millet Harvester", description: "Grain harvesting" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Pigeon Peas": {
+                soil: "Sandy loam, well-drained",
+                yield: "25-35 bags/acre",
+                returns: "KES 30,000-50,000",
+                period: "4-6 months",
+                fertilizers: [
+                    { name: "Rhizobium Inoculant", description: "Nitrogen fixation", dosage: "200-250 g/ha" },
+                    { name: "SSP", description: "Phosphorus for root development", dosage: "100-150 kg/ha" },
+                    { name: "MOP", description: "Potassium for pod filling", dosage: "40-60 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Cypermethrin", description: "Controls pod borers", dosage: "300-500 ml/ha" },
+                    { name: "Imidacloprid", description: "Controls aphids", dosage: "100-150 ml/ha" }
+                ],
+                fungicides: [
+                    { name: "Mancozeb", description: "Controls leaf spot", dosage: "1.5-2.0 kg/ha" },
+                    { name: "Carbendazim", description: "Controls root rot", dosage: "500 g/ha" }
+                ],
+                tools: [
+                    { name: "Planter", description: "Seeding equipment" },
+                    { name: "Pigeon Pea Harvester", description: "Pod collection" },
+                    { name: "Sprayer", description: "Chemical application" }
+                ]
+            },
+            "Okra": {
+                soil: "Loamy, well-drained",
+                yield: "40-60 bags/acre",
+                returns: "KES 35,000-55,000",
+                period: "3-4 months",
+                fertilizers: [
+                    { name: "NPK 17:17:17", description: "Balanced fertilizer", dosage: "100-150 kg/ha" },
+                    { name: "Urea", description: "Nitrogen for vegetative growth", dosage: "60-80 kg/ha" },
+                    { name: "MOP", description: "Potassium for fruit quality", dosage: "60-80 kg/ha" }
+                ],
+                pesticides: [
+                    { name: "Cypermethrin", description: "Controls fruit borers", dosage: "300-500 ml/ha" },
+                    { name: "Imidacloprid", description: "Controls aphids", dosage: "100-150 ml/ha" }
+                ],
+                fungicides: [
+                    { name: "Mancozeb", description: "Controls leaf spot", dosage: "1.5-2.0 kg/ha" },
+                    { name: "Carbendazim", description: "Controls fruit rot", dosage: "500 g/ha" }
+                ],
+                tools: [
+                    { name: "Planter", description: "Seeding equipment" },
+                    { name: "Okra Harvester", description: "Pod collection" },
                     { name: "Sprayer", description: "Chemical application" }
                 ]
             }

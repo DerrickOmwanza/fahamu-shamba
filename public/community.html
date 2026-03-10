@@ -107,18 +107,40 @@
         .stat-label { font-size: 0.85rem; color: var(--text-light); }
         
         /* Questions List */
-        .questions-list { margin-top: 15px; }
+        .questions-list { 
+            margin-top: 15px; 
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 8px;
+            scroll-behavior: smooth;
+        }
+        .questions-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .questions-list::-webkit-scrollbar-track {
+            background: var(--lighter);
+            border-radius: 10px;
+        }
+        .questions-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        .questions-list::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
         .question-item {
             padding: 20px;
-            background: var(--light);
-            border-radius: 10px;
+            background: white;
+            border-radius: 12px;
             margin-bottom: 15px;
             transition: all 0.3s ease;
             cursor: pointer;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
         }
         .question-item:hover { background: var(--lighter); transform: translateX(5px); }
         .question-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        .question-title { font-weight: 600; color: var(--primary-dark); font-size: 1.05rem; }
+        .question-title { font-weight: 600; color: var(--primary-dark); font-size: 1.05rem; flex: 1; }
         .question-meta { display: flex; gap: 15px; font-size: 0.8rem; color: var(--text-light); margin-top: 8px; }
         .question-category { 
             display: inline-block; 
@@ -131,15 +153,44 @@
         }
         .question-stats { display: flex; gap: 15px; margin-top: 10px; }
         .question-stat { display: flex; align-items: center; gap: 5px; color: var(--text-light); font-size: 0.85rem; }
+        .question-author { display: flex; align-items: center; gap: 8px; }
+        .question-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; }
+        .question-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .question-action-btn { padding: 6px 12px; border: 1px solid var(--border); border-radius: 20px; background: white; color: var(--text); font-size: 0.8rem; cursor: pointer; transition: all 0.3s; }
+        .question-action-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .question-details { margin-top: 10px; color: var(--text); font-size: 0.9rem; line-height: 1.5; }
+        .my-question-badge { background: rgba(245,124,0,0.15); color: var(--secondary); padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
         
         /* Success Stories */
-        .stories-list { margin-top: 15px; }
+        .stories-list { 
+            margin-top: 15px; 
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 8px;
+            scroll-behavior: smooth;
+        }
+        .stories-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .stories-list::-webkit-scrollbar-track {
+            background: var(--lighter);
+            border-radius: 10px;
+        }
+        .stories-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        .stories-list::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
         .story-item {
             padding: 20px;
-            background: var(--light);
+            background: white;
             border-radius: 10px;
             margin-bottom: 15px;
             transition: all 0.3s ease;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
         }
         .story-item:hover { background: var(--lighter); }
         .story-author { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -180,12 +231,75 @@
         }
         
         /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 10px; }
         .modal.show { display: flex; }
-        .modal-content { background: white; padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: white; padding: 30px; border-radius: 12px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-title { font-size: 1.3rem; font-weight: 700; color: var(--primary-dark); }
-        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); transition: all 0.3s; }
+        .modal-close:hover { color: var(--danger); transform: scale(1.2); }
+        
+        /* Question Detail Modal */
+        .question-detail-content { font-size: 0.95rem; line-height: 1.6; }
+        .question-detail-header { border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
+        .question-detail-meta { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-light); margin-top: 10px; }
+        .question-detail-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .question-detail-btn { padding: 8px 16px; border: 1px solid var(--border); border-radius: 20px; background: white; color: var(--text); font-size: 0.85rem; cursor: pointer; transition: all 0.3s; }
+        .question-detail-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .answers-list { 
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        .answers-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .answers-list::-webkit-scrollbar-track {
+            background: var(--lighter);
+            border-radius: 10px;
+        }
+        .answers-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        .answers-list::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        .answer-item { 
+            padding: 15px; 
+            background: var(--light); 
+            border-radius: 8px; 
+            margin-bottom: 10px; 
+            border-left: 3px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+        .answer-item:hover { 
+            background: white; 
+            box-shadow: var(--shadow-sm);
+        }
+        .answer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .answer-author { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-light); }
+        .answer-content { color: var(--text); line-height: 1.6; }
+        
+        /* Answer Form */
+        .answer-form { 
+            margin-top: 20px; 
+            padding: 20px; 
+            background: rgba(45,118,73,0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(45,118,73,0.1);
+        }
+        .answer-form textarea { 
+            min-height: 120px; 
+            resize: vertical;
+        }
+        .answer-form-actions { 
+            display: flex; 
+            gap: 10px; 
+            margin-top: 15px; 
+            flex-wrap: wrap;
+        }
         
         /* Language */
         .language-selector { 
@@ -304,6 +418,31 @@
             .community-header-section { padding: 20px; margin: 15px; }
             .community-section { padding: 0 15px; }
             .stats-grid { grid-template-columns: 1fr 1fr; }
+            .questions-list { max-height: 400px; }
+            .stories-list { max-height: 400px; }
+            .question-item { padding: 15px; margin-bottom: 12px; }
+            .story-item { padding: 15px; margin-bottom: 12px; }
+            .btn { padding: 10px 20px; font-size: 0.9rem; }
+        }
+        
+        @media (max-width: 600px) {
+            .questions-list { max-height: 350px; }
+            .stories-list { max-height: 350px; }
+            .question-item { padding: 12px; margin-bottom: 10px; font-size: 0.9rem; }
+            .story-item { padding: 12px; margin-bottom: 10px; font-size: 0.9rem; }
+            .question-title { font-size: 0.95rem; }
+            .story-name { font-size: 0.9rem; }
+            .question-meta { flex-direction: column; gap: 5px; }
+            .question-stats { flex-wrap: wrap; gap: 10px; }
+            .story-actions { flex-direction: column; gap: 10px; }
+            .btn { padding: 8px 16px; font-size: 0.85rem; }
+        }
+        
+        @media (max-width: 480px) {
+            .questions-list { max-height: 300px; }
+            .stories-list { max-height: 300px; }
+            .community-section { padding: 0 10px; }
+            .community-header-section { padding: 15px; margin: 10px; }
         }
         
         /* Back Button */
@@ -465,7 +604,53 @@
             </div>
         </div>
         
+        <!-- My Contributions -->
+        <div class="community-section">
+            <div class="section-title">
+                <i class="fas fa-user-circle"></i> My Contributions
+            </div>
+            <div class="community-card">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4 style="color:var(--primary-dark); margin-bottom:15px; font-size:1rem; display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-question-circle"></i> My Questions
+                        </h4>
+                        <div id="myQuestionsList">
+                            <div class="empty-state" style="padding:20px;">
+                                <i class="fas fa-question-circle"></i>
+                                <p>You haven't asked any questions yet.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color:var(--primary-dark); margin-bottom:15px; font-size:1rem; display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-star"></i> My Stories
+                        </h4>
+                        <div id="myStoriesList">
+                            <div class="empty-state" style="padding:20px;">
+                                <i class="fas fa-star"></i>
+                                <p>You haven't shared any stories yet.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div style="height: 50px;"></div>
+    </div>
+    
+    <!-- Question Detail Modal -->
+    <div class="modal" id="questionDetailModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <div class="modal-title">Question Details</div>
+                <button class="modal-close" onclick="closeModal('questionDetailModal')">&times;</button>
+            </div>
+            <div id="questionDetailContent">
+                <!-- Content loaded dynamically -->
+            </div>
+        </div>
     </div>
     
     <!-- Ask Question Modal -->
@@ -615,18 +800,30 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
             
             if (result.success && result.data && result.data.length > 0) {
                 container.innerHTML = result.data.map(q => `
-                    <div class="question-item">
+                    <div class="question-item" onclick="viewQuestion('${q.id}')">
                         <div class="question-header">
                             <div class="question-title">${q.title}</div>
                             <span class="question-category">${q.category || 'General'}</span>
                         </div>
                         <div class="question-meta">
-                            <span><i class="fas fa-user"></i> ${q.author_name || 'Anonymous'}</span>
+                            <span class="question-author">
+                                <div class="question-avatar">${(q.author_name || 'A').charAt(0).toUpperCase()}</div>
+                                <span>${q.author_name || 'Anonymous'}</span>
+                            </span>
                             <span><i class="fas fa-calendar"></i> ${new Date(q.created_at).toLocaleDateString()}</span>
                         </div>
                         <div class="question-stats">
-                            <span class="question-stat"><i class="fas fa-comments"></i> ${q.answer_count || 0} answers</span>
+                            <span class="question-stat"><i class="fas fa-comments"></i> ${q.answerCount || 0} answers</span>
                             <span class="question-stat"><i class="fas fa-eye"></i> ${q.views || 0} views</span>
+                        </div>
+                        ${q.content ? `<div class="question-details">${q.content}</div>` : ''}
+                        <div class="question-actions">
+                            <button class="question-action-btn" onclick="event.stopPropagation(); viewQuestion('${q.id}')">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                            <button class="question-action-btn" onclick="event.stopPropagation(); viewQuestion('${q.id}')">
+                                <i class="fas fa-comment"></i> Answer
+                            </button>
                         </div>
                     </div>
                 `).join('');
@@ -658,8 +855,8 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
                         <div class="story-title" style="font-weight:600; margin-bottom:10px; color:var(--primary-dark);">${s.title}</div>
                         <div class="story-content">${s.content}</div>
                         <div class="story-actions">
-                            <span class="story-action" onclick="likeStory('${s.story_id}')">
-                                <i class="fas fa-heart"></i> ${s.likes || 0}
+                             <span class="story-action" onclick="likeStory('${s.id}')">
+                                 <i class="fas fa-heart"></i> ${s.likes || 0}
                             </span>
                             <span class="story-action">
                                 <i class="fas fa-comment"></i> ${s.comment_count || 0}
@@ -686,7 +883,13 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
             
             const result = await apiCall('/api/community/questions', {
                 method: 'POST',
-                body: JSON.stringify({ title, category, content: details })
+                body: JSON.stringify({ 
+                    title, 
+                    category, 
+                    content: details,
+                    authorPhone: currentUser?.phone || '',
+                    authorName: currentUser?.name || 'Anonymous'
+                })
             });
             
             if (result.success) {
@@ -710,7 +913,12 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
             
             const result = await apiCall('/api/community/stories', {
                 method: 'POST',
-                body: JSON.stringify({ title, content })
+                body: JSON.stringify({ 
+                    title, 
+                    content,
+                    authorPhone: currentUser?.phone || '',
+                    authorName: currentUser?.name || 'Anonymous'
+                })
             });
             
             if (result.success) {
@@ -724,15 +932,236 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
             }
         }
         
+        // View question details
+        async function viewQuestion(questionId) {
+            const result = await apiCall(`/api/community/questions/${questionId}`);
+            if (result.success && result.question) {
+                const q = result.question;
+                const content = document.getElementById('questionDetailContent');
+                
+                content.innerHTML = `
+                    <div class="question-detail-header">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <h3 style="color:var(--primary-dark); font-size:1.2rem; margin:0;">${q.title}</h3>
+                            <span class="question-category">${q.category || 'General'}</span>
+                        </div>
+                        <div class="question-detail-meta">
+                            <span class="question-author">
+                                <div class="question-avatar">${(q.author_name || 'A').charAt(0).toUpperCase()}</div>
+                                <span>${q.author_name || 'Anonymous'}</span>
+                            </span>
+                            <span><i class="fas fa-calendar"></i> ${new Date(q.created_at).toLocaleDateString()}</span>
+                            <span><i class="fas fa-eye"></i> ${q.views || 0} views</span>
+                        </div>
+                        ${q.content ? `<div class="question-detail-content" style="margin-top:15px; padding-top:15px; border-top:1px solid var(--border);">${q.content}</div>` : ''}
+                    </div>
+                    
+                    <div class="answers-list" style="max-height: 400px; overflow-y: auto; padding-right: 8px; margin-bottom: 20px; border: 1px solid var(--border); border-radius: 8px; padding: 15px;">
+                        <h4 style="color:var(--primary-dark); margin-bottom:15px; font-size:1.1rem; margin-top:0;">
+                            <i class="fas fa-comments"></i> Answers (${result.answers ? result.answers.length : 0})
+                        </h4>
+                        ${result.answers && result.answers.length > 0 ? result.answers.map((a, idx) => `
+                            <div class="answer-item" style="margin-bottom: 15px; padding: 12px; background: var(--light); border-radius: 8px; border-left: 3px solid var(--primary);">
+                                <div class="answer-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                                    <div class="answer-author" style="display:flex; align-items:center; gap:8px;">
+                                        <div class="question-avatar">${(a.author_name || 'A').charAt(0).toUpperCase()}</div>
+                                        <div>
+                                            <strong>${a.author_name || 'Anonymous'}</strong>
+                                            <div style="font-size:0.75rem; color:var(--text-light);">
+                                                <i class="fas fa-calendar"></i> ${new Date(a.created_at).toLocaleDateString()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    ${a.is_verified ? `<span style="background:var(--success); color:white; padding:2px 8px; border-radius:12px; font-size:0.7rem; font-weight:600;">✓ Verified</span>` : ''}
+                                </div>
+                                <div class="answer-content" style="color:var(--text); line-height:1.6; margin-bottom:10px;">${a.content}</div>
+                                <div style="display:flex; gap:15px; color:var(--text-light); font-size:0.85rem; padding-top:10px; border-top:1px solid rgba(0,0,0,0.1);">
+                                    <span style="cursor:pointer; transition:color 0.3s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-light)';">
+                                        <i class="fas fa-thumbs-up"></i> Helpful (${a.upvotes || 0})
+                                    </span>
+                                    <span style="cursor:pointer; transition:color 0.3s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-light)';">
+                                        <i class="fas fa-comment"></i> Reply
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('') : `
+                            <div style="text-align:center; color:var(--text-light); padding:30px 20px;">
+                                <i class="fas fa-comments" style="font-size:2.5rem; margin-bottom:10px; opacity:0.3;"></i>
+                                <p><strong>No answers yet</strong></p>
+                                <p style="font-size:0.9rem;">Be the first to help this farmer by providing an answer!</p>
+                            </div>
+                        `}
+                    </div>
+                    
+                    <div class="answer-form">
+                        <h4 style="color:var(--primary-dark); margin-bottom:15px; font-size:1.1rem;">
+                            <i class="fas fa-comment-dots"></i> Add Your Answer
+                        </h4>
+                        <form onsubmit="submitAnswer(event, '${questionId}')">
+                            <div class="form-group">
+                                <textarea id="answerContent" placeholder="Share your knowledge and help this farmer..." required></textarea>
+                            </div>
+                            <div class="answer-form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i> Post Answer
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="closeModal('questionDetailModal')">
+                                    <i class="fas fa-times"></i> Close
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                
+                openModal('questionDetailModal');
+            } else {
+                showToast('Failed to load question details', 'error');
+            }
+        }
+        
+        // Submit answer
+        async function submitAnswer(event, questionId) {
+            event.preventDefault();
+            const content = document.getElementById('answerContent').value;
+            
+            const result = await apiCall('/api/community/answers', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    questionId: parseInt(questionId), 
+                    content,
+                    authorPhone: currentUser?.phone || '',
+                    authorName: currentUser?.name || 'Anonymous'
+                })
+            });
+            
+            if (result.success) {
+                showToast('Answer posted successfully!', 'success');
+                document.getElementById('answerContent').value = '';
+                // Reload the question to show the new answer
+                viewQuestion(questionId);
+                // Update the questions list
+                loadQuestions();
+                loadCommunityStats();
+            } else {
+                showToast(result.message || 'Failed to post answer', 'error');
+            }
+        }
+        
+        // Load my questions
+        async function loadMyQuestions() {
+            const userPhone = currentUser?.phone;
+            if (!userPhone) {
+                const container = document.getElementById('myQuestionsList');
+                container.innerHTML = `
+                    <div class="empty-state" style="padding:20px;">
+                        <i class="fas fa-question-circle"></i>
+                        <p>Please log in to see your questions.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const result = await apiCall(`/api/community/my-questions?phone=${encodeURIComponent(userPhone)}`);
+            const container = document.getElementById('myQuestionsList');
+            
+            if (result.success && result.data && result.data.length > 0) {
+                container.innerHTML = result.data.map(q => `
+                    <div class="question-item" onclick="viewQuestion('${q.id}')">
+                        <div class="question-header">
+                            <div class="question-title">${q.title}</div>
+                            <span class="question-category">${q.category || 'General'}</span>
+                        </div>
+                        <div class="question-meta">
+                            <span class="question-author">
+                                <div class="question-avatar">${(q.author_name || 'A').charAt(0).toUpperCase()}</div>
+                                <span>${q.author_name || 'Anonymous'}</span>
+                            </span>
+                            <span><i class="fas fa-calendar"></i> ${new Date(q.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <div class="question-stats">
+                            <span class="question-stat"><i class="fas fa-comments"></i> ${q.answerCount || 0} answers</span>
+                            <span class="question-stat"><i class="fas fa-eye"></i> ${q.views || 0} views</span>
+                        </div>
+                        ${q.content ? `<div class="question-details">${q.content}</div>` : ''}
+                        <div class="question-actions">
+                            <span class="my-question-badge">My Question</span>
+                            <button class="question-action-btn" onclick="event.stopPropagation(); viewQuestion('${q.id}')">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding:20px;">
+                        <i class="fas fa-question-circle"></i>
+                        <p>You haven't asked any questions yet.</p>
+                        <p style="font-size:0.8rem; color:var(--text-light); margin-top:10px;">Questions you ask will appear here</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Load my stories
+        async function loadMyStories() {
+            const userPhone = currentUser?.phone;
+            if (!userPhone) {
+                const container = document.getElementById('myStoriesList');
+                container.innerHTML = `
+                    <div class="empty-state" style="padding:20px;">
+                        <i class="fas fa-star"></i>
+                        <p>Please log in to see your stories.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const result = await apiCall(`/api/community/my-stories?phone=${encodeURIComponent(userPhone)}`);
+            const container = document.getElementById('myStoriesList');
+            
+            if (result.success && result.data && result.data.length > 0) {
+                container.innerHTML = result.data.map(s => `
+                    <div class="story-item">
+                        <div class="story-author">
+                            <div class="story-avatar">${(s.author_name || 'A').charAt(0).toUpperCase()}</div>
+                            <div>
+                                <div class="story-name">${s.author_name || 'Anonymous'}</div>
+                                <div class="story-date">${new Date(s.created_at).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                        <div class="story-title" style="font-weight:600; margin-bottom:10px; color:var(--primary-dark);">${s.title}</div>
+                        <div class="story-content">${s.content}</div>
+                        <div class="story-actions">
+                            <span class="story-action" onclick="likeStory('${s.id}')">
+                                <i class="fas fa-heart"></i> ${s.likes || 0}
+                            </span>
+                            <span class="story-action">
+                                <i class="fas fa-comment"></i> ${s.comment_count || 0}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding:20px;">
+                        <i class="fas fa-star"></i>
+                        <p>You haven't shared any stories yet.</p>
+                        <p style="font-size:0.8rem; color:var(--text-light); margin-top:10px;">Success stories you share will appear here</p>
+                    </div>
+                `;
+            }
+        }
+        
         // Like story
         async function likeStory(storyId) {
             const result = await apiCall('/api/community/stories/like', {
                 method: 'POST',
-                body: JSON.stringify({ story_id: storyId })
+                body: JSON.stringify({ storyId: parseInt(storyId) })
             });
             
             if (result.success) {
                 loadStories();
+                loadMyStories();
             }
         }
         
@@ -771,11 +1200,10 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
             loadCommunityStats();
             loadQuestions();
             loadStories();
+            loadMyQuestions();
+            loadMyStories();
         });
     </script>
 </body>
 </html>
-
-
-
 

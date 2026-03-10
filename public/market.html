@@ -431,12 +431,12 @@
         // Convert row-per-market API to page table shape (crop row with sub-counties columns)
         function normalizeMarketPrices(rawRows, timestamp) {
             const map = new Map();
-            const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego'];
+            const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego', 'rarieda', 'ugenya'];
             rawRows.forEach(row => {
                 const crop = row.crop;
                 const marketRaw = String(row.market || '').toLowerCase();
                 if (!map.has(crop)) {
-                    map.set(crop, { crop, bondo: 0, ugunja: 0, yala: 0, gem: 0, alego: 0, trend: 'stable' });
+                    map.set(crop, { crop, bondo: 0, ugunja: 0, yala: 0, gem: 0, alego: 0, rarieda: 0, ugenya: 0, trend: 'stable' });
                 }
                 const matched = subcounties.find(sc => marketRaw.includes(sc));
                 if (matched) {
@@ -462,7 +462,7 @@
         // Display prices table
         function displayPrices(data) {
             const crops = data.prices;
-            const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego'];
+            const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego', 'rarieda', 'ugenya'];
             
             let html = '<table class="price-table"><thead><tr><th>Crop</th>';
             subcounties.forEach(sc => {
@@ -501,7 +501,7 @@
 
             // Calculate average price for each crop across all sub-counties
             const cropsWithAverages = data.prices.map(crop => {
-                const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego'];
+                const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego', 'rarieda', 'ugenya'];
                 const prices = subcounties.map(sc => crop[sc] || 0);
                 const validPrices = prices.filter(p => p > 0);
                 
@@ -623,7 +623,7 @@
                 date.setDate(date.getDate() - (i * 7));
                 const weekStart = date.toISOString().split('T')[0];
                 
-                const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego'];
+                const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego', 'rarieda', 'ugenya'];
                 const trends = subcounties.map(sc => ({
                     subcounty: sc,
                     week_start: weekStart,
@@ -639,13 +639,15 @@
             const ctx = document.getElementById('priceChart').getContext('2d');
             
             const weeks = [...new Set(trends.map(t => t.week_start))].sort();
-            const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego'];
+            const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego', 'rarieda', 'ugenya'];
             const colors = {
                 'bondo': 'rgba(46, 125, 50, 1)',
                 'ugunja': 'rgba(74, 157, 111, 1)',
                 'yala': 'rgba(245, 124, 0, 1)',
                 'gem': 'rgba(52, 152, 219, 1)',
-                'alego': 'rgba(155, 89, 182, 1)'
+                'alego': 'rgba(155, 89, 182, 1)',
+                'rarieda': 'rgba(231, 76, 60, 1)',
+                'ugenya': 'rgba(149, 165, 166, 1)'
             };
             
             const datasets = subcounties.map(sc => ({

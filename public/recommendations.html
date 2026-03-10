@@ -120,15 +120,23 @@
         .empty-state .btn { margin: 0 auto; }
         
         /* ===== HISTORY SECTION ===== */
-        .history-list { display: flex; flex-direction: column; gap: 15px; }
-        .history-item { background: white; padding: 20px; border-radius: 10px; border-left: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); transition: all 0.3s ease; }
-        .history-item:hover { box-shadow: var(--shadow-md); }
-        .history-crop { display: flex; align-items: center; gap: 15px; flex: 1; }
-        .history-crop span { font-size: 1.5rem; }
+        .history-container { max-height: 400px; overflow-y: auto; border-radius: 12px; border: 1px solid var(--border); background: white; }
+        .history-list { display: flex; flex-direction: column; gap: 1px; background: var(--light); }
+        .history-item { background: white; padding: 15px 20px; border-left: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; cursor: pointer; }
+        .history-item:hover { background: var(--lighter); transform: translateX(5px); }
+        .history-crop { display: flex; align-items: center; gap: 12px; flex: 1; }
+        .history-crop span { font-size: 1.2rem; }
         .history-info { flex: 1; }
-        .history-crop-name { font-weight: 700; color: var(--primary-dark); margin-bottom: 4px; }
-        .history-meta { font-size: 0.8rem; color: var(--text-light); }
-        .history-date { font-size: 0.85rem; color: var(--text-light); text-align: right; }
+        .history-crop-name { font-weight: 700; color: var(--primary-dark); margin-bottom: 2px; font-size: 0.95rem; }
+        .history-meta { font-size: 0.75rem; color: var(--text-light); }
+        .history-date { font-size: 0.75rem; color: var(--text-light); text-align: right; flex-shrink: 0; min-width: 120px; }
+        
+        /* Compact history for mobile */
+        @media (max-width: 768px) {
+            .history-container { max-height: 300px; }
+            .history-item { padding: 12px 15px; flex-direction: column; align-items: flex-start; gap: 8px; }
+            .history-date { text-align: left; width: 100%; }
+        }
         
         /* ===== PROGRESS BAR ===== */
         .progress-container { background: var(--lighter); border-radius: 10px; height: 10px; width: 100%; overflow: hidden; margin: 15px 0; }
@@ -434,13 +442,15 @@
                 <form id="recommendationForm">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>📍 County</label>
+                            <label>📍 Sub-County</label>
                             <select id="location" required>
-                                <option value="">Select county...</option>
-                                <option value="Siaya">Siaya</option>
-                                <option value="Bondo">Bondo</option>
-                                <option value="Ugunja">Ugunja</option>
-                                <option value="Yala">Yala</option>
+                                <option value="">Select sub-county...</option>
+                                <option value="alego">Alego Usonga</option>
+                                <option value="bondo">Bondo</option>
+                                <option value="gem">Gem</option>
+                                <option value="rarieda">Rarieda</option>
+                                <option value="ugenya">Ugenya</option>
+                                <option value="ugunja">Ugunja</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -511,7 +521,9 @@
             <!-- History Section -->
             <div id="historySection" style="display:none; margin-top: 40px;">
                 <div class="section-title"><i class="fas fa-history"></i> Recommendation History</div>
-                <div class="history-list" id="historyList"></div>
+                <div class="history-container">
+                    <div class="history-list" id="historyList"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -611,9 +623,12 @@
         // Form Functions
         function loadDemoData() {
             const demos = [
-                { location: 'Siaya', soilType: 'loam', season: 'long_rains', farmSize: 2.5, budget: 5000, waterSource: 'Rainfall' },
-                { location: 'Bondo', soilType: 'sandy', season: 'short_rains', farmSize: 1.8, budget: 3500, waterSource: 'Well' },
-                { location: 'Yala', soilType: 'clay', season: 'dry', farmSize: 3, budget: 6000, waterSource: 'Borehole' }
+                { location: 'bondo', soilType: 'loam', season: 'long_rains', farmSize: 2.5, budget: 5000, waterSource: 'Rainfall' },
+                { location: 'ugunja', soilType: 'sandy', season: 'short_rains', farmSize: 1.8, budget: 3500, waterSource: 'Well' },
+                { location: 'yala', soilType: 'clay', season: 'dry', farmSize: 3, budget: 6000, waterSource: 'Borehole' },
+                { location: 'alego', soilType: 'sandy', season: 'short_rains', farmSize: 2, budget: 4000, waterSource: 'Rainfall' },
+                { location: 'gem', soilType: 'loam', season: 'long_rains', farmSize: 1.5, budget: 3000, waterSource: 'Borehole' },
+                { location: 'ugenya', soilType: 'clay', season: 'short_rains', farmSize: 2.2, budget: 4500, waterSource: 'Irrigation' }
             ];
             const demo = demos[Math.floor(Math.random() * demos.length)];
             document.getElementById('location').value = demo.location;
