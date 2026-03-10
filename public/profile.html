@@ -120,9 +120,9 @@
          .photo-upload-btn { display: inline-block; padding: 12px 24px; background: var(--primary); color: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
          .photo-upload-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
     </style>
-    <link rel="stylesheet" href="/css/mobile-hardening.css">
+    <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/toast.css">
-    <script src="/js/mobile-hardening.js" defer></script>
+    <script src="/js/navbar.js" defer></script>
     <script src="/js/toast.js" defer></script>
 </head>
 <body>
@@ -169,31 +169,24 @@
     
     <!-- Main Content -->
     <div class="main-content">
-        <div class="top-header">
-            <div class="header-left">
-                <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
+        <div class="top-nav">
+            <div class="nav-left">
+                <button class="nav-hamburger" onclick="toggleMobileSidebar()" aria-label="Open menu">
                     <i class="fas fa-bars"></i>
                 </button>
-                <span class="header-title" style="font-weight:700;color:var(--primary-dark);font-size:1.1rem;">My Profile</span>
+                <button class="nav-back-btn" id="navBackBtn" onclick="goToDashboard()">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </button>
             </div>
-            <div class="language-wrapper">
-                <span class="language-label">Language:</span>
-                <div class="language-dropdown-container">
-                    <button type="button" class="language-dropdown-btn" id="languageBtn" onclick="toggleLanguageDropdown()">
-                        <span id="languageBtnText">Choose Language</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="language-dropdown-menu" id="languageDropdownMenu">
-                        <div class="language-option" onclick="selectLanguage('en', '🌐 English')">🌐 English</div>
-                        <div class="language-option" onclick="selectLanguage('sw', '🌐 Kiswahili')">🌐 Kiswahili</div>
-                        <div class="language-option" onclick="selectLanguage('luo', '🌐 Dholuo')">🌐 Dholuo</div>
-                    </div>
+            <div class="nav-center">
+                <h1 class="nav-page-title active" id="navPageTitle">My Profile</h1>
+            </div>
+            <div class="nav-right">
+                <div class="nav-profile" onclick="goToSettings()">
+                    <div class="nav-profile-avatar" id="navProfileAvatar">👤</div>
+                    <span class="nav-profile-name" id="navProfileName">Farmer</span>
                 </div>
-                <select id="languageSelect" onchange="changeLanguage(this.value)" style="display:none;">
-                    <option value="en">English</option>
-                    <option value="sw">Kiswahili</option>
-                    <option value="luo">Dholuo</option>
-                </select>
             </div>
         </div>
         

@@ -471,8 +471,8 @@
             .back-dashboard-btn { padding: 10px 12px; }
         }
         </style>
-            <link rel="stylesheet" href="/css/mobile-hardening.css">
-    <script src="/js/mobile-hardening.js" defer></script>
+            <link rel="stylesheet" href="/css/navbar.css">
+    <script src="/js/navbar.js" defer></script>
 </head>
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
@@ -506,37 +506,31 @@
     
     <!-- Main Content -->
     <div class="main-content">
-        <header class="top-header">
-            <div class="header-left">
-                <button class="mobile-menu-btn" onclick="toggleMobileSidebar()"><i class="fas fa-bars"></i></button>
-                <span style="font-weight:700;color:var(--primary-dark);font-size:1.1rem;">Community</span>
-            </div>
-            <div class="header-right">
-                <div class="language-wrapper">
-                    <span class="language-label">Language:</span>
-                    <div class="language-dropdown-container">
-                        <button type="button" class="language-dropdown-btn" id="languageBtn" onclick="toggleLanguageDropdown()">
-                            <span id="languageBtnText">Choose Language</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="language-dropdown-menu" id="languageDropdownMenu">
-                            <div class="language-option" onclick="selectLanguage('english', '🇬🇧 English')">🇬🇧 English</div>
-                            <div class="language-option" onclick="selectLanguage('swahili', '🇰🇪 Kiswahili')">🇰🇪 Kiswahili</div>
-                            <div class="language-option" onclick="selectLanguage('luo', '🌍 Dholuo')">🌍 Dholuo</div>
-                        </div>
-                    </div>
-                    <select id="languageSelect" onchange="changeLanguage(this.value)" style="display:none;">
-                        <option value="english">English</option>
-                        <option value="swahili">Kiswahili</option>
-                        <option value="luo">Dholuo</option>
-                    </select>
-                </div>
-                <button class="back-dashboard-btn" onclick="window.location.href='/dashboard.html'" title="Return to Dashboard">
+        <!-- Top Header - Uniform Nav Bar -->
+        <header class="top-nav">
+            <div class="nav-left">
+                <!-- Hamburger Button -->
+                <button class="nav-hamburger" onclick="toggleMobileSidebar()" aria-label="Open menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <!-- Back to Dashboard Button -->
+                <button class="nav-back-btn" id="navBackBtn" onclick="goToDashboard()">
                     <i class="fas fa-arrow-left"></i>
                     <span>Back</span>
                 </button>
             </div>
-            </header>
+            <!-- Center: Page Title -->
+            <div class="nav-center">
+                <h1 class="nav-page-title active" id="navPageTitle">Community</h1>
+            </div>
+            <!-- Right: Farmer Profile -->
+            <div class="nav-right">
+                <div class="nav-profile" onclick="goToProfile()">
+                    <div class="nav-profile-avatar" id="navProfileAvatar">👤</div>
+                    <span class="nav-profile-name" id="navProfileName">Farmer</span>
+                </div>
+            </div>
+        </header>
         
         <!-- Community Header -->
         <div class="community-header-section">

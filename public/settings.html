@@ -328,9 +328,9 @@
             gap: 10px;
         }
         </style>
-            <link rel="stylesheet" href="/css/mobile-hardening.css">
+            <link rel="stylesheet" href="/css/navbar.css">
             <link rel="stylesheet" href="/css/toast.css">
-            <script src="/js/mobile-hardening.js" defer></script>
+            <script src="/js/navbar.js" defer></script>
             <script src="/js/toast.js" defer></script>
 </head>
 <body>
@@ -377,19 +377,25 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="page-header">
-            <div class="header-left">
-                <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
+        <div class="top-nav">
+            <div class="nav-left">
+                <button class="nav-hamburger" onclick="toggleMobileSidebar()" aria-label="Open menu">
                     <i class="fas fa-bars"></i>
                 </button>
-                <h1 class="page-title">
-                    <i class="fas fa-cog"></i>
-                    Settings
-                </h1>
+                <button class="nav-back-btn" id="navBackBtn" onclick="goToDashboard()">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </button>
             </div>
-            <a href="/dashboard.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Back
-            </a>
+            <div class="nav-center">
+                <h1 class="nav-page-title active" id="navPageTitle">Settings</h1>
+            </div>
+            <div class="nav-right">
+                <div class="nav-profile" onclick="goToProfile()">
+                    <div class="nav-profile-avatar" id="navProfileAvatar">👤</div>
+                    <span class="nav-profile-name" id="navProfileName">Farmer</span>
+                </div>
+            </div>
         </div>
 
         <!-- Language Settings -->

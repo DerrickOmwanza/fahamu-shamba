@@ -223,12 +223,11 @@
         }
     </style>
     <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/toast.css">
-    <link rel="stylesheet" href="/css/mobile-hardening.css">
     <script src="/language-utils.js"></script>
-    <script src="/js/sidebar.js" defer></script>
+    <script src="/js/navbar.js" defer></script>
     <script src="/js/toast.js" defer></script>
-    <script src="/js/mobile-hardening.js" defer></script>
 </head>
 <body>
     <!-- Sidebar Overlay -->
@@ -268,35 +267,27 @@
     
     <!-- Main Content -->
     <div class="main-content">
-        <header class="top-header">
-            <button class="mobile-menu-btn" onclick="toggleMobileSidebar()"><i class="fas fa-bars"></i></button>
-            <button class="back-btn" onclick="window.location.href='/dashboard.html'">
-                <i class="fas fa-arrow-left"></i> Back
-            </button>
-            <h2 style="color: var(--primary-dark); font-weight: 700;">Market Prices</h2>
-            <div style="display: flex; gap: 12px; align-items: center;">
-                <div class="language-wrapper">
-                    <span class="language-label">Language:</span>
-                    <div class="language-dropdown-container">
-                        <button type="button" class="language-dropdown-btn" id="languageBtn" onclick="toggleLanguageDropdown()">
-                            <span id="languageBtnText">Choose Language</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="language-dropdown-menu" id="languageDropdownMenu">
-                            <div class="language-option" onclick="selectLanguage('en', '🌐 English')">🌐 English</div>
-                            <div class="language-option" onclick="selectLanguage('sw', '🌐 Kiswahili')">🌐 Kiswahili</div>
-                            <div class="language-option" onclick="selectLanguage('luo', '🌐 Dholuo')">🌐 Dholuo</div>
-                        </div>
-                    </div>
-                    <select id="languageSelect" onchange="changeLanguage(this.value)" style="display:none;">
-                        <option value="en">English</option>
-                        <option value="sw">Kiswahili</option>
-                        <option value="luo">Dholuo</option>
-                    </select>
-                </div>
-                <div class="currency-toggle">
-                    <button class="active" onclick="setCurrency('KES')">KSh</button>
-                    <button onclick="setCurrency('USD')">USD</button>
+        <header class="top-nav">
+            <div class="nav-left">
+                <!-- Hamburger Button -->
+                <button class="nav-hamburger" onclick="toggleMobileSidebar()" aria-label="Open menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <!-- Back to Dashboard Button -->
+                <button class="nav-back-btn" id="navBackBtn" onclick="goToDashboard()">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </button>
+            </div>
+            <!-- Center: Page Title -->
+            <div class="nav-center">
+                <h1 class="nav-page-title active" id="navPageTitle">Market Prices</h1>
+            </div>
+            <!-- Right: Farmer Profile -->
+            <div class="nav-right">
+                <div class="nav-profile" onclick="goToProfile()">
+                    <div class="nav-profile-avatar" id="navProfileAvatar">👤</div>
+                    <span class="nav-profile-name" id="navProfileName">Farmer</span>
                 </div>
             </div>
         </header>
