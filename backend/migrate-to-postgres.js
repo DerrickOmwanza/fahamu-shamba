@@ -42,6 +42,7 @@ async function migrate() {
         gender VARCHAR(20),
         id_number VARCHAR(50),
         preferred_language VARCHAR(20) DEFAULT 'english',
+        profile_photo TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         is_active BOOLEAN DEFAULT TRUE
