@@ -119,7 +119,13 @@ if (USE_POSTGRES) {
 const dbAsync = USE_POSTGRES ? {
   run: async (sql, params = []) => {
     let paramIndex = 0;
-    const pgSQL = sql.replace(/\?/g, () => `$${++paramIndex}`);
+    let pgSQL = sql.replace(/\?/g, () => `$${++paramIndex}`);
+    
+    // Auto-add RETURNING id for INSERT statements
+    if (pgSQL.trim().toUpperCase().startsWith('INSERT') && !pgSQL.toUpperCase().includes('RETURNING')) {
+      pgSQL += ' RETURNING id';
+    }
+    
     const result = await pool.query(pgSQL, params);
     return {
       lastID: result.rows[0]?.id || null,
