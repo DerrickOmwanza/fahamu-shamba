@@ -17,9 +17,18 @@
         const sidebarContainer = document.getElementById('sidebar-container');
         if (!sidebarContainer) return;
 
-        // Add loading class to prevent flash
+        // HIDE BOTH SIDEBAR AND MAIN CONTENT during load to prevent flash
         sidebarContainer.style.opacity = '0';
         sidebarContainer.style.visibility = 'hidden';
+        
+        const mainContent = document.querySelector('.main-content') || 
+                           document.querySelector('.page-container') ||
+                           document.querySelector('.dashboard-wrap');
+        
+        if (mainContent) {
+            mainContent.style.opacity = '0';
+            mainContent.style.transition = 'opacity 0.3s ease';
+        }
 
         try {
             const response = await fetch('/components/sidebar.html');
@@ -54,20 +63,30 @@
             // Re-bind hamburger buttons across the page
             bindHamburgerButtons();
             
-            // Fade in sidebar smoothly after everything is loaded
+            // Fade in BOTH sidebar and main content together for seamless load
             requestAnimationFrame(() => {
-                sidebarContainer.style.transition = 'opacity 0.2s ease';
+                sidebarContainer.style.transition = 'opacity 0.3s ease';
                 sidebarContainer.style.opacity = '1';
                 sidebarContainer.style.visibility = 'visible';
+                
+                // Show main content at the same time
+                if (mainContent) {
+                    mainContent.style.opacity = '1';
+                }
             });
             
-            console.log('Sidebar component loaded and initialized (Closed state)');
+            console.log('Sidebar and main content loaded together seamlessly');
             
         } catch (error) {
             console.error('Error loading sidebar component:', error);
-            // Show container even on error to prevent permanent blank
+            // Show both sidebar container and main content even on error
             sidebarContainer.style.opacity = '1';
             sidebarContainer.style.visibility = 'visible';
+            
+            // Don't leave main content hidden if sidebar fails
+            if (mainContent) {
+                mainContent.style.opacity = '1';
+            }
         }
     }
 
