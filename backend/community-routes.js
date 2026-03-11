@@ -8,6 +8,14 @@ import communityService from './community-service-async.js';
 
 const router = express.Router();
 
+// Middleware to ensure dbAsync is set for all routes
+router.use((req, res, next) => {
+  if (req.dbAsync) {
+    communityService.setAsyncDb(req.dbAsync);
+  }
+  next();
+});
+
 // ==================== QUESTIONS & ANSWERS ====================
 
 // Ask a question
@@ -34,7 +42,7 @@ router.post('/community/questions', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error posting question:', error);
-    res.status(500).json({ success: false, error: 'Failed to post question' });
+    res.status(500).json({ success: false, error: 'Failed to post question', details: error.message });
   }
 });
 
@@ -54,7 +62,7 @@ router.get('/community/questions', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error fetching questions:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch questions' });
+    res.status(500).json({ success: false, error: 'Failed to fetch questions', details: error.message });
   }
 });
 
@@ -74,7 +82,7 @@ router.get('/community/my-questions', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error fetching user questions:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch user questions' });
+    res.status(500).json({ success: false, error: 'Failed to fetch user questions', details: error.message });
   }
 });
 
@@ -94,7 +102,7 @@ router.get('/community/my-stories', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error fetching user stories:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch user stories' });
+    res.status(500).json({ success: false, error: 'Failed to fetch user stories', details: error.message });
   }
 });
 
@@ -105,7 +113,7 @@ router.get('/community/questions/:id', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error fetching question:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch question' });
+    res.status(500).json({ success: false, error: 'Failed to fetch question', details: error.message });
   }
 });
 
@@ -131,7 +139,7 @@ router.post('/community/answers', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error posting answer:', error);
-    res.status(500).json({ success: false, error: 'Failed to post answer' });
+    res.status(500).json({ success: false, error: 'Failed to post answer', details: error.message });
   }
 });
 
@@ -158,7 +166,7 @@ router.post('/community/upvote', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error upvoting:', error);
-    res.status(500).json({ success: false, error: 'Failed to upvote' });
+    res.status(500).json({ success: false, error: 'Failed to upvote', details: error.message });
   }
 });
 
@@ -178,7 +186,7 @@ router.post('/community/answers/verify', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error verifying answer:', error);
-    res.status(500).json({ success: false, error: 'Failed to verify answer' });
+    res.status(500).json({ success: false, error: 'Failed to verify answer', details: error.message });
   }
 });
 
@@ -210,7 +218,7 @@ router.post('/community/stories', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error submitting story:', error);
-    res.status(500).json({ success: false, error: 'Failed to submit story' });
+    res.status(500).json({ success: false, error: 'Failed to submit story', details: error.message });
   }
 });
 
@@ -228,7 +236,7 @@ router.get('/community/stories', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error fetching stories:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch stories' });
+    res.status(500).json({ success: false, error: 'Failed to fetch stories', details: error.message });
   }
 });
 
@@ -248,7 +256,7 @@ router.post('/community/stories/like', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error liking story:', error);
-    res.status(500).json({ success: false, error: 'Failed to like story' });
+    res.status(500).json({ success: false, error: 'Failed to like story', details: error.message });
   }
 });
 
@@ -268,7 +276,7 @@ router.post('/community/stories/approve', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error approving story:', error);
-    res.status(500).json({ success: false, error: 'Failed to approve story' });
+    res.status(500).json({ success: false, error: 'Failed to approve story', details: error.message });
   }
 });
 
@@ -296,7 +304,7 @@ router.post('/community/topics', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error creating topic:', error);
-    res.status(500).json({ success: false, error: 'Failed to create topic' });
+    res.status(500).json({ success: false, error: 'Failed to create topic', details: error.message });
   }
 });
 
@@ -308,7 +316,7 @@ router.get('/community/topics', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error fetching topics:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch topics' });
+    res.status(500).json({ success: false, error: 'Failed to fetch topics', details: error.message });
   }
 });
 
@@ -319,7 +327,7 @@ router.get('/community/topics/:id/posts', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error fetching posts:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch posts' });
+    res.status(500).json({ success: false, error: 'Failed to fetch posts', details: error.message });
   }
 });
 
@@ -345,7 +353,7 @@ router.post('/community/posts', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error posting:', error);
-    res.status(500).json({ success: false, error: 'Failed to post' });
+    res.status(500).json({ success: false, error: 'Failed to post', details: error.message });
   }
 });
 
@@ -358,7 +366,7 @@ router.get('/community/stats', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error fetching stats:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch stats' });
+    res.status(500).json({ success: false, error: 'Failed to fetch stats', details: error.message });
   }
 });
 
