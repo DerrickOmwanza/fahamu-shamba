@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import recommendationEngine from './recommendation-engine.js';
 import demoData from './demo-data.js';
 import adminRoutes from './admin-routes.js';
+import pool from './database-postgres.js';
 import farmerRoutes from './farmer-routes.js';
 import farmerProfileRoutes from './farmer-profile-routes.js';
 import * as adminDB from './admin-database.js';
@@ -34,6 +35,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
+const USE_POSTGRES = process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgres');
 
 // Enhanced CORS configuration
 app.use(cors({
@@ -101,14 +103,42 @@ console.log('📧 Initializing email service...');
 initializeEmailService();
 
 // Initialize database with error handling
-const databasePath = IS_VERCEL
-  ? (process.env.SQLITE_DB_PATH || '/tmp/fahamu_shamba.db')
-  : path.join(__dirname, 'fahamu_shamba.db');
-const db = new Database(databasePath, {}); // Add empty options object
-console.log(`✅ Connected to SQLite database at ${databasePath}`);
+let db;
+if (USE_POSTGRES) {
+  console.log('✅ Using PostgreSQL database (persistent storage for Vercel)');
+  db = null; // PostgreSQL doesn't use better-sqlite3
+} else {
+  const databasePath = IS_VERCEL
+    ? (process.env.SQLITE_DB_PATH || '/tmp/fahamu_shamba.db')
+    : path.join(__dirname, 'fahamu_shamba.db');
+  db = new Database(databasePath, {});
+  console.log(`✅ Connected to SQLite database at ${databasePath}`);
+}
 
 // Wrapper for better-sqlite3 to match async patterns (MUST be before initializeDatabase)
-const dbAsync = {
+const dbAsync = USE_POSTGRES ? {
+  run: async (sql, params = []) => {
+    let paramIndex = 0;
+    const pgSQL = sql.replace(/\?/g, () => `$${++paramIndex}`);
+    const result = await pool.query(pgSQL, params);
+    return {
+      lastID: result.rows[0]?.id || null,
+      changes: result.rowCount
+    };
+  },
+  get: async (sql, params = []) => {
+    let paramIndex = 0;
+    const pgSQL = sql.replace(/\?/g, () => `$${++paramIndex}`);
+    const result = await pool.query(pgSQL, params);
+    return result.rows[0] || null;
+  },
+  all: async (sql, params = []) => {
+    let paramIndex = 0;
+    const pgSQL = sql.replace(/\?/g, () => `$${++paramIndex}`);
+    const result = await pool.query(pgSQL, params);
+    return result.rows;
+  }
+} : {
   run: (sql, params = []) => {
     try {
       const stmt = db.prepare(sql);
@@ -142,32 +172,40 @@ const dbAsync = {
 initializeDatabase();
 
 // Initialize authentication tables
-console.log('🔐 Initializing authentication tables...');
-try {
-  initializeAuthTables(db);
-  console.log('✅ Authentication tables initialized');
-} catch (error) {
-  console.error('⚠️ Error initializing auth tables:', error.message);
+if (!USE_POSTGRES) {
+  console.log('🔐 Initializing authentication tables...');
+  try {
+    initializeAuthTables(db);
+    console.log('✅ Authentication tables initialized');
+  } catch (error) {
+    console.error('⚠️ Error initializing auth tables:', error.message);
+  }
+} else {
+  console.log('✅ Using PostgreSQL - auth tables already migrated');
 }
 
 // Initialize community and feedback databases with the main db connection
-console.log('👥 Initializing community database...');
-try {
-  communityService.initializeCommunityDatabase(db);
-  console.log('✅ Community database initialized');
-} catch (error) {
-  console.error('⚠️ Error initializing community database:', error.message);
-}
+if (!USE_POSTGRES) {
+  console.log('👥 Initializing community database...');
+  try {
+    communityService.initializeCommunityDatabase(db);
+    console.log('✅ Community database initialized');
+  } catch (error) {
+    console.error('⚠️ Error initializing community database:', error.message);
+  }
 
-console.log('📝 Initializing feedback database...');
-try {
-  feedbackService.initializeFeedbackDatabase(db);
-  console.log('✅ Feedback database initialized');
-} catch (error) {
-  console.error('⚠️ Error initializing feedback database:', error.message);
+  console.log('📝 Initializing feedback database...');
+  try {
+    feedbackService.initializeFeedbackDatabase(db);
+    console.log('✅ Feedback database initialized');
+  } catch (error) {
+    console.error('⚠️ Error initializing feedback database:', error.message);
+  }
+} else {
+  console.log('✅ Using PostgreSQL - community and feedback tables already migrated');
 }
 console.log('🚀 Registering authentication routes...');
-const authRoutes = initAuthRoutes(db);
+const authRoutes = initAuthRoutes(db, dbAsync);
 app.use('/api/auth', authRoutes);
 console.log('✅ Authentication routes registered');
 
@@ -474,6 +512,12 @@ const sendRecommendationNotification = async (phoneNumber, recommendation) => {
 
 // Initialize database tables
 function initializeDatabase() {
+  // Skip SQLite initialization if using PostgreSQL
+  if (USE_POSTGRES) {
+    console.log('✅ Using PostgreSQL - tables already migrated, skipping SQLite initialization');
+    return;
+  }
+
   try {
     // Initialize admin database
     adminDB.initializeAdminDatabase(db, dbAsync);
@@ -656,9 +700,10 @@ app.get('/api/weather/live/:subcounty', async (req, res) => {
   // If key is missing, fallback to existing open-meteo endpoints already in this service.
   if (!OPENWEATHER_API_KEY) {
     try {
-      const [currentResp, forecastResp] = await Promise.all([
+      const [currentResp, forecastResp, agrometData] = await Promise.all([
         fetch(`${WEATHER_BASE_URL}/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=temperature_2m,relative_humidity_2m,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m&timezone=Africa/Nairobi`),
-        fetch(`${WEATHER_BASE_URL}/forecast?latitude=${coords.lat}&longitude=${coords.lon}&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Africa/Nairobi&forecast_days=7`)
+        fetch(`${WEATHER_BASE_URL}/forecast?latitude=${coords.lat}&longitude=${coords.lon}&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Africa/Nairobi&forecast_days=7`),
+        fetchAgrometData(coords.lat, coords.lon)
       ]);
       const currentData = await currentResp.json();
       const forecastData = await forecastResp.json();
@@ -676,7 +721,8 @@ app.get('/api/weather/live/:subcounty', async (req, res) => {
           description: getWeatherDescription(currentData?.current?.weather_code || 0),
           icon: getWeatherIcon(currentData?.current?.weather_code || 0),
           precipitation: currentData?.current?.precipitation || 0,
-          rain_1h: currentData?.current?.rain || 0
+          rain_1h: currentData?.current?.rain || 0,
+          agromet: agrometData
         },
         hourly: (forecastData?.hourly?.time || []).slice(0, 24).map((time, idx) => ({
           dt_txt: time,
@@ -724,10 +770,11 @@ app.get('/api/weather/live/:subcounty', async (req, res) => {
   }
 
   try {
-    const [currentRes, forecastRes, airRes] = await Promise.all([
+    const [currentRes, forecastRes, airRes, agrometData] = await Promise.all([
       fetch(`${OPENWEATHER_BASE_URL}/weather?lat=${coords.lat}&lon=${coords.lon}&units=metric&appid=${OPENWEATHER_API_KEY}`),
       fetch(`${OPENWEATHER_BASE_URL}/forecast?lat=${coords.lat}&lon=${coords.lon}&units=metric&appid=${OPENWEATHER_API_KEY}`),
-      fetch(`${OPENWEATHER_BASE_URL}/air_pollution?lat=${coords.lat}&lon=${coords.lon}&appid=${OPENWEATHER_API_KEY}`)
+      fetch(`${OPENWEATHER_BASE_URL}/air_pollution?lat=${coords.lat}&lon=${coords.lon}&appid=${OPENWEATHER_API_KEY}`),
+      fetchAgrometData(coords.lat, coords.lon)
     ]);
 
     if (!currentRes.ok || !forecastRes.ok || !airRes.ok) {
@@ -788,7 +835,8 @@ app.get('/api/weather/live/:subcounty', async (req, res) => {
         icon: current.weather?.[0]?.icon || '01d',
         precipitation: current.rain?.['1h'] || 0,
         rain_1h: current.rain?.['1h'] || 0,
-        clouds: current.clouds?.all || 0
+        clouds: current.clouds?.all || 0,
+        agromet: agrometData
       },
       hourly: (forecast.list || []).slice(0, 24).map(item => ({
         dt_txt: item.dt_txt,
@@ -923,6 +971,22 @@ app.get('/api/weather/summary/:subcounty', async (req, res) => {
 });
 
 // ==================== WEATHER HELPER FUNCTIONS ====================
+async function fetchAgrometData(lat, lon) {
+  try {
+    const response = await fetch(`https://agromet-api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=et0_fao_evapotranspiration,soil_moisture_0_to_10cm,soil_temperature_0_to_10cm&timezone=Africa/Nairobi`);
+    if (!response.ok) return null;
+    const data = await response.json();
+    return {
+      evapotranspiration: data.daily?.et0_fao_evapotranspiration?.[0] || 0,
+      soil_moisture: data.daily?.soil_moisture_0_to_10cm?.[0] || 0,
+      soil_temperature: data.daily?.soil_temperature_0_to_10cm?.[0] || 0
+    };
+  } catch (error) {
+    console.error('Agromet API error:', error);
+    return null;
+  }
+}
+
 function processOpenMeteoForecast(dailyData, location) {
   if (!dailyData.time || !dailyData.temperature_2m_min || !dailyData.temperature_2m_max) {
     return getMockForecastData(location);
@@ -2523,21 +2587,34 @@ app.get('/api/test', (req, res) => {
 });
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
   try {
-    // Use synchronous better-sqlite3 API
-    const result = db.prepare('SELECT 1 as test').get();
-    
-    res.json({
-      success: true,
-      status: 'All systems operational',
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime()
-    });
+    if (USE_POSTGRES) {
+      // PostgreSQL health check
+      const result = await pool.query('SELECT 1 as test');
+      res.json({
+        success: true,
+        status: 'All systems operational (PostgreSQL)',
+        database: 'PostgreSQL',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+      });
+    } else {
+      // SQLite health check
+      const result = db.prepare('SELECT 1 as test').get();
+      res.json({
+        success: true,
+        status: 'All systems operational (SQLite)',
+        database: 'SQLite',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+      });
+    }
   } catch (err) {
     return res.status(503).json({
       success: false,
       status: 'Database connection failed',
+      error: err.message,
       timestamp: new Date().toISOString()
     });
   }

@@ -5,8 +5,25 @@ import jwt from 'jsonwebtoken';
 const router = express.Router();
 
 // Initialize auth routes with database instance
-export function initAuthRoutes(db) {
+export function initAuthRoutes(db, dbAsync = null) {
   const JWT_SECRET = process.env.JWT_SECRET || 'farmer_secret_key_change_in_production';
+  
+  // Use dbAsync if provided (PostgreSQL), otherwise create wrapper for SQLite
+  const dbHelper = dbAsync || {
+    get: (sql, params = []) => {
+      const stmt = db.prepare(sql);
+      return Promise.resolve(stmt.get(...params));
+    },
+    run: (sql, params = []) => {
+      const stmt = db.prepare(sql);
+      const result = stmt.run(...params);
+      return Promise.resolve({ lastID: result.lastInsertRowid, changes: result.changes });
+    },
+    all: (sql, params = []) => {
+      const stmt = db.prepare(sql);
+      return Promise.resolve(stmt.all(...params));
+    }
+  };
 
   // Middleware: Verify JWT token (must be defined BEFORE routes that use it)
   router.use((req, res, next) => {
@@ -107,9 +124,10 @@ export function initAuthRoutes(db) {
       const normalizedUsername = username.trim().toLowerCase();
 
       // Check if phone or username already exists
-       // Note: Use lowercase comparison in JavaScript since SQLite's LOWER() may not be available
-       const stmt = db.prepare('SELECT id, phone, username FROM users WHERE phone = ? OR username = ?');
-       const existingUser = stmt.get(normalizedPhone, normalizedUsername);
+      const existingUser = await dbHelper.get(
+        'SELECT id, phone, username FROM users WHERE phone = ? OR username = ?',
+        [normalizedPhone, normalizedUsername]
+      );
 
       if (existingUser) {
         return res.status(400).json({
@@ -124,15 +142,15 @@ export function initAuthRoutes(db) {
       const passwordHash = await hashPassword(password);
 
       // Create user
-      const insertStmt = db.prepare(
-        'INSERT INTO users (phone, username, password_hash, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
+      const result = await dbHelper.run(
+        'INSERT INTO users (phone, username, password_hash, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
+        [normalizedPhone, normalizedUsername, passwordHash]
       );
-      const result = insertStmt.run(normalizedPhone, normalizedUsername, passwordHash);
 
       res.status(201).json({
         status: 'success',
         message: 'Step 1 complete. Proceed to profile setup.',
-        userId: result.lastInsertRowid
+        userId: result.lastID
       });
     } catch (error) {
       console.error('Registration Step 1 error:', error);
@@ -157,8 +175,7 @@ export function initAuthRoutes(db) {
       }
 
       // Verify user exists
-      const userStmt = db.prepare('SELECT id FROM users WHERE id = ?');
-      const user = userStmt.get(userId);
+      const user = await dbHelper.get('SELECT id FROM users WHERE id = ?', [userId]);
 
       if (!user) {
         return res.status(404).json({
@@ -168,18 +185,19 @@ export function initAuthRoutes(db) {
       }
 
       // Create farm profile
-      const farmStmt = db.prepare(
-        'INSERT INTO farms (user_id, location, ward, farm_size, farm_size_unit, created_at, updated_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
+      const farmResult = await dbHelper.run(
+        'INSERT INTO farms (user_id, location, ward, farm_size, farm_size_unit, created_at, updated_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
+        [userId, location, ward || null, farm_size || null, farm_size_unit]
       );
-      const farmResult = farmStmt.run(userId, location, ward || null, farm_size || null, farm_size_unit);
 
       // Update user name and language preference
-      const updateStmt = db.prepare('UPDATE users SET name = ?, preferred_language = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
-      updateStmt.run(name, preferred_language, userId);
+      await dbHelper.run(
+        'UPDATE users SET name = ?, preferred_language = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [name, preferred_language, userId]
+      );
 
       // Fetch updated user
-      const getUserStmt = db.prepare('SELECT id, phone, username, name FROM users WHERE id = ?');
-      const updatedUser = getUserStmt.get(userId);
+      const updatedUser = await dbHelper.get('SELECT id, phone, username, name FROM users WHERE id = ?', [userId]);
 
       // Generate JWT token with user data
       const token = generateToken({
@@ -241,22 +259,22 @@ export function initAuthRoutes(db) {
 
       console.log(`Login attempt with username: ${usernameIdentifier}`);
 
-       // Find user by username only (matching create account page)
-       // Use exact match with lowercase since we normalize on registration
-       const stmt = db.prepare('SELECT id, phone, username, password_hash, name, preferred_language FROM users WHERE username = ?');
-       const user = stmt.get(usernameIdentifier);
+      // Find user by username only (matching create account page)
+      let user = await dbHelper.get(
+        'SELECT id, phone, username, password_hash, name, preferred_language FROM users WHERE username = ?',
+        [usernameIdentifier]
+      );
        
-       // If not found, try case-insensitive search as fallback
-       if (!user) {
-         console.log(`Trying case-insensitive search for: ${usernameIdentifier}`);
-         const fallbackStmt = db.prepare('SELECT id, phone, username, password_hash, name, preferred_language FROM users');
-         const allUsers = fallbackStmt.all();
-         const fallbackUser = allUsers.find(u => u.username && u.username.toLowerCase() === usernameIdentifier);
-         if (fallbackUser) {
-           console.log(`Found user via case-insensitive search: ${fallbackUser.username}`);
-           Object.assign(user = {}, fallbackUser);
-         }
-       }
+      // If not found, try case-insensitive search as fallback
+      if (!user) {
+        console.log(`Trying case-insensitive search for: ${usernameIdentifier}`);
+        const allUsers = await dbHelper.all('SELECT id, phone, username, password_hash, name, preferred_language FROM users', []);
+        const fallbackUser = allUsers.find(u => u.username && u.username.toLowerCase() === usernameIdentifier);
+        if (fallbackUser) {
+          console.log(`Found user via case-insensitive search: ${fallbackUser.username}`);
+          user = fallbackUser;
+        }
+      }
 
       if (!user) {
         console.log(`User not found for username: ${usernameIdentifier}`);
@@ -281,8 +299,7 @@ export function initAuthRoutes(db) {
       }
 
       // Generate token with user data (fetch farm first, then use it)
-      const farmStmt = db.prepare('SELECT location, ward, farm_size, farm_size_unit FROM farms WHERE user_id = ?');
-      const farm = farmStmt.get(user.id);
+      const farm = await dbHelper.get('SELECT location, ward, farm_size, farm_size_unit FROM farms WHERE user_id = ?', [user.id]);
       
       const token = generateToken({
         id: user.id,
@@ -320,7 +337,7 @@ export function initAuthRoutes(db) {
   });
 
   // GET /api/auth/user - Fetch current user (requires token in Authorization header)
-  router.get('/user', (req, res) => {
+  router.get('/user', async (req, res) => {
     try {
       const token = req.headers.authorization?.split(' ')[1];
 
@@ -344,12 +361,10 @@ export function initAuthRoutes(db) {
       let user = null;
       let farm = null;
       try {
-        const userStmt = db.prepare('SELECT id, phone, username, name FROM users WHERE id = ?');
-        user = userStmt.get(decoded.userId);
+        user = await dbHelper.get('SELECT id, phone, username, name FROM users WHERE id = ?', [decoded.userId]);
         
         if (user) {
-          const farmStmt = db.prepare('SELECT location, ward, farm_size, farm_size_unit FROM farms WHERE user_id = ?');
-          farm = farmStmt.get(user.id);
+          farm = await dbHelper.get('SELECT location, ward, farm_size, farm_size_unit FROM farms WHERE user_id = ?', [user.id]);
         }
       } catch (dbError) {
         console.log('Database query error (may be Vercel ephemeral storage):', dbError.message);
@@ -396,7 +411,7 @@ export function initAuthRoutes(db) {
   });
 
   // PUT /api/auth/update-profile - Update user profile
-  router.put('/update-profile', (req, res) => {
+  router.put('/update-profile', async (req, res) => {
     try {
       const token = req.headers.authorization?.split(' ')[1];
 
@@ -420,19 +435,9 @@ export function initAuthRoutes(db) {
 
       // Update user in database if it exists
       try {
-        const updateStmt = db.prepare(`
-          UPDATE users 
-          SET name = ?, email = ?, date_of_birth = ?, gender = ?, id_number = ?, updated_at = CURRENT_TIMESTAMP
-          WHERE id = ?
-        `);
-        
-        const result = updateStmt.run(
-          name || null,
-          email || null,
-          date_of_birth || null,
-          gender || null,
-          id_number || null,
-          decoded.userId
+        const result = await dbHelper.run(
+          'UPDATE users SET name = ?, email = ?, date_of_birth = ?, gender = ?, id_number = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+          [name || null, email || null, date_of_birth || null, gender || null, id_number || null, decoded.userId]
         );
 
         if (result.changes > 0) {
@@ -460,7 +465,7 @@ export function initAuthRoutes(db) {
   });
 
   // POST /api/auth/update-language - Update user's language preference
-  router.post('/update-language', (req, res) => {
+  router.post('/update-language', async (req, res) => {
     try {
       const token = req.headers.authorization?.split(' ')[1];
 
@@ -500,8 +505,10 @@ export function initAuthRoutes(db) {
       }
 
       // Update user language preference
-      const updateStmt = db.prepare('UPDATE users SET preferred_language = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
-      const result = updateStmt.run(preferred_language, decoded.userId);
+      const result = await dbHelper.run(
+        'UPDATE users SET preferred_language = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [preferred_language, decoded.userId]
+      );
 
       if (result.changes > 0) {
         return res.json({
