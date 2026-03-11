@@ -12,10 +12,13 @@ export function setAsyncDb(asyncDbHelper) {
 
 // Initialize community tables (already done in migration)
 export function initializeCommunityDatabase(dbConnection, asyncDbConnection) {
+  // MUST set dbAsync first before anything else!
   if (asyncDbConnection) {
     setAsyncDb(asyncDbConnection);
+    console.log('✅ Community async service initialized with PostgreSQL dbAsync');
+  } else {
+    console.warn('⚠️ Community service initialized without dbAsync - this may cause errors');
   }
-  console.log('✅ Community async service initialized');
 }
 
 // ==================== QUESTIONS & ANSWERS ====================
