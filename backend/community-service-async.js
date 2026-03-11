@@ -3,11 +3,43 @@
  * Provides farmer-to-farmer Q&A, discussion boards, and success stories
  */
 
-let dbAsync;
+import pool from './database-postgres.js';
 
-// Set async database helper (for PostgreSQL)
+// Create our own dbAsync helper (like localhost creates its own getDb())
+const dbAsync = {
+  run: async (sql, params = []) => {
+    let paramIndex = 0;
+    let pgSQL = sql.replace(/\?/g, () => `$${++paramIndex}`);
+    
+    // Auto-add RETURNING id for INSERT statements
+    if (pgSQL.trim().toUpperCase().startsWith('INSERT') && !pgSQL.toUpperCase().includes('RETURNING')) {
+      pgSQL += ' RETURNING id';
+    }
+    
+    const result = await pool.query(pgSQL, params);
+    return {
+      lastID: result.rows[0]?.id || null,
+      changes: result.rowCount
+    };
+  },
+  get: async (sql, params = []) => {
+    let paramIndex = 0;
+    const pgSQL = sql.replace(/\?/g, () => `$${++paramIndex}`);
+    const result = await pool.query(pgSQL, params);
+    return result.rows[0] || null;
+  },
+  all: async (sql, params = []) => {
+    let paramIndex = 0;
+    const pgSQL = sql.replace(/\?/g, () => `$${++paramIndex}`);
+    const result = await pool.query(pgSQL, params);
+    return result.rows;
+  }
+};
+
+// Keep this for backwards compatibility but it's not needed anymore
 export function setAsyncDb(asyncDbHelper) {
-  dbAsync = asyncDbHelper;
+  // No longer needed - we create our own connection
+  console.log('✅ Community service using direct PostgreSQL connection');
 }
 
 // Initialize community tables (already done in migration)
