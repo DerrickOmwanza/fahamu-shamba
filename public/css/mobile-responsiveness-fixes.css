@@ -62,18 +62,25 @@ button, a, .btn, .nav-item, .clickable,
         z-index: 2000 !important;
     }
     
-    /* Sidebar overlay fix - must be below sidebar */
+    /* Sidebar overlay fix - must be below sidebar and hidden when closed */
     .sidebar-overlay {
         z-index: 1500 !important;
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
     
     .sidebar-overlay.mobile-open {
         z-index: 1500 !important;
+        display: block !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
     }
     
     .main-content {
         margin-left: 0 !important;
         width: 100% !important;
+        pointer-events: auto !important;
     }
     
     /* Header adjustments */
