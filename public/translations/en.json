@@ -1,145 +1,137 @@
 {
-    "header":  {
-                   "tagline":  "Smart Farming"
-               },
-    "nav":  {
-                "login":  "Login",
-                "signup":  "Sign Up"
-            },
-    "hero":  {
-                 "headline":  "Smart Farming Decisions, Powered by AI",
-                 "subtext":  "Get personalized crop recommendations based on your soil, weather, and market. Increase yields by 30% and reduce wasted inputs by 25%.",
-                 "createAccount":  "Create Account",
-                 "learnMore":  "Log In"
-             },
-    "features":  {
-                     "title":  "What You Get",
-                     "crops":  {
-                                   "name":  "Crop Predictions",
-                                   "desc":  "AI-powered recommendations tailored to your soil type, weather, and farm size."
-                               },
-                     "weather":  {
-                                     "name":  "Weather Forecasts",
-                                     "desc":  "Real-time weather data and forecasts for all 5 sub-counties in Siaya."
-                                 },
-                     "market":  {
-                                    "name":  "Market Insights",
-                                    "desc":  "Track crop prices across 6 markets to maximize your profit potential."
-                                },
-                     "soil":  {
-                                  "name":  "Soil Analysis",
-                                  "desc":  "Detailed soil quality reports with nutrient management recommendations."
-                              },
-                     "languages":  {
-                                       "name":  "Multilingual Support",
-                                       "desc":  "Choose your language: English, Kiswahili, or Dholuo. Understand Fahamu Shamba in the language you know best."
-                                   },
-                     "security":  {
-                                      "name":  "Secure \u0026 Private",
-                                      "desc":  "Your farm data is encrypted and protected. We never share your information."
-                                  }
-                 },
-    "howItWorks":  {
-                       "title":  "How It Works in 4 Steps",
-                       "steps":  [
-                                     {
-                                         "num":  "1",
-                                         "title":  "Your Profile",
-                                         "desc":  "Enter farm details"
-                                     },
-                                     {
-                                         "num":  "2",
-                                         "title":  "AI Analysis",
-                                         "desc":  "ML models analyze"
-                                     },
-                                     {
-                                         "num":  "3",
-                                         "title":  "Recommendations",
-                                         "desc":  "Get top crops"
-                                     },
-                                     {
-                                         "num":  "4",
-                                         "title":  "Grow \u0026 Profit",
-                                         "desc":  "Increase yield"
-                                     }
-                                 ]
-                   },
-    "stats":  {
-                  "title":  "Proven Results",
-                  "yield":  {
-                                "number":  "30%",
-                                "label":  "Higher Yields",
-                                "desc":  "Average increase with our recommendations"
-                            },
-                  "cost":  {
-                               "number":  "25%",
-                               "label":  "Cost Savings",
-                               "desc":  "Less wasted inputs"
-                           },
-                  "counties":  {
-                                   "number":  "5",
-                                   "label":  "Sub-Counties",
-                                   "desc":  "Serving all Siaya"
-                               },
-                  "free":  {
-                               "number":  "100%",
-                               "label":  "Free Access",
-                               "desc":  "No hidden charges"
-                           }
-              },
-    "testimonials":  {
-                         "title":  "What Farmers Say",
-                         "james":  {
-                                       "text":  "Fahamu Shamba helped me increase my bean yield by 40%. I now use data instead of guessing.",
-                                       "name":  "James Ochieng",
-                                       "location":  "Bondo"
-                                   },
-                         "mary":  {
-                                      "text":  "The weather forecasts are incredibly accurate. I avoided crop loss during the dry season.",
-                                      "name":  "Mary Kipchoge",
-                                      "location":  "Ugunja"
-                                  },
-                         "peter":  {
-                                       "text":  "Market prices tool saved me from planting the wrong crop. My income is up 35% this year!",
-                                       "name":  "Peter Mwangi",
-                                       "location":  "Yala"
-                                   }
-                     },
-    "instructions":  {
-                         "title":  "🚀 Getting Started is Easy!",
-                         "subtitle":  "Choose your path:",
-                         "new":  "New Farmer? Click the Sign Up button to create an account. You\u0027ll set up your profile in just 2 minutes.",
-                         "existing":  "Already have an account? Click the Login button to access your personalized dashboard.",
-                         "first":  "First time here? Check out the Features section above to see what Fahamu Shamba offers.",
-                         "after":  "After logging in, you\u0027ll access your Farmer Dashboard where you can get crop recommendations, check weather forecasts, and track market prices."
-                     },
-    "cta":  {
-                "title":  "Ready to Transform Your Farming?",
-                "subtitle":  "Join hundreds of farmers across Siaya County making smarter decisions with Fahamu Shamba.",
-                "createAccount":  "Create Free Account",
-                "login":  "Log In to Dashboard"
-            },
-    "footer":  {
-                   "about":  "About",
-                   "aboutLinks":  [
-                                      "About Fahamu Shamba",
-                                      "Our Mission",
-                                      "Blog"
-                                  ],
-                   "resources":  "Resources",
-                   "resourceLinks":  [
-                                         "Crop Guide",
-                                         "Market Trends",
-                                         "Help Center"
-                                     ],
-                   "legal":  "Legal",
-                   "legalLinks":  [
-                                      "Privacy Policy",
-                                      "Terms of Service",
-                                      "Contact"
-                                  ],
-                   "languages":  "Languages",
-                   "copyright":  "? 2025 Fahamu Shamba. All rights reserved.",
-                   "description":  "Empowering smallholder farmers in Siaya County with AI-powered crop recommendations and market intelligence."
-               }
+  "nav": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "ussd": "USSD Demo"
+  },
+  "header": {
+    "tagline": "Smart Farming Made Simple"
+  },
+  "hero": {
+    "headline": "Smart Farming Made Simple",
+    "subtext": "Get personalized crop recommendations and market insights.",
+    "learnMore": "Learn More",
+    "createAccount": "Create Free Account"
+  },
+  "features": {
+    "title": "Why Choose Fahamu Shamba?",
+    "crops": {
+      "name": "Crop Guide",
+      "desc": "Get expert guidance on which crops to plant based on your location, soil type, and season."
+    },
+    "weather": {
+      "name": "Weather Intelligence",
+      "desc": "Stay updated with accurate weather forecasts tailored to your farming location."
+    },
+    "market": {
+      "name": "Market Prices",
+      "desc": "Monitor real-time market prices and get the best time to sell your produce."
+    },
+    "soil": {
+      "name": "Soil Analysis",
+      "desc": "Understand your soil composition and get recommendations for soil improvement."
+    },
+    "security": {
+      "name": "Secure & Private",
+      "desc": "Your farm data is encrypted and kept secure. Only you control your information."
+    },
+    "languages": {
+      "name": "Multiple Languages",
+      "desc": "Access Fahamu Shamba in English, Swahili, or Dholuo—your choice."
+    }
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "steps": [
+      {
+        "title": "Sign Up",
+        "desc": "Create your account and tell us about your farm. It only takes 2 minutes."
+      },
+      {
+        "title": "Get Recommendations",
+        "desc": "Our AI analyzes your location, soil, and season to recommend the best crops."
+      },
+      {
+        "title": "Track & Grow",
+        "desc": "Monitor weather, market prices, and crop health with our integrated dashboard."
+      },
+      {
+        "title": "Harvest Success",
+        "desc": "Maximize your yield and profits with data-driven farming decisions."
+      }
+    ]
+  },
+  "stats": {
+    "title": "Impact by Numbers",
+    "yield": {
+      "label": "+35% Yield",
+      "desc": "Average increase in crop yield"
+    },
+    "cost": {
+      "label": "-20% Costs",
+      "desc": "Reduction in farming expenses"
+    },
+    "counties": {
+      "label": "40+ Counties",
+      "desc": "Active across Kenya"
+    },
+    "free": {
+      "label": "100% Free",
+      "desc": "No hidden charges or subscriptions"
+    }
+  },
+  "testimonials": {
+    "title": "Success Stories",
+    "james": {
+      "name": "James Kiplagat",
+      "location": "Uasin Gishu County",
+      "text": "Fahamu Shamba helped me understand when to plant and what crops work best for my soil. My harvest doubled!"
+    },
+    "mary": {
+      "name": "Mary Omondi",
+      "location": "Kisumu County",
+      "text": "The market price predictions saved me from selling at the wrong time. I earned 40% more this season."
+    },
+    "peter": {
+      "name": "Peter Mwangi",
+      "location": "Kiambu County",
+      "text": "Using Fahamu Shamba, I've reduced my farming costs by half while increasing productivity. Highly recommend!"
+    }
+  },
+  "cta": {
+    "title": "Ready to Transform Your Farm?",
+    "subtitle": "Join thousands of Kenyan farmers already using Fahamu Shamba to grow smarter, not harder.",
+    "login": "Log In to Dashboard",
+    "createAccount": "Create Free Account"
+  },
+  "instructions": {
+    "title": "How to Get Started",
+    "subtitle": "Choose what applies to you:",
+    "new": "1. New to Fahamu Shamba? Click Sign Up to create your account.",
+    "existing": "2. Already registered? Click Login to enter your dashboard.",
+    "first": "3. Want to learn more? Scroll up to see what Fahamu Shamba can help you with.",
+    "after": "Next: Once you log in, you'll see your dashboard with crop tips, weather updates, and market prices."
+  },
+  "footer": {
+    "description": "Fahamu Shamba is an AI-powered platform helping Kenyan farmers make smarter decisions about what to plant, when to plant, and how to maximize their yields.",
+    "about": "About",
+    "resources": "Resources",
+    "legal": "Legal",
+    "aboutLinks": [
+      "About Us",
+      "Contact Us",
+      "Our Mission"
+    ],
+    "resourceLinks": [
+      "Blog",
+      "Documentation",
+      "Help Center"
+    ],
+    "legalLinks": [
+      "Privacy Policy",
+      "Terms of Service",
+      "Contact Us"
+    ],
+    "copyright": "© 2025 Fahamu Shamba. All rights reserved."
+  }
 }

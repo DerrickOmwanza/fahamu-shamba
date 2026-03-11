@@ -1,0 +1,334 @@
+/* Unified Sidebar Styles - Used across all pages */
+
+:root {
+    --primary: #2d7649;
+    --primary-dark: #1e5631;
+    --secondary: #f57c00;
+    --light: #f9f7f4;
+    --text: #34495e;
+    --text-light: #7f8c8d;
+    --border: #e0e6ed;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+    --sidebar-width: 260px;
+    --sidebar-collapsed: 70px;
+}
+
+/* Sidebar Container */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+    color: white;
+    z-index: 1001;
+    transition: width 0.3s ease, transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    overflow: hidden;
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed);
+}
+
+/* Sidebar Header */
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.sidebar-logo {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.sidebar-brand {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.sidebar-brand h2 {
+    font-size: 1.2rem;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-brand p {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    margin: 2px 0 0 0;
+    white-space: nowrap;
+}
+
+.sidebar-close-btn {
+    margin-left: auto;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(0,0,0,0.2);
+    color: #fff;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1002;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.sidebar-close-btn:hover {
+    background: rgba(255,255,255,0.3);
+    border-color: rgba(255,255,255,0.5);
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+    flex: 1;
+    padding: 15px 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    margin-bottom: 5px;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+    position: relative;
+}
+
+.nav-item:hover {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    transform: translateX(4px);
+}
+
+.nav-item.active {
+    background: rgba(255,255,255,0.25);
+    color: white;
+    border-left: 3px solid var(--secondary);
+}
+
+.nav-item i {
+    width: 24px;
+    min-width: 24px;
+    text-align: center;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-item span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    padding: 15px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-phone {
+    font-size: 0.78rem;
+    opacity: 0.85;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(231,76,60,0.35);
+    border-radius: 8px;
+    background: rgba(231,76,60,0.2);
+    color: #ffb3ab;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.logout-btn:hover {
+    background: #e74c3c;
+    color: #fff;
+}
+
+/* Sidebar Overlay (Mobile) */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1000;
+}
+
+/* Main Content Alignment */
+.main-content {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+
+/* Tablet & Small Desktop (show close button, keep sidebar) */
+@media (max-width: 1280px) {
+    .sidebar-close-btn {
+        display: inline-flex;
+    }
+}
+
+/* Tablet & Mobile (hide sidebar by default, show overlay on open) */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width) !important;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+        display: none;
+    }
+
+    .sidebar-overlay.mobile-open {
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+    }
+}
+
+/* Mobile (optimize for small screens) */
+@media (max-width: 640px) {
+    .sidebar-header {
+        padding: 16px;
+    }
+
+    .sidebar-logo {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+    }
+
+    .sidebar-brand h2 {
+        font-size: 1rem;
+    }
+
+    .sidebar-brand p {
+        font-size: 0.7rem;
+    }
+
+    .nav-item {
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    .nav-item i {
+        font-size: 1rem;
+    }
+
+    .sidebar-footer {
+        padding: 12px;
+    }
+
+    .user-info {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .logout-btn {
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Scrollbar styling for sidebar nav */
+.sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.3);
+}

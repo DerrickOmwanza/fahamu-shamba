@@ -1,0 +1,64 @@
+<!-- SHARED SIDEBAR COMPONENT -->
+<div class="sidebar" id="sidebar">
+    <button class="sidebar-close" onclick="closeMobileSidebar()">
+        <i class="fas fa-times"></i>
+    </button>
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <i class="fas fa-seedling"></i>
+        </div>
+        <div class="sidebar-brand">
+            <h2>Fahamu Shamba</h2>
+            <p>Smart Farming Assistant</p>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="/dashboard.html" class="nav-item" id="nav-dashboard">
+            <i class="fas fa-th-large"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/recommendations.html" class="nav-item" id="nav-recommendations">
+            <i class="fas fa-lightbulb"></i>
+            <span>Recommendations</span>
+        </a>
+        <a href="/market.html" class="nav-item" id="nav-market">
+            <i class="fas fa-shopping-basket"></i>
+            <span>Market Trends</span>
+        </a>
+        <a href="/community.html" class="nav-item" id="nav-community">
+            <i class="fas fa-users"></i>
+            <span>Community</span>
+        </a>
+        <a href="/feedback.html" class="nav-item" id="nav-feedback">
+            <i class="fas fa-comment-alt"></i>
+            <span>Feedback</span>
+        </a>
+        <a href="/profile.html" class="nav-item" id="nav-profile">
+            <i class="fas fa-user-circle"></i>
+            <span>My Profile</span>
+        </a>
+        <a href="/settings.html" class="nav-item" id="nav-settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="user-info">
+            <div class="user-avatar" id="sidebar-user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-details">
+                <div class="user-name" id="sidebar-user-name">Farmer</div>
+                <div class="user-phone" id="sidebar-user-phone">+254...</div>
+            </div>
+        </div>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </button>
+    </div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>

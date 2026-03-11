@@ -174,29 +174,10 @@
     white-space: nowrap;
 }
 
-/* ===== SIDEBAR OVERLAY ===== */
-.nav-sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.45);
-    z-index: 999;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.nav-sidebar-overlay.active {
-    display: block;
-    opacity: 1;
-}
-
 /* ===== RESPONSIVE DESIGN ===== */
 
 /* Tablet */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .top-nav {
         padding: 10px 16px;
         min-height: 56px;
@@ -335,4 +316,3 @@
         animation: none;
     }
 }
-

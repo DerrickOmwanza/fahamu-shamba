@@ -199,26 +199,26 @@
         </div>
         <div class="logo">
             <img src="/fahamu-logo.png" alt="Fahamu Shamba">
-            <h1>Fahamu Shamba</h1>
+            <h1 data-i18n="landing_title">Fahamu Shamba</h1>
         </div>
-        <h2>Create Account</h2>
+        <h2 data-i18n="create_account"></h2>
         <form id="signupForm">
             <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" id="name" placeholder="Enter your full name" required>
+                <label data-i18n="full_name"></label>
+                <input type="text" id="name" data-i18n-placeholder="enter_full_name" required>
             </div>
             <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="username" placeholder="Choose a username" required>
+                <label data-i18n="username"></label>
+                <input type="text" id="username" data-i18n-placeholder="enter_username" required>
             </div>
             <div class="form-group">
-                <label>Phone Number</label>
-                <input type="tel" id="phone" placeholder="e.g., 0712345678" required>
+                <label data-i18n="phone_number"></label>
+                <input type="tel" id="phone" data-i18n-placeholder="example_phone" required>
             </div>
             <div class="form-group">
-                <label>Sub-County</label>
+                <label data-i18n="sub_county"></label>
                 <select id="subcounty" required>
-                    <option value="">Select Sub-County</option>
+                    <option value="" data-i18n="select_sub_county"></option>
                     <option value="bondo">Bondo</option>
                     <option value="ugenya">Ugenya</option>
                     <option value="ugunja">Ugunja</option>
@@ -228,17 +228,17 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Ward</label>
-                <input type="text" id="ward" placeholder="Enter your ward" required>
+                <label data-i18n="ward"></label>
+                <input type="text" id="ward" data-i18n-placeholder="enter_ward" required>
             </div>
             <div class="form-group">
-                <label>Farm Size (Acres)</label>
-                <input type="number" id="farmSize" placeholder="e.g., 2" required>
+                <label data-i18n="farm_size"></label>
+                <input type="number" id="farmSize" data-i18n-placeholder="example_farm_size" required>
             </div>
             <div class="form-group">
-                <label>Main Crop</label>
+                <label data-i18n="main_crop"></label>
                 <select id="mainCrop" required>
-                    <option value="">Select Crop</option>
+                    <option value="" data-i18n="select_crop"></option>
                     <option value="maize">Maize</option>
                     <option value="beans">Beans</option>
                     <option value="rice">Rice</option>
@@ -247,40 +247,26 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="password" placeholder="Create a password" required>
+                <label data-i18n="password"></label>
+                <input type="password" id="password" data-i18n-placeholder="create_password" required>
             </div>
             <div class="form-group">
-                <label>Confirm Password</label>
-                <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                <label data-i18n="confirm_password"></label>
+                <input type="password" id="confirmPassword" data-i18n-placeholder="confirm_your_password" required>
             </div>
-            <button type="submit" class="btn">Create Account</button>
+            <button type="submit" class="btn" data-i18n="create_account"></button>
         </form>
         <div class="links">
-            <p>Already have an account? <a href="/login.html">Login</a></p>
+            <p><span data-i18n="already_have_account"></span> <a href="/login.html" data-i18n="login"></a></p>
         </div>
         <div class="back-link">
-            <a href="/"><i class="fas fa-arrow-left"></i> Back to Home</a>
+            <a href="/"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home"></span></a>
         </div>
     </div>
     <script>
         // Initialize language on page load
         document.addEventListener('DOMContentLoaded', () => {
-            const lang = getCurrentLanguage();
-            const select = document.getElementById('languageSelect');
-            if (select && lang) {
-                select.value = lang;
-                const langNames = {
-                    'en': '🌐 English',
-                    'sw': '🌐 Kiswahili',
-                    'luo': '🌐 Dholuo'
-                };
-                const btnText = document.getElementById('languageBtnText');
-                if (btnText && langNames[lang]) {
-                    btnText.textContent = langNames[lang];
-                }
-            }
-            translatePage(lang);
+           initializeLanguage();
         });
         
         // Language functions
@@ -298,11 +284,19 @@
         function selectLanguage(lang, text) {
             const btnText = document.getElementById('languageBtnText');
             if (btnText) btnText.textContent = text;
+
+            const normalizedLang = {
+                'en': 'english',
+                'sw': 'swahili',
+                'luo': 'luo'
+            }[lang] || 'english';
+            
             const select = document.getElementById('languageSelect');
-            if (select) select.value = lang;
+            if (select) select.value = normalizedLang;
+
             const menu = document.getElementById('languageDropdownMenu');
             if (menu) menu.classList.remove('show');
-            changeLanguage(lang);
+            changeLanguage(normalizedLang);
         }
         
         // Close dropdown when clicking outside
@@ -336,12 +330,12 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
             
             if (password !== confirmPassword) {
-                showToast('Passwords do not match!', 'error');
+                showToast(t('passwords_do_not_match'), 'error'); // Assumes 'passwords_do_not_match' key exists
                 return;
             }
             
             if (!username) {
-                showToast('Please choose a username!', 'error');
+                showToast(t('username_required'), 'error'); // Assumes 'username_required' key exists
                 return;
             }
 
@@ -349,7 +343,7 @@
 
             try {
                 submitBtn.disabled = true;
-                submitBtn.textContent = 'Creating account...';
+                submitBtn.textContent = t('loading');
 
                 const registerRes = await fetch('/api/auth/register', {
                     method: 'POST',
@@ -358,9 +352,12 @@
                 });
                 const registerData = await registerRes.json();
                 if (!registerRes.ok || registerData.status !== 'success') {
-                    throw new Error(registerData.message || 'Registration failed');
+                    throw new Error(registerData.message || t('registration_failed')); // Assumes 'registration_failed'
                 }
 
+                // Get current language preference
+                const currentLanguage = getCurrentLanguage();
+                
                 const profileRes = await fetch('/api/auth/register-profile', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -369,25 +366,26 @@
                         name,
                         location: subcounty,
                         ward,
-                        farm_size: Number(farmSize) || null
+                        farm_size: Number(farmSize) || null,
+                        preferred_language: currentLanguage
                     })
                 });
                 const profileData = await profileRes.json();
                 if (!profileRes.ok || profileData.status !== 'success') {
-                    throw new Error(profileData.message || 'Profile setup failed');
+                    throw new Error(profileData.message || t('profile_setup_failed'));
                 }
 
                 localStorage.setItem('token', profileData.token);
                 localStorage.setItem('user', JSON.stringify(profileData.user || {}));
-                showToast('Account created successfully! Please login.', 'success');
+                showToast(t('registration_success'), 'success');
                 setTimeout(() => {
                     window.location.href = '/login.html';
                 }, 1500);
             } catch (error) {
-                showToast(error.message || 'Failed to create account', 'error');
+                showToast(error.message || t('registration_failed'), 'error');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Create Account';
+                submitBtn.textContent = t('create_account');
             }
         });
     </script>

@@ -120,52 +120,16 @@
          .photo-upload-btn { display: inline-block; padding: 12px 24px; background: var(--primary); color: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
          .photo-upload-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
     </style>
+    <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/toast.css">
+    <script src="/js/sidebar.js" defer></script>
     <script src="/js/navbar.js" defer></script>
     <script src="/js/toast.js" defer></script>
 </head>
 <body>
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
-    
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-    
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-logo">🌱</div>
-            <div class="sidebar-brand">
-                <h2>Fahamu Shamba</h2>
-                <p>Smart Farming</p>
-            </div>
-            <button class="sidebar-close-btn" onclick="closeMobileSidebar()" aria-label="Close menu">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <nav class="sidebar-nav">
-            <a class="nav-item" onclick="goToDashboard()"><i class="fas fa-home"></i><span>Dashboard</span></a>
-            <a class="nav-item" onclick="goToRecommendations()"><i class="fas fa-leaf"></i><span>Recommendations</span></a>
-            <a class="nav-item" onclick="goToMarket()"><i class="fas fa-chart-bar"></i><span>Market Prices</span></a>
-            <a class="nav-item" onclick="goToCommunity()"><i class="fas fa-users"></i><span>Community</span></a>
-            <a class="nav-item" onclick="goToFeedback()"><i class="fas fa-star"></i><span>Feedback</span></a>
-            <a class="nav-item active" onclick="goToProfile()"><i class="fas fa-user-circle"></i><span>My Profile</span></a>
-            <a class="nav-item" onclick="goToSettings()"><i class="fas fa-cog"></i><span>Settings</span></a>
-        </nav>
-        
-        <div class="sidebar-footer">
-            <div class="user-info">
-                <div class="user-avatar">👤</div>
-                <div class="user-details">
-                    <div class="user-name" id="userName">Farmer</div>
-                    <div class="user-phone" id="userPhone">—</div>
-                </div>
-            </div>
-            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
-        </div>
-    </aside>
+    <div id="sidebar-container"></div>
+
     
     <!-- Main Content -->
     <div class="main-content">
@@ -268,6 +232,21 @@
          
          // Initialize
          document.addEventListener('DOMContentLoaded', () => {
+             // Load user's language preference from database
+             try {
+                 const userStr = localStorage.getItem('user');
+                 if (userStr) {
+                     const user = JSON.parse(userStr);
+                     if (user && user.preferred_language) {
+                         setLanguage(user.preferred_language);
+                         localStorage.setItem('fahamuShamba_language', user.preferred_language);
+                     }
+                 }
+             } catch (e) {
+                 console.warn('Could not load user language preference:', e);
+             }
+             
+             initializeLanguage();
              loadUserData();
              setupPhotoUpload();
          });
@@ -291,10 +270,15 @@
          function displayUserData() {
              if (!currentUser) return;
              
-             document.getElementById('userName').textContent = currentUser.name || 'Farmer';
-             document.getElementById('userPhone').textContent = currentUser.phone || '—';
-             document.getElementById('profileName').textContent = currentUser.name || 'Farmer';
-             document.getElementById('profileLocation').textContent = 'Location: ' + (currentUser.sub_county || '—');
+             const nameEl = document.getElementById('userName');
+             const phoneEl = document.getElementById('userPhone');
+             const profileNameEl = document.getElementById('profileName');
+             const profileLocEl = document.getElementById('profileLocation');
+             
+             if (nameEl) nameEl.textContent = currentUser.name || currentUser.username || 'Farmer';
+             if (phoneEl) phoneEl.textContent = currentUser.phone || '—';
+             if (profileNameEl) profileNameEl.textContent = currentUser.name || currentUser.username || 'Farmer';
+             if (profileLocEl) profileLocEl.textContent = 'Location: ' + (currentUser.sub_county || '—');
              
              // Display profile photo
              if (currentUser.profile_photo) {

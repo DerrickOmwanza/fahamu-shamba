@@ -1,10 +1,16 @@
 // Global Language Management System
-const SUPPORTED_LANGUAGES = ['english', 'swahili', 'luo'];
-const DEFAULT_LANGUAGE = 'english';
-const STORAGE_KEY = 'fahamuShamba_language';
+if (typeof SUPPORTED_LANGUAGES === 'undefined') {
+    var SUPPORTED_LANGUAGES = ['english', 'swahili', 'luo'];
+}
+if (typeof DEFAULT_LANGUAGE === 'undefined') {
+    var DEFAULT_LANGUAGE = 'english';
+}
+if (typeof STORAGE_KEY === 'undefined') {
+    var STORAGE_KEY = 'fahamuShamba_language';
+}
 
-// All UI strings in all languages
-const translations = {
+if (typeof translations === 'undefined') {
+    var translations = {
   english: {
     // General
     welcome: 'Welcome',
@@ -12,8 +18,6 @@ const translations = {
     loading: 'Loading...',
     error: 'Error',
     success: 'Success',
-    
-    // Landing Page
     landing_title: 'Fahamu Shamba',
     landing_subtitle: 'Smart Farming Companion',
     landing_tagline: 'Your AI-Powered Guide to Better Farming',
@@ -25,35 +29,39 @@ const translations = {
     login: 'Login',
     register: 'Register',
     create_account: 'Create Account',
-    phone: 'Phone Number',
-    password: 'Password',
-    confirm_password: 'Confirm Password',
-    enter_phone: 'Enter your phone number',
-    enter_password: 'Enter your password',
-    already_have_account: 'Already have an account?',
-    no_account: "Don't have an account?",
-    next: 'Next',
-    submit: 'Submit',
-    login_button: 'Login',
-    signup_button: 'Sign Up',
+    full_name: "Full Name",
+    enter_full_name: "Enter your full name",
+    username: "Username",
+    enter_username: "Enter your username",
+    phone_number: "Phone Number",
+    example_phone: "e.g., 0712345678",
+    sub_county: "Sub-County",
+    select_sub_county: "Select Sub-County",
+    ward: "Ward",
+    enter_ward: "Enter your ward",
+    farm_size: "Farm Size (Acres)",
+    example_farm_size: "e.g., 2",
+    main_crop: "Main Crop",
+    select_crop: "Select Crop",
+    password: "Password",
+    create_password: "Create a password",
+    confirm_password: "Confirm Password",
+    confirm_your_password: "Confirm your password",
+    already_have_account: "Already have an account? Login",
+    welcome_back: "Welcome Back!",
+    dont_have_account: "Don't have an account? Sign Up",
+    back_home: "Back to Home",
     
     // Registration Step 2
     profile_setup: 'Profile Setup',
-    full_name: 'Full Name',
     county: 'County',
-    ward: 'Ward',
-    farm_size: 'Farm Size (hectares)',
     select_county: 'Select County',
-    select_ward: 'Select Ward',
     enter_name: 'Enter your full name',
     enter_county: 'Select your county',
-    enter_ward: 'Select your ward',
-    enter_farm_size: 'Enter farm size',
     complete_profile: 'Complete Profile',
     
     // Dashboard
     dashboard: 'Dashboard',
-    welcome_back: 'Welcome back',
     good_morning: 'Good morning',
     good_afternoon: 'Good afternoon',
     good_evening: 'Good evening',
@@ -68,7 +76,6 @@ const translations = {
     updated: 'Last Updated',
     today: 'Today',
     name: 'Name',
-    phone_number: 'Phone Number',
     county_label: 'County',
     ward_label: 'Ward',
     farm_size_label: 'Farm Size',
@@ -132,38 +139,42 @@ const translations = {
     learn_more: 'Jifunze Zaidi',
     
     // Auth Pages
-    login: 'Ingia',
+    login: "Ingia",
     register: 'Jisajili',
-    create_account: 'Tengeneza Akaunti',
-    phone: 'Nambari ya Simu',
-    password: 'Neno la Siri',
-    confirm_password: 'Thibitisha Neno la Siri',
-    enter_phone: 'Ingiza nambari ya simu yako',
-    enter_password: 'Ingiza neno la siri lako',
-    already_have_account: 'Tayari una akaunti?',
-    no_account: 'Huna akaunti?',
-    next: 'Inayofuata',
-    submit: 'Tuma',
-    login_button: 'Ingia',
-    signup_button: 'Jisajili',
-    
+    create_account: "Unda Akaunti",
+    full_name: "Jina Kamili",
+    enter_full_name: "Weka jina lako kamili",
+    username: "Jina la mtumiaji",
+    enter_username: "Weka jina la mtumiaji",
+    phone_number: "Nambari ya Simu",
+    example_phone: "mfano, 0712345678",
+    sub_county: "Kaunti Ndogo",
+    select_sub_county: "Chagua Kaunti Ndogo",
+    ward: "Wodi",
+    enter_ward: "Weka wodi yako",
+    farm_size: "Ukubwa wa Shamba (ekari)",
+    example_farm_size: "mfano, 2",
+    main_crop: "Mzao Mkuu",
+    select_crop: "Chagua Mzao",
+    password: "Nenosiri",
+    create_password: "Unda nenosiri",
+    confirm_password: "Thibitisha Nenosiri",
+    confirm_your_password: "Thibitisha nenosiri lako",
+    already_have_account: "Tayari una akaunti? Ingia",
+    welcome_back: "Karibu Tena!",
+    dont_have_account: "Huna akaunti? Jisajili",
+    back_home: "Rudi Nyumbani",
+
     // Registration Step 2
     profile_setup: 'Mipango ya Wasifu',
-    full_name: 'Jina Kamili',
     county: 'Kaunti',
-    ward: 'Kata',
-    farm_size: 'Ukubwa wa Shamba (hectares)',
     select_county: 'Chagua Kaunti',
-    select_ward: 'Chagua Kata',
     enter_name: 'Ingiza jina lako kamili',
     enter_county: 'Chagua kaunti yako',
-    enter_ward: 'Chagua kata yako',
-    enter_farm_size: 'Ingiza ukubwa wa shamba',
     complete_profile: 'Kumalizia Wasifu',
     
     // Dashboard
     dashboard: 'Dashibodi',
-    welcome_back: 'Karibu tena',
     good_morning: 'Habari za asubuhi',
     good_afternoon: 'Habari za jioni',
     good_evening: 'Habari za jioni',
@@ -178,7 +189,6 @@ const translations = {
     updated: 'Ilisasishwa Mwisho',
     today: 'Leo',
     name: 'Jina',
-    phone_number: 'Nambari ya Simu',
     county_label: 'Kaunti',
     ward_label: 'Kata',
     farm_size_label: 'Ukubwa wa Shamba',
@@ -245,36 +255,39 @@ const translations = {
     login: 'Jothieth',
     register: 'Jothieth Hara',
     create_account: 'Yie Akaunti',
-    phone: 'Namba mar simu',
-    password: 'Nyithindo mag dak',
-    confirm_password: 'Keto dwoko mar nyithindo',
-    enter_phone: 'Gir namba mar simu moloyo',
-    enter_password: 'Gir nyithindo mag dak moloyo',
-    already_have_account: 'Oyawore ne akaunti?',
-    no_account: 'Ok oyawore akaunti?',
-    next: 'Dhiyo mbele',
-    submit: 'Dircho',
-    login_button: 'Jothieth',
-    signup_button: 'Jothieth Hara',
-    back: 'Dok chiengʼ',
-    
+    full_name: "",
+    enter_full_name: "",
+    username: "",
+    enter_username: "",
+    phone_number: "",
+    example_phone: "",
+    sub_county: "",
+    select_sub_county: "",
+    ward: "",
+    enter_ward: "",
+    farm_size: "",
+    example_farm_size: "",
+    main_crop: "",
+    select_crop: "",
+    password: "",
+    create_password: "",
+    confirm_password: "",
+    confirm_your_password: "",
+    already_have_account: "",
+    welcome_back: "Oyawore Hara!",
+    dont_have_account: "",
+    back_home: "Dok Home",
+
     // Registration Step 2
     profile_setup: 'Setup Ranyisi',
-    full_name: 'Nyingʼ',
     county: 'County',
-    ward: 'Ward',
-    farm_size: 'Pako Bonde (hectares)',
     select_county: 'Rito County',
-    select_ward: 'Rito Ward',
     enter_name: 'Gir nyingʼ moloyo',
     enter_county: 'Rito county moloyo',
-    enter_ward: 'Rito ward moloyo',
-    enter_farm_size: 'Gir pako bonde',
     complete_profile: 'Yie akaunti',
     
     // Dashboard
     dashboard: 'Dashboard',
-    welcome_back: 'Oyawore Hara',
     good_morning: 'Oyawore Ohi',
     good_afternoon: 'Oyawore Ndalo',
     good_evening: 'Oyawore Odhiambo',
@@ -289,7 +302,6 @@ const translations = {
     updated: 'Ilisasishwa Mwisho',
     today: 'Kawuono',
     name: 'Nyingʼ',
-    phone_number: 'Namba mar simu',
     county_label: 'County',
     ward_label: 'Ward',
     farm_size_label: 'Pako Bonde',
@@ -338,12 +350,28 @@ const translations = {
   }
 };
 
+function getBrowserLanguage() {
+  const lang = navigator.language || navigator.userLanguage;
+  if (lang.startsWith('sw')) return 'swahili';
+  // Assuming 'luo' is the browser code for Dholuo. May need adjustment.
+  if (lang.startsWith('luo') || lang.startsWith('dho')) return 'luo'; 
+  return 'english';
+}
+
 // Get current language
 function getCurrentLanguage() {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored && SUPPORTED_LANGUAGES.includes(stored)) {
     return stored;
   }
+  
+  // If no language is stored, detect from browser settings
+  const browserLang = getBrowserLanguage();
+  if (SUPPORTED_LANGUAGES.includes(browserLang)) {
+      setLanguage(browserLang); // Save the detected language
+      return browserLang;
+  }
+
   return DEFAULT_LANGUAGE;
 }
 
@@ -358,10 +386,28 @@ function setLanguage(lang) {
   return false;
 }
 
-// Get translated string
+// Get translated string (supports nested keys like "instructions.new")
 function t(key, lang = null) {
   const language = lang || getCurrentLanguage();
-  return translations[language]?.[key] || translations[DEFAULT_LANGUAGE]?.[key] || key;
+  
+  // Handle nested keys with dot notation (e.g., "instructions.new")
+  const keys = key.split('.');
+  let value = translations[language];
+  
+  for (const k of keys) {
+    value = value?.[k];
+  }
+  
+  // Fallback to English if not found
+  if (!value) {
+    value = translations[DEFAULT_LANGUAGE];
+    for (const k of keys) {
+      value = value?.[k];
+    }
+  }
+  
+  // Return the value or the original key if not found
+  return value || key;
 }
 
 // Translate all elements with data-i18n attribute
@@ -376,6 +422,15 @@ function translatePage(lang = null) {
       el.textContent = translation;
     } else {
       el.textContent = translation;
+    }
+  });
+  
+  // Also translate placeholders for elements with data-i18n-placeholder
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    const translation = t(key, language);
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+      el.placeholder = translation;
     }
   });
   

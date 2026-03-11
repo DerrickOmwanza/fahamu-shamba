@@ -43,7 +43,8 @@ export function initAuthRoutes(db) {
       name: user.name,
       location: user.location || null,
       ward: user.ward || null,
-      farm_size: user.farm_size || null
+      farm_size: user.farm_size || null,
+      preferred_language: user.preferred_language || 'english'
     }, JWT_SECRET, { expiresIn: '7d' });
   };
 
@@ -145,7 +146,7 @@ export function initAuthRoutes(db) {
   // POST /api/auth/register-profile - Step 2: Profile Details
   router.post('/register-profile', async (req, res) => {
     try {
-      const { userId, name, location, ward, farm_size, farm_size_unit = 'acres' } = req.body;
+      const { userId, name, location, ward, farm_size, farm_size_unit = 'acres', preferred_language = 'english' } = req.body;
 
       // Validate input
       if (!userId || !name || !location) {
@@ -172,9 +173,9 @@ export function initAuthRoutes(db) {
       );
       const farmResult = farmStmt.run(userId, location, ward || null, farm_size || null, farm_size_unit);
 
-      // Update user name
-      const updateStmt = db.prepare('UPDATE users SET name = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
-      updateStmt.run(name, userId);
+      // Update user name and language preference
+      const updateStmt = db.prepare('UPDATE users SET name = ?, preferred_language = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
+      updateStmt.run(name, preferred_language, userId);
 
       // Fetch updated user
       const getUserStmt = db.prepare('SELECT id, phone, username, name FROM users WHERE id = ?');
@@ -188,7 +189,8 @@ export function initAuthRoutes(db) {
         name: name,
         location: location,
         ward: ward || null,
-        farm_size: farm_size || null
+        farm_size: farm_size || null,
+        preferred_language: preferred_language
       });
 
       res.status(201).json({
@@ -203,7 +205,8 @@ export function initAuthRoutes(db) {
           location,
           ward: ward || null,
           farm_size: farm_size || null,
-          farm_size_unit: farm_size_unit || 'acres'
+          farm_size_unit: farm_size_unit || 'acres',
+          preferred_language: preferred_language
         }
       });
     } catch (error) {
@@ -240,13 +243,13 @@ export function initAuthRoutes(db) {
 
        // Find user by username only (matching create account page)
        // Use exact match with lowercase since we normalize on registration
-       const stmt = db.prepare('SELECT id, phone, username, password_hash, name FROM users WHERE username = ?');
+       const stmt = db.prepare('SELECT id, phone, username, password_hash, name, preferred_language FROM users WHERE username = ?');
        const user = stmt.get(usernameIdentifier);
        
        // If not found, try case-insensitive search as fallback
        if (!user) {
          console.log(`Trying case-insensitive search for: ${usernameIdentifier}`);
-         const fallbackStmt = db.prepare('SELECT id, phone, username, password_hash, name FROM users');
+         const fallbackStmt = db.prepare('SELECT id, phone, username, password_hash, name, preferred_language FROM users');
          const allUsers = fallbackStmt.all();
          const fallbackUser = allUsers.find(u => u.username && u.username.toLowerCase() === usernameIdentifier);
          if (fallbackUser) {
@@ -288,7 +291,8 @@ export function initAuthRoutes(db) {
         name: user.name,
         location: farm ? farm.location : null,
         ward: farm ? farm.ward : null,
-        farm_size: farm ? farm.farm_size : null
+        farm_size: farm ? farm.farm_size : null,
+        preferred_language: user.preferred_language
       });
 
       res.json({
@@ -302,7 +306,8 @@ export function initAuthRoutes(db) {
           location: farm ? farm.location : null,
           ward: farm ? farm.ward : null,
           farm_size: farm ? farm.farm_size : null,
-          farm_size_unit: farm ? farm.farm_size_unit : 'acres'
+          farm_size_unit: farm ? farm.farm_size_unit : 'acres',
+          preferred_language: user.preferred_language || 'english'
         }
       });
     } catch (error) {
@@ -450,6 +455,72 @@ export function initAuthRoutes(db) {
       res.status(500).json({
         status: 'error',
         message: 'Failed to update profile'
+      });
+    }
+  });
+
+  // POST /api/auth/update-language - Update user's language preference
+  router.post('/update-language', (req, res) => {
+    try {
+      const token = req.headers.authorization?.split(' ')[1];
+
+      if (!token) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'No token provided'
+        });
+      }
+
+      const decoded = req.verifyToken(token);
+
+      if (!decoded) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Invalid or expired token'
+        });
+      }
+
+      const { userId, preferred_language } = req.body;
+
+      // Validate language
+      const VALID_LANGUAGES = ['english', 'swahili', 'luo'];
+      if (!VALID_LANGUAGES.includes(preferred_language)) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Invalid language selection'
+        });
+      }
+
+      // Verify userId matches token
+      if (userId && decoded.userId !== userId) {
+        return res.status(403).json({
+          status: 'error',
+          message: 'Unauthorized'
+        });
+      }
+
+      // Update user language preference
+      const updateStmt = db.prepare('UPDATE users SET preferred_language = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
+      const result = updateStmt.run(preferred_language, decoded.userId);
+
+      if (result.changes > 0) {
+        return res.json({
+          status: 'success',
+          message: 'Language preference updated',
+          preferred_language
+        });
+      }
+
+      // User not found
+      res.status(404).json({
+        status: 'error',
+        message: 'User not found'
+      });
+    } catch (error) {
+      console.error('Update language error:', error);
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to update language preference'
       });
     }
   });

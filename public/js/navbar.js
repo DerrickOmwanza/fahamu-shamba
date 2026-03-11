@@ -2,11 +2,8 @@
  * Shared Navigation Bar Functions
  * Used across all authenticated pages
  * 
- * Features:
- * - Hamburger toggle (opens sidebar)
- * - Back to Dashboard button
- * - Language auto-load from localStorage
- * - Profile display
+ * NOTE: Sidebar toggle functions are now in sidebar.js
+ * This file handles language, profile, and UI utilities
  */
 
 // ===== LANGUAGE HANDLING =====
@@ -47,9 +44,9 @@ function changeLanguage(lang) {
     }
     
     // Update language button text if exists
-    const langBtnText = document.getElementById('languageBtnText');
+    var langBtnText = document.getElementById('languageBtnText');
     if (langBtnText) {
-        const langNames = {
+        var langNames = {
             'en': '🌐 English',
             'sw': '🌐 Kiswahili',
             'luo': '🌐 Dholuo'
@@ -58,107 +55,17 @@ function changeLanguage(lang) {
     }
     
     // Update hidden select if exists
-    const langSelect = document.getElementById('languageSelect');
+    var langSelect = document.getElementById('languageSelect');
     if (langSelect) {
         langSelect.value = lang;
     }
-}
-
-// ===== NAV BAR FUNCTIONS =====
-
-/**
- * Toggle mobile sidebar
- */
-function toggleMobileSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    if (sidebar) {
-        sidebar.classList.toggle('mobile-open');
-    }
-    
-    if (overlay) {
-        overlay.classList.toggle('mobile-open');
-    }
-}
-
-/**
- * Close mobile sidebar
- */
-function closeMobileSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    if (sidebar) {
-        sidebar.classList.remove('mobile-open');
-    }
-    
-    if (overlay) {
-        overlay.classList.remove('mobile-open');
-    }
-}
-
-/**
- * Navigate to dashboard
- */
-function goToDashboard() {
-    closeMobileSidebar();
-    window.location.href = '/dashboard.html';
-}
-
-/**
- * Navigate to recommendations
- */
-function goToRecommendations() {
-    closeMobileSidebar();
-    window.location.href = '/recommendations.html';
-}
-
-/**
- * Navigate to market prices
- */
-function goToMarket() {
-    closeMobileSidebar();
-    window.location.href = '/market.html';
-}
-
-/**
- * Navigate to community
- */
-function goToCommunity() {
-    closeMobileSidebar();
-    window.location.href = '/community.html';
-}
-
-/**
- * Navigate to feedback
- */
-function goToFeedback() {
-    closeMobileSidebar();
-    window.location.href = '/feedback.html';
-}
-
-/**
- * Navigate to profile
- */
-function goToProfile() {
-    closeMobileSidebar();
-    window.location.href = '/profile.html';
-}
-
-/**
- * Navigate to settings
- */
-function goToSettings() {
-    closeMobileSidebar();
-    window.location.href = '/settings.html';
 }
 
 /**
  * Toggle language dropdown
  */
 function toggleLanguageDropdown() {
-    const menu = document.getElementById('languageDropdownMenu');
+    var menu = document.getElementById('languageDropdownMenu');
     if (menu) {
         menu.classList.toggle('show');
     }
@@ -170,17 +77,17 @@ function toggleLanguageDropdown() {
  * @param {string} text - Display text
  */
 function selectLanguageOption(lang, text) {
-    const btnText = document.getElementById('languageBtnText');
+    var btnText = document.getElementById('languageBtnText');
     if (btnText) {
         btnText.textContent = text;
     }
     
-    const select = document.getElementById('languageSelect');
+    var select = document.getElementById('languageSelect');
     if (select) {
         select.value = lang;
     }
     
-    const menu = document.getElementById('languageDropdownMenu');
+    var menu = document.getElementById('languageDropdownMenu');
     if (menu) {
         menu.classList.remove('show');
     }
@@ -194,22 +101,22 @@ function selectLanguageOption(lang, text) {
  * Load and display user profile data
  */
 function loadUserProfile() {
-    const cached = localStorage.getItem('user');
+    var cached = localStorage.getItem('user');
     if (cached) {
         try {
-            const user = JSON.parse(cached);
-            const name = user.name || user.username || 'Farmer';
-            const phone = user.phone || user.phone_number || '—';
+            var user = JSON.parse(cached);
+            var name = user.name || user.username || 'Farmer';
+            var phone = user.phone || user.phone_number || '—';
             
             // Update sidebar user info
-            const userNameEl = document.getElementById('userName');
-            const userPhoneEl = document.getElementById('userPhone');
+            var userNameEl = document.getElementById('userName');
+            var userPhoneEl = document.getElementById('userPhone');
             if (userNameEl) userNameEl.textContent = name;
             if (userPhoneEl) userPhoneEl.textContent = phone;
             
             // Update nav profile (if exists)
-            const navProfileName = document.getElementById('navProfileName');
-            const navProfileAvatar = document.getElementById('navProfileAvatar');
+            var navProfileName = document.getElementById('navProfileName');
+            var navProfileAvatar = document.getElementById('navProfileAvatar');
             
             if (navProfileName) navProfileName.textContent = name;
             if (navProfileAvatar) {
@@ -217,14 +124,14 @@ function loadUserProfile() {
                 navProfileAvatar.textContent = name.charAt(0).toUpperCase();
             }
             
-            return { name, phone };
+            return { name: name, phone: phone };
         } catch (e) {
             console.error('Error parsing user data:', e);
         }
     }
     
     // Set defaults
-    const userNameEl = document.getElementById('userName');
+    var userNameEl = document.getElementById('userName');
     if (userNameEl) userNameEl.textContent = 'Farmer';
     
     return { name: 'Farmer', phone: '—' };
@@ -247,20 +154,19 @@ function logoutUser() {
  * @param {string} options.pageTitle - Page title to display
  * @param {boolean} options.showBackButton - Whether to show back button
  */
-function initNavBar(options = {}) {
-    const {
-        pageTitle = 'Fahamu Shamba',
-        showBackButton = true
-    } = options;
+function initNavBar(options) {
+    options = options || {};
+    var pageTitle = options.pageTitle || 'Fahamu Shamba';
+    var showBackButton = options.showBackButton !== false;
     
     // Set page title
-    const titleEl = document.getElementById('navPageTitle');
+    var titleEl = document.getElementById('navPageTitle');
     if (titleEl) {
         titleEl.textContent = pageTitle;
     }
     
     // Set back button visibility
-    const backBtn = document.getElementById('navBackBtn');
+    var backBtn = document.getElementById('navBackBtn');
     if (backBtn) {
         if (showBackButton) {
             backBtn.classList.remove('hidden');
@@ -273,53 +179,71 @@ function initNavBar(options = {}) {
     loadUserProfile();
     
     // Auto-load language
-    const storedLang = getStoredLanguage();
+    var storedLang = getStoredLanguage();
     if (storedLang) {
         changeLanguage(storedLang);
     }
-    
-    // Close sidebar on outside click (mobile)
-    document.addEventListener('click', function(event) {
-        const sidebar = document.getElementById('sidebar');
-        const hamburger = document.querySelector('.nav-hamburger');
-        
-        if (!sidebar || !sidebar.classList.contains('mobile-open')) return;
-        if (sidebar.contains(event.target)) return;
-        if (hamburger && hamburger.contains(event.target)) return;
-        
-        closeMobileSidebar();
-    });
-    
-    // Close sidebar on window resize to desktop
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 992) {
-            closeMobileSidebar();
-        }
-    });
 }
 
 // ===== EXPORT FOR GLOBAL USE =====
 
+// Make sidebar functions available globally (these are in sidebar.js, but we duplicate for safety)
+if (typeof window.toggleMobileSidebar !== 'function') {
+    window.toggleMobileSidebar = function() {
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay') || document.getElementById('overlay');
+        
+        if (!sidebar) {
+            console.error('Sidebar element not found!');
+            return;
+        }
+        
+        var isOpen = sidebar.classList.toggle('mobile-open');
+        sidebar.classList.toggle('active');
+        
+        if (overlay) {
+            overlay.classList.toggle('mobile-open');
+            overlay.classList.toggle('active');
+        }
+        
+        var hamburger = document.getElementById('hamburger');
+        if (hamburger) {
+            hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+    };
+}
+
+if (typeof window.closeMobileSidebar !== 'function') {
+    window.closeMobileSidebar = function() {
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay') || document.getElementById('overlay');
+        
+        if (sidebar) {
+            sidebar.classList.remove('mobile-open');
+            sidebar.classList.remove('active');
+        }
+        
+        if (overlay) {
+            overlay.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+        }
+        
+        var hamburger = document.getElementById('hamburger');
+        if (hamburger) {
+            hamburger.setAttribute('aria-expanded', 'false');
+        }
+    };
+}
+
 // Make functions available globally
-window.toggleMobileSidebar = toggleMobileSidebar;
-window.closeMobileSidebar = closeMobileSidebar;
-window.goToDashboard = goToDashboard;
-window.goToRecommendations = goToRecommendations;
-window.goToMarket = goToMarket;
-window.goToCommunity = goToCommunity;
-window.goToFeedback = goToFeedback;
-window.goToProfile = goToProfile;
-window.goToSettings = goToSettings;
 window.changeLanguage = changeLanguage;
 window.toggleLanguageDropdown = toggleLanguageDropdown;
 window.selectLanguageOption = selectLanguageOption;
 window.loadUserProfile = loadUserProfile;
 window.logout = logoutUser;
+window.logoutUser = logoutUser;
 window.initNavBar = initNavBar;
 window.getCurrentLanguage = getCurrentLanguage;
 window.setLanguage = setStoredLanguage;
 window.getStoredLanguage = getStoredLanguage;
-
-// Legacy compatibility
-window.logoutUser = logoutUser;
 

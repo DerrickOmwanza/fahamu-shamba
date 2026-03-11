@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fahamu Shamba - Login & Register</title>
     <script src="/language-utils.js"></script>
+    <script src="/language-sync.js"></script>
     <style>
         * {
             margin: 0;
@@ -627,9 +628,15 @@
                     return;
                 }
 
-                // Save token and redirect
+                // Save token and user
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
+                
+                // Apply user's language preference if available
+                if (typeof applyUserLanguagePreference === 'function') {
+                  applyUserLanguagePreference(data.user);
+                }
+                
                 window.location.href = '/farmer-dashboard';
             } catch (error) {
                 console.error('Login error:', error);
@@ -719,6 +726,9 @@
             setLoading('registerStep2Loading', true);
 
             try {
+                // Get current language preference
+                const currentLanguage = typeof getCurrentLanguage === 'function' ? getCurrentLanguage() : 'english';
+                
                 const response = await fetch(`${API_URL}/register-profile`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -727,7 +737,8 @@
                         name,
                         location,
                         ward: ward || null,
-                        farm_size: isNaN(farm_size) ? null : farm_size
+                        farm_size: isNaN(farm_size) ? null : farm_size,
+                        preferred_language: currentLanguage
                     })
                 });
 
@@ -738,9 +749,15 @@
                     return;
                 }
 
-                // Save token and redirect
+                // Save token and user
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
+                
+                // Apply user's language preference if available
+                if (typeof applyUserLanguagePreference === 'function') {
+                  applyUserLanguagePreference(data.user);
+                }
+                
                 window.location.href = '/farmer-dashboard';
             } catch (error) {
                 console.error('Profile error:', error);

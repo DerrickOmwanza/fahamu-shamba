@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hamburger Fix Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .status-box {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border: 2px solid #ddd;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        
+        .status-info {
+            background: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        
+        .test-button:hover {
+            background: #0056b3;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Hamburger Menu Fix Test</h1>
+        
+        <div class="instructions">
+            <strong>Test Instructions:</strong>
+            <ol>
+                <li>Click "Test Hamburger Functionality" to verify the fix</li>
+                <li>Check that the sidebar opens and closes properly</li>
+                <li>Verify that the aria-expanded attribute changes correctly</li>
+                <li>Test on mobile viewport (resize browser to < 992px width)</li>
+            </ol>
+        </div>
+
+        <div id="test-results" class="status-box status-info">
+            <strong>Test Status:</strong> Ready to test
+        </div>
+
+        <button class="test-button" onclick="testHamburgerFunctionality()">🧪 Test Hamburger Functionality</button>
+        <button class="test-button" onclick="testAriaExpanded()">🔍 Check aria-expanded</button>
+        <button class="test-button" onclick="resetTest()">🔄 Reset Test</button>
+
+        <div class="code-block">
+            <strong>What was fixed:</strong><br>
+            1. Removed conflicting inline JavaScript in dashboard.html<br>
+            2. Standardized onclick handlers across all pages<br>
+            3. Ensured navbar.js functions are properly loaded<br>
+            4. Fixed event parameter conflicts
+        </div>
+
+        <div class="code-block">
+            <strong>Files modified:</strong><br>
+            - public/dashboard.html (removed conflicting inline JS)<br>
+            - public/dashboard.html (standardized onclick handler)
+        </div>
+
+        <div id="debug-info" class="status-box status-info" style="display: none;">
+            <strong>Debug Info:</strong><br>
+            <div id="debug-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test the hamburger functionality
+        function testHamburgerFunctionality() {
+            const results = document.getElementById('test-results');
+            const debugInfo = document.getElementById('debug-info');
+            const debugContent = document.getElementById('debug-content');
+            
+            try {
+                // Check if navbar.js functions are available
+                if (typeof toggleMobileSidebar !== 'function') {
+                    throw new Error('toggleMobileSidebar function not found - navbar.js may not be loaded');
+                }
+
+                // Check if sidebar exists
+                const sidebar = document.getElementById('sidebar');
+                if (!sidebar) {
+                    throw new Error('Sidebar element not found');
+                }
+
+                // Check if hamburger button exists
+                const hamburger = document.getElementById('hamburger') || document.querySelector('.nav-hamburger');
+                if (!hamburger) {
+                    throw new Error('Hamburger button not found');
+                }
+
+                // Test the functionality
+                const initialOpen = sidebar.classList.contains('mobile-open');
+                
+                // Simulate click
+                hamburger.click();
+                
+                // Wait for animation
+                setTimeout(() => {
+                    const afterClick = sidebar.classList.contains('mobile-open');
+                    
+                    // Click again to close
+                    hamburger.click();
+                    
+                    setTimeout(() => {
+                        const afterSecondClick = sidebar.classList.contains('mobile-open');
+                        
+                        // Analyze results
+                        if (initialOpen !== afterClick && afterClick !== afterSecondClick) {
+                            results.className = 'status-box status-success';
+                            results.innerHTML = `
+                                <strong>✅ Test PASSED!</strong><br>
+                                - Hamburger button found and functional<br>
+                                - Sidebar opens and closes correctly<br>
+                                - toggleMobileSidebar function is working
+                            `;
+                            
+                            debugInfo.style.display = 'block';
+                            debugContent.innerHTML = `
+                                Initial state: ${initialOpen ? 'open' : 'closed'}<br>
+                                After first click: ${afterClick ? 'open' : 'closed'}<br>
+                                After second click: ${afterSecondClick ? 'open' : 'closed'}<br>
+                                Function available: ${typeof toggleMobileSidebar}
+                            `;
+                        } else {
+                            throw new Error('Sidebar state did not change correctly');
+                        }
+                    }, 100);
+                }, 100);
+
+            } catch (error) {
+                results.className = 'status-box status-error';
+                results.innerHTML = `
+                    <strong>❌ Test FAILED!</strong><br>
+                    Error: ${error.message}<br><br>
+                    <strong>Troubleshooting:</strong><br>
+                    1. Make sure navbar.js is loaded<br>
+                    2. Check that sidebar and hamburger elements exist<br>
+                    3. Verify onclick handlers are correct<br>
+                    4. Test on actual mobile device or mobile viewport
+                `;
+            }
+        }
+
+        // Check aria-expanded attribute
+        function testAriaExpanded() {
+            const results = document.getElementById('test-results');
+            const hamburger = document.getElementById('hamburger') || document.querySelector('.nav-hamburger');
+            
+            if (!hamburger) {
+                results.className = 'status-box status-error';
+                results.innerHTML = '❌ Hamburger button not found';
+                return;
+            }
+
+            const ariaExpanded = hamburger.getAttribute('aria-expanded');
+            const sidebar = document.getElementById('sidebar');
+            const isOpen = sidebar ? sidebar.classList.contains('mobile-open') : false;
+
+            results.className = 'status-box status-info';
+            results.innerHTML = `
+                <strong>🔍 aria-expanded Status:</strong><br>
+                Current value: <strong>${ariaExpanded}</strong><br>
+                Sidebar open: <strong>${isOpen}</strong><br><br>
+                <strong>Note:</strong> The aria-expanded attribute should toggle between "true" and "false" when clicking the hamburger button.
+            `;
+        }
+
+        // Reset test
+        function resetTest() {
+            const results = document.getElementById('test-results');
+            const debugInfo = document.getElementById('debug-info');
+            
+            results.className = 'status-box status-info';
+            results.innerHTML = '<strong>Test Status:</strong> Ready to test';
+            debugInfo.style.display = 'none';
+            
+            // Close sidebar if open
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.remove('mobile-open');
+            if (overlay) overlay.classList.remove('mobile-open');
+        }
+
+        // Auto-test on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Check if we're on a page with sidebar
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.getElementById('hamburger') || document.querySelector('.nav-hamburger');
+            
+            if (sidebar && hamburger) {
+                document.getElementById('test-results').innerHTML = `
+                    <strong>✅ Environment Ready!</strong><br>
+                    - Sidebar element found<br>
+                    - Hamburger button found<br>
+                    - Click "Test Hamburger Functionality" to verify the fix
+                `;
+            } else {
+                document.getElementById('test-results').className = 'status-box status-error';
+                document.getElementById('test-results').innerHTML = `
+                    <strong>⚠️ Test Environment:</strong><br>
+                    This test page needs to be opened in context with a page that has sidebar elements.<br>
+                    <br>
+                    <strong>Alternative:</strong><br>
+                    1. Open dashboard.html in your browser<br>
+                    2. Resize to mobile viewport (< 992px width)<br>
+                    3. Click the hamburger button<br>
+                    4. Verify sidebar opens/closes
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

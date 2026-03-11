@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidebar Mobile Test</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: #f0f0f0;
+        }
+
+        /* Sidebar Base Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1e5631 0%, #2d7649 100%);
+            color: white;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            padding: 20px;
+        }
+
+        .sidebar h1 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        .sidebar-close-btn {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+        }
+
+        /* Sidebar Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 992px) {
+            /* Hide sidebar off-screen by default */
+            .sidebar {
+                transform: translateX(-100%);
+                width: 260px;
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 1001;
+            }
+
+            /* When mobile-open class is present, slide it in */
+            .sidebar.mobile-open {
+                transform: translateX(0);
+                z-index: 1001;
+            }
+
+            /* Show overlay when mobile-open */
+            .sidebar-overlay.mobile-open {
+                display: block !important;
+                z-index: 1000;
+            }
+
+            /* Show close button on mobile */
+            .sidebar-close-btn {
+                display: flex !important;
+            }
+
+            /* Hide overlay by default */
+            .sidebar-overlay {
+                display: none !important;
+            }
+
+            /* Adjust main content */
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            /* Show hamburger on mobile */
+            .hamburger {
+                display: flex !important;
+            }
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        /* Hamburger Button */
+        .hamburger {
+            display: none;
+            width: 44px;
+            height: 44px;
+            background: #1e5631;
+            border: 1px solid #184528;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+        }
+
+        .hamburger:hover {
+            background: #2d7649;
+        }
+
+        .nav-title {
+            flex: 1;
+            font-weight: bold;
+            color: #2d7649;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            margin-top: 60px;
+            padding: 40px;
+            min-height: calc(100vh - 60px);
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        .content-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .status {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .test-button {
+            padding: 10px 20px;
+            background: #2d7649;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+
+        .test-button:hover {
+            background: #1e5631;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <button class="hamburger" id="hamburger" onclick="toggleMobileSidebar(event)" title="Toggle Sidebar">☰</button>
+        <div class="nav-title">Dashboard Test</div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar(event)"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <button class="sidebar-close-btn" onclick="closeMobileSidebar(event)">✕</button>
+        <h1>Fahamu Shamba</h1>
+        <nav class="sidebar-nav">
+            <a href="#dashboard">Dashboard</a>
+            <a href="#weather">Weather</a>
+            <a href="#market">Market</a>
+            <a href="#community">Community</a>
+            <a href="#profile">Profile</a>
+            <a href="#settings">Settings</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Sidebar Mobile Toggle Test</h1>
+
+        <div class="status">
+            <strong>Current Status:</strong><br>
+            Viewport Width: <span id="vpWidth">-</span>px<br>
+            Mobile Query Active: <span id="mobileActive">-</span><br>
+            Sidebar Classes: <span id="sidebarClasses">-</span><br>
+            Overlay Classes: <span id="overlayClasses">-</span>
+        </div>
+
+        <div class="content-box">
+            <h2>Testing Instructions</h2>
+            <ol>
+                <li><strong>Desktop Test:</strong> Open this page on desktop (width > 992px)
+                    <ul>
+                        <li>✓ Hamburger button should be HIDDEN</li>
+                        <li>✓ Sidebar should be visible on the left</li>
+                    </ul>
+                </li>
+                <li><strong>Mobile Test:</strong> Resize window to < 992px (or use DevTools mobile mode)
+                    <ul>
+                        <li>✓ Hamburger button should be VISIBLE</li>
+                        <li>✓ Sidebar should be HIDDEN off-screen</li>
+                        <li>✓ Click hamburger → sidebar slides in from left</li>
+                        <li>✓ Click overlay or X button → sidebar slides out</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="content-box">
+            <h2>Manual Test Controls</h2>
+            <button class="test-button" onclick="testToggleSidebar()">Test Toggle</button>
+            <button class="test-button" onclick="testCheckElements()">Check Elements</button>
+            <button class="test-button" onclick="testCheckClasses()">Check Classes</button>
+            <button class="test-button" onclick="testCheckMediaQuery()">Check Media Query</button>
+            <button class="test-button" onclick="testCheckTransform()">Check Transform</button>
+        </div>
+
+        <div class="content-box" id="testOutput"></div>
+
+        <div class="content-box">
+            <h2>How It Works</h2>
+            <p><strong>CSS Media Query:</strong></p>
+            <pre>@media (max-width: 992px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.mobile-open { transform: translateX(0); }
+}</pre>
+            <p><strong>JavaScript Toggle:</strong></p>
+            <pre>window.toggleMobileSidebar = function(e) {
+    var sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('mobile-open');
+}</pre>
+        </div>
+    </div>
+
+    <script>
+        // Toggle sidebar
+        window.toggleMobileSidebar = function(e) {
+            if (e) e.preventDefault();
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.toggle('mobile-open');
+            if (overlay) overlay.classList.toggle('mobile-open');
+            updateStatus();
+            return false;
+        };
+
+        // Close sidebar
+        window.closeMobileSidebar = function(e) {
+            if (e) e.preventDefault();
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.remove('mobile-open');
+            if (overlay) overlay.classList.remove('mobile-open');
+            updateStatus();
+            return false;
+        };
+
+        // Update status display
+        function updateStatus() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            var mq = window.matchMedia('(max-width: 992px)');
+            
+            document.getElementById('vpWidth').textContent = window.innerWidth;
+            document.getElementById('mobileActive').textContent = mq.matches ? 'YES' : 'NO';
+            document.getElementById('sidebarClasses').textContent = sidebar.className;
+            document.getElementById('overlayClasses').textContent = overlay.className;
+        }
+
+        // Test functions
+        function testToggleSidebar() {
+            var output = document.getElementById('testOutput');
+            var sidebar = document.getElementById('sidebar');
+            output.innerHTML = '<strong>Test: Toggle Sidebar</strong><br>';
+            output.innerHTML += 'Before: ' + sidebar.className + '<br>';
+            window.toggleMobileSidebar();
+            output.innerHTML += 'After: ' + sidebar.className + '<br>';
+        }
+
+        function testCheckElements() {
+            var output = document.getElementById('testOutput');
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            var hamburger = document.getElementById('hamburger');
+            
+            output.innerHTML = '<strong>Test: Check Elements</strong><br>';
+            output.innerHTML += 'Sidebar: ' + (sidebar ? '✓ Found' : '✗ NOT FOUND') + '<br>';
+            output.innerHTML += 'Overlay: ' + (overlay ? '✓ Found' : '✗ NOT FOUND') + '<br>';
+            output.innerHTML += 'Hamburger: ' + (hamburger ? '✓ Found' : '✗ NOT FOUND') + '<br>';
+        }
+
+        function testCheckClasses() {
+            var output = document.getElementById('testOutput');
+            var sidebar = document.getElementById('sidebar');
+            output.innerHTML = '<strong>Test: Check Classes</strong><br>';
+            output.innerHTML += 'Sidebar: ' + sidebar.className + '<br>';
+            output.innerHTML += 'Has .mobile-open: ' + (sidebar.classList.contains('mobile-open') ? '✓ YES' : '✗ NO') + '<br>';
+        }
+
+        function testCheckMediaQuery() {
+            var output = document.getElementById('testOutput');
+            var mq = window.matchMedia('(max-width: 992px)');
+            output.innerHTML = '<strong>Test: Check Media Query</strong><br>';
+            output.innerHTML += 'Max-width: 992px active: ' + (mq.matches ? '✓ YES' : '✗ NO') + '<br>';
+            output.innerHTML += 'Current width: ' + window.innerWidth + 'px<br>';
+        }
+
+        function testCheckTransform() {
+            var output = document.getElementById('testOutput');
+            var sidebar = document.getElementById('sidebar');
+            var styles = window.getComputedStyle(sidebar);
+            output.innerHTML = '<strong>Test: Check Transform</strong><br>';
+            output.innerHTML += 'Transform: ' + styles.transform + '<br>';
+            output.innerHTML += 'Classes: ' + sidebar.className + '<br>';
+            if (sidebar.classList.contains('mobile-open')) {
+                output.innerHTML += 'Status: Should be translateX(0)<br>';
+            } else {
+                output.innerHTML += 'Status: Should be translateX(-260px) or translateX(-100%)<br>';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStatus();
+            window.addEventListener('resize', updateStatus);
+        });
+    </script>
+</body>
+</html>

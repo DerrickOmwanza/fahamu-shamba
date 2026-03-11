@@ -6,6 +6,7 @@
     <title>Crop Details & Inputs - Fahamu Shamba</title>
     <link rel="icon" href="/fahamu-logo.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/sidebar-unified.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -16,29 +17,6 @@
         }
         body { font-family: 'Roboto', 'Segoe UI', sans-serif; background: var(--light); min-height: 100vh; color: var(--text); }
 
-        .sidebar { position: fixed; left: 0; top: 0; width: var(--sidebar-width); height: 100vh; background: linear-gradient(180deg,var(--primary-dark) 0%,var(--primary) 100%); color: white; z-index: 1000; transition: width 0.3s ease; display: flex; flex-direction: column; box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
-        .sidebar.collapsed { width: var(--sidebar-collapsed); }
-        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
-        .sidebar-logo { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-        .sidebar-brand h2 { font-size: 1.2rem; margin-bottom: 2px; }
-        .sidebar-brand p { font-size: 0.75rem; opacity: 0.85; }
-        .sidebar-close-btn { margin-left: auto; width: 38px; height: 38px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.35); background: rgba(0,0,0,0.2); color: #fff; cursor: pointer; display: none; align-items: center; justify-content: center; }
-        .sidebar-nav { flex: 1; padding: 15px 10px; overflow-y: auto; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 10px; color: rgba(255,255,255,0.85); text-decoration: none; margin-bottom: 5px; transition: all 0.25s ease; }
-        .nav-item:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(4px); }
-        .nav-item.active { background: rgba(255,255,255,0.25); color: white; border-left: 3px solid var(--secondary); }
-        .nav-item i { width: 24px; text-align: center; font-size: 1.1rem; }
-        .sidebar-footer { padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .user-info { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 12px; }
-        .user-avatar { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; }
-        .user-name { font-weight: 600; }
-        .user-phone { font-size: 0.78rem; opacity: 0.85; }
-        .logout-btn { width: 100%; padding: 12px; border: 1px solid rgba(231,76,60,0.35); border-radius: 8px; background: rgba(231,76,60,0.2); color: #ffb3ab; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .logout-btn:hover { background: #e74c3c; color: #fff; }
-        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 999; }
-
-        .main-content { margin-left: var(--sidebar-width); min-height: 100vh; }
-        
         .top-nav { background: #fff; padding: 15px 24px; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 90; gap: 12px; }
         .nav-left { display: flex; align-items: center; gap: 10px; }
         .nav-hamburger { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: var(--primary-dark); border: 1px solid #184528; border-radius: 10px; color: #fff; font-size: 1.2rem; cursor: pointer; transition: all 0.3s ease; }
@@ -95,13 +73,6 @@
         .toast.show { opacity: 1; transform: translateY(0); }
         .toast.error { background: #e74c3c; }
 
-        @media (max-width: 1280px) { .sidebar-close-btn { display: inline-flex; } }
-        @media (max-width: 992px) {
-            .sidebar { transform: translateX(-100%); width: var(--sidebar-width) !important; }
-            .sidebar.mobile-open { transform: translateX(0); }
-            .sidebar-overlay.mobile-open { display: block; }
-            .main-content { margin-left: 0 !important; }
-        }
         @media (max-width: 640px) {
             .page-container { padding: 14px; }
             .top-header { padding: 12px 14px; }
@@ -115,43 +86,9 @@
             .tools-list { grid-template-columns: 1fr; }
         }
     </style>
-    <link rel="stylesheet" href="/css/navbar.css">
-    <script src="/js/navbar.js" defer></script>
+    <script src="/js/sidebar-init.js"></script>
 </head>
 <body>
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
-    
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-logo">🌱</div>
-            <div class="sidebar-brand">
-                <h2>Fahamu Shamba</h2>
-                <p>Smart Farming</p>
-            </div>
-            <button class="sidebar-close-btn" onclick="closeMobileSidebar()" aria-label="Close menu">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <nav class="sidebar-nav">
-            <a class="nav-item" href="/dashboard.html"><i class="fas fa-home"></i><span>Dashboard</span></a>
-            <a class="nav-item" href="/recommendations.html"><i class="fas fa-seedling"></i><span>Recommendations</span></a>
-            <a class="nav-item" href="/market.html"><i class="fas fa-chart-bar"></i><span>Market Prices</span></a>
-            <a class="nav-item" href="/community.html"><i class="fas fa-users"></i><span>Community</span></a>
-            <a class="nav-item" href="/feedback.html"><i class="fas fa-comments"></i><span>Feedback</span></a>
-            <a class="nav-item" href="/profile.html"><i class="fas fa-user-circle"></i><span>My Profile</span></a>
-            <a class="nav-item" href="/settings.html"><i class="fas fa-cog"></i><span>Settings</span></a>
-        </nav>
-        <div class="sidebar-footer">
-            <div class="user-info">
-                <div class="user-avatar">👤</div>
-                <div>
-                    <div class="user-name" id="userName">Farmer</div>
-                    <div class="user-phone" id="userPhone">—</div>
-                </div>
-            </div>
-            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button>
-        </div>
-    </aside>
 
     <div class="main-content">
         <header class="top-nav">
@@ -250,39 +187,6 @@
     <div id="toast" class="toast"></div>
     
     <script>
-        function toggleMobileSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.toggle('mobile-open');
-            overlay.classList.toggle('mobile-open');
-        }
-
-        function closeMobileSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.remove('mobile-open');
-            overlay.classList.remove('mobile-open');
-        }
-
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/login.html';
-        }
-
-        function loadUserData() {
-            const cached = localStorage.getItem('user');
-            if (cached) {
-                try {
-                    const user = JSON.parse(cached);
-                    document.getElementById('userName').textContent = user.name || 'Farmer';
-                    document.getElementById('userPhone').textContent = user.phone || '—';
-                    document.getElementById('navProfileName').textContent = user.name || 'Farmer';
-                } catch (e) {
-                    document.getElementById('userName').textContent = 'Farmer';
-                }
-            }
-        }
 
         const cropData = {
             "Maize": {

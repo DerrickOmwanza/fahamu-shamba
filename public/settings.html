@@ -328,52 +328,16 @@
             gap: 10px;
         }
         </style>
+            <link rel="stylesheet" href="/css/sidebar.css">
             <link rel="stylesheet" href="/css/navbar.css">
             <link rel="stylesheet" href="/css/toast.css">
+            <script src="/js/sidebar.js" defer></script>
             <script src="/js/navbar.js" defer></script>
             <script src="/js/toast.js" defer></script>
 </head>
 <body>
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
-    
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-    
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-logo">🌱</div>
-            <div class="sidebar-brand">
-                <h2>Fahamu Shamba</h2>
-                <p>Smart Farming</p>
-            </div>
-            <button class="sidebar-close-btn" onclick="closeMobileSidebar()" aria-label="Close menu">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <nav class="sidebar-nav">
-            <a class="nav-item" onclick="goToDashboard()"><i class="fas fa-home"></i><span>Dashboard</span></a>
-            <a class="nav-item" onclick="goToRecommendations()"><i class="fas fa-leaf"></i><span>Recommendations</span></a>
-            <a class="nav-item" onclick="goToMarket()"><i class="fas fa-chart-bar"></i><span>Market Prices</span></a>
-            <a class="nav-item" onclick="goToCommunity()"><i class="fas fa-users"></i><span>Community</span></a>
-            <a class="nav-item" onclick="goToFeedback()"><i class="fas fa-star"></i><span>Feedback</span></a>
-            <a class="nav-item" onclick="goToProfile()"><i class="fas fa-user-circle"></i><span>My Profile</span></a>
-            <a class="nav-item active" onclick="goToSettings()"><i class="fas fa-cog"></i><span>Settings</span></a>
-        </nav>
-        
-        <div class="sidebar-footer">
-            <div class="user-info">
-                <div class="user-avatar">👤</div>
-                <div class="user-details">
-                    <div class="user-name" id="userName">Farmer</div>
-                    <div class="user-phone" id="userPhone">—</div>
-                </div>
-            </div>
-            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
-        </div>
-    </aside>
+    <div id="sidebar-container"></div>
+
 
     <!-- Main Content -->
     <main class="main-content">
@@ -625,10 +589,36 @@
         }
 
         // Change language
-        function changeLanguage(lang) {
+        async function changeLanguage(lang) {
             setLanguage(lang);
             translatePage(lang);
             saveSettings();
+            
+            // Save to backend if user is logged in
+            try {
+                const token = localStorage.getItem('token');
+                const userStr = localStorage.getItem('user');
+                if (token && userStr) {
+                    const user = JSON.parse(userStr);
+                    if (user && user.id) {
+                        await fetch('/api/auth/update-language', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                                userId: user.id,
+                                preferred_language: lang
+                            })
+                        });
+                        console.log('Language preference saved to database:', lang);
+                        showToast('Language preference saved!', 'success');
+                    }
+                }
+            } catch (error) {
+                console.warn('Could not save language to backend:', error);
+            }
         }
 
         // Confirm delete
@@ -646,10 +636,38 @@
         });
 
         // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Load user's language preference first
+            try {
+                const userStr = localStorage.getItem('user');
+                if (userStr) {
+                    const user = JSON.parse(userStr);
+                    if (user && user.preferred_language) {
+                        // Use user's stored language preference
+                        setLanguage(user.preferred_language);
+                        localStorage.setItem('fahamuShamba_language', user.preferred_language);
+                        console.log('Loaded user language preference:', user.preferred_language);
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not load user language preference:', e);
+            }
+            
             const currentLang = getCurrentLanguage();
             // Only set value if there's a saved language
             if (currentLang) document.getElementById('languageSelect').value = currentLang;
+            
+            // Update button text
+            const langNames = {
+                'english': '🇬🇧 English',
+                'swahili': '🇰🇪 Kiswahili',
+                'luo': '🌍 Dholuo'
+            };
+            const btnText = document.getElementById('languageBtnText');
+            if (btnText && langNames[currentLang]) {
+                btnText.textContent = langNames[currentLang];
+            }
+            
             loadSettings();
         });
     </script>

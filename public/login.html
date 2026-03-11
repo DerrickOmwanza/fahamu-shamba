@@ -195,45 +195,31 @@
         </div>
         <div class="logo">
             <img src="/fahamu-logo.png" alt="Fahamu Shamba">
-            <h1>Fahamu Shamba</h1>
+            <h1 data-i18n="landing_title">Fahamu Shamba</h1>
         </div>
-        <h2>Welcome Back!</h2>
+        <h2 data-i18n="welcome_back"></h2>
         <form id="loginForm">
             <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="username" placeholder="Enter your username" required>
+                <label data-i18n="username"></label>
+                <input type="text" id="username" data-i18n-placeholder="enter_username" required>
             </div>
             <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="password" placeholder="Enter your password" required>
+                <label data-i18n="password"></label>
+                <input type="password" id="password" data-i18n-placeholder="create_password" required>
             </div>
-            <button type="submit" class="btn">Login</button>
+            <button type="submit" class="btn" data-i18n="login"></button>
         </form>
         <div class="links">
-            <p>Don't have an account? <a href="/signup.html">Sign Up</a></p>
+            <p><span data-i18n="dont_have_account"></span> <a href="/signup.html" data-i18n="register"></a></p>
         </div>
         <div class="back-link">
-            <a href="/"><i class="fas fa-arrow-left"></i> Back to Home</a>
+            <a href="/"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home"></span></a>
         </div>
     </div>
     <script>
         // Initialize language on page load
         document.addEventListener('DOMContentLoaded', () => {
-            const lang = getCurrentLanguage();
-            const select = document.getElementById('languageSelect');
-            if (select && lang) {
-                select.value = lang;
-                const langNames = {
-                    'en': '🌐 English',
-                    'sw': '🌐 Kiswahili',
-                    'luo': '🌐 Dholuo'
-                };
-                const btnText = document.getElementById('languageBtnText');
-                if (btnText && langNames[lang]) {
-                    btnText.textContent = langNames[lang];
-                }
-            }
-            translatePage(lang);
+            initializeLanguage();
         });
         
         // Language functions
@@ -251,11 +237,19 @@
         function selectLanguage(lang, text) {
             const btnText = document.getElementById('languageBtnText');
             if (btnText) btnText.textContent = text;
+            
+            const normalizedLang = {
+                'en': 'english',
+                'sw': 'swahili',
+                'luo': 'luo'
+            }[lang] || 'english';
+
             const select = document.getElementById('languageSelect');
-            if (select) select.value = lang;
+            if (select) select.value = normalizedLang;
+
             const menu = document.getElementById('languageDropdownMenu');
             if (menu) menu.classList.remove('show');
-            changeLanguage(lang);
+            changeLanguage(normalizedLang);
         }
         
         // Close dropdown when clicking outside
@@ -275,7 +269,7 @@
             const submitBtn = document.querySelector('#loginForm .btn');
             
             if (!username || !password) {
-                showToast('Please enter username and password', 'error');
+                showToast(t('all_fields_required'), 'error');
                 return;
             }
 
@@ -284,7 +278,7 @@
 
             try {
                 submitBtn.disabled = true;
-                submitBtn.textContent = 'Logging in...';
+                submitBtn.textContent = t('loading');
 
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
@@ -294,17 +288,25 @@
 
                 const result = await response.json();
                 if (!response.ok || result.status !== 'success') {
-                    throw new Error(result.message || 'Login failed');
+                    throw new Error(result.message || t('invalid_credentials'));
                 }
 
                 localStorage.setItem('token', result.token);
                 localStorage.setItem('user', JSON.stringify(result.user || {}));
+                
+                // Apply user's language preference after successful login
+                if (result.user && result.user.preferred_language) {
+                    setLanguage(result.user.preferred_language);
+                    localStorage.setItem('fahamuShamba_language', result.user.preferred_language);
+                    console.log('Applied language preference after login:', result.user.preferred_language);
+                }
+                
                 window.location.href = '/dashboard.html';
             } catch (error) {
-                showToast(error.message || 'Invalid username or password', 'error');
+                showToast(error.message || t('invalid_credentials'), 'error');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Login';
+                submitBtn.textContent = t('login');
             }
         });
     </script>

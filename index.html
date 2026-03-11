@@ -1076,10 +1076,37 @@
       }
     }
 
-    function setLanguage(lang, options = { persist: true }) {
+    async function setLanguage(lang, options = { persist: true }) {
       state.language = lang;
       if (options.persist) {
         localStorage.setItem('fs_language', lang);
+        // Also save to fahamuShamba_language for consistency
+        localStorage.setItem('fahamuShamba_language', lang);
+        
+        // Try to sync with backend if user is logged in
+        try {
+          const token = localStorage.getItem('token');
+          const userStr = localStorage.getItem('user');
+          if (token && userStr) {
+            const user = JSON.parse(userStr);
+            if (user && user.id) {
+              await fetch('/api/auth/update-language', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                  userId: user.id,
+                  preferred_language: lang
+                })
+              });
+              console.log(`Language preference "${lang}" saved to user profile`);
+            }
+          }
+        } catch (error) {
+          console.warn('Could not save language to backend:', error);
+        }
       }
       updateLanguageUI();
       renderAllOptions();

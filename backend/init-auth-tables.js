@@ -14,36 +14,69 @@ export function initializeAuthTables(db) {
   try {
     console.log('🔧 Initializing authentication tables...');
 
-    // Create users table
-    db.exec(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        phone VARCHAR(20) UNIQUE NOT NULL,
-        username VARCHAR(50) UNIQUE COLLATE NOCASE,
-        password_hash VARCHAR(255),
-        name VARCHAR(100),
-        email VARCHAR(100),
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        is_active BOOLEAN DEFAULT 1
-      );
-    `);
+    // Check if users table exists and get its columns
+    let userColumns = [];
+    const tableExists = db.prepare(`
+      SELECT name FROM sqlite_master 
+      WHERE type='table' AND name='users'
+    `).get();
 
-    // Create index on phone for fast lookups
-    db.exec(`
-      CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone);
-      CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
-    `);
-
-    // Backward-compatible migration for existing DBs created before username field.
-    const userColumns = db.prepare(`PRAGMA table_info(users)`).all().map(col => col.name);
-    if (!userColumns.includes('username')) {
-      db.exec(`ALTER TABLE users ADD COLUMN username VARCHAR(50);`);
-      db.exec(`CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);`);
-      console.log('✅ Added username column to existing users table');
+    if (tableExists) {
+      // Table exists, get its columns for migration
+      userColumns = db.prepare(`PRAGMA table_info(users)`).all().map(col => col.name);
+      console.log('ℹ️  users table already exists with columns:', userColumns.join(', '));
+    } else {
+      // Create users table with all columns
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          phone VARCHAR(20) UNIQUE NOT NULL,
+          username VARCHAR(50) UNIQUE COLLATE NOCASE,
+          password_hash VARCHAR(255),
+          name VARCHAR(100),
+          email VARCHAR(100),
+          preferred_language VARCHAR(20) DEFAULT 'english',
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          is_active BOOLEAN DEFAULT 1
+        );
+      `);
+      console.log('✅ users table created');
+      userColumns = ['id', 'phone', 'username', 'password_hash', 'name', 'email', 'preferred_language', 'created_at', 'updated_at', 'is_active'];
     }
 
-    console.log('✅ users table created');
+    // Backward-compatible migration: Add missing columns to existing users table
+    // Add username column if it doesn't exist
+    if (!userColumns.includes('username')) {
+      try {
+        db.exec(`ALTER TABLE users ADD COLUMN username VARCHAR(50);`);
+        console.log('✅ Added username column to existing users table');
+      } catch (e) {
+        console.log('⚠️  Could not add username column:', e.message);
+      }
+    }
+
+    // Add preferred_language column if it doesn't exist
+    if (!userColumns.includes('preferred_language')) {
+      try {
+        db.exec(`ALTER TABLE users ADD COLUMN preferred_language VARCHAR(20) DEFAULT 'english';`);
+        console.log('✅ Added preferred_language column to existing users table');
+      } catch (e) {
+        console.log('⚠️  Could not add preferred_language column:', e.message);
+      }
+    }
+
+    // Create indexes (use IF NOT EXISTS to handle existing indexes)
+    try {
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone);`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_users_language ON users(preferred_language);`);
+      console.log('✅ User indexes created');
+    } catch (e) {
+      console.log('⚠️  Index creation note:', e.message);
+    }
+
+    console.log('✅ users table ready');
 
     // Create farms table
     db.exec(`
