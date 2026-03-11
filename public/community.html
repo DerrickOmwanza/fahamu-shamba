@@ -183,6 +183,29 @@
         .stories-list::-webkit-scrollbar-thumb:hover {
             background: var(--primary-dark);
         }
+        
+        /* My Contributions Lists - Scrollable */
+        .my-contributions-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+            scroll-behavior: smooth;
+        }
+        .my-contributions-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .my-contributions-list::-webkit-scrollbar-track {
+            background: var(--lighter);
+            border-radius: 10px;
+        }
+        .my-contributions-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        .my-contributions-list::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
         .story-item {
             padding: 20px;
             background: white;
@@ -420,6 +443,7 @@
             .stats-grid { grid-template-columns: 1fr 1fr; }
             .questions-list { max-height: 400px; }
             .stories-list { max-height: 400px; }
+            .my-contributions-list { max-height: 350px; }
             .question-item { padding: 15px; margin-bottom: 12px; }
             .story-item { padding: 15px; margin-bottom: 12px; }
             .btn { padding: 10px 20px; font-size: 0.9rem; }
@@ -428,6 +452,7 @@
         @media (max-width: 600px) {
             .questions-list { max-height: 350px; }
             .stories-list { max-height: 350px; }
+            .my-contributions-list { max-height: 300px; }
             .question-item { padding: 12px; margin-bottom: 10px; font-size: 0.9rem; }
             .story-item { padding: 12px; margin-bottom: 10px; font-size: 0.9rem; }
             .question-title { font-size: 0.95rem; }
@@ -441,6 +466,7 @@
         @media (max-width: 480px) {
             .questions-list { max-height: 300px; }
             .stories-list { max-height: 300px; }
+            .my-contributions-list { max-height: 250px; }
             .community-section { padding: 0 10px; }
             .community-header-section { padding: 15px; margin: 10px; }
         }
@@ -587,7 +613,7 @@
                         <h4 style="color:var(--primary-dark); margin-bottom:15px; font-size:1rem; display:flex; align-items:center; gap:8px;">
                             <i class="fas fa-question-circle"></i> My Questions
                         </h4>
-                        <div id="myQuestionsList">
+                        <div id="myQuestionsList" class="my-contributions-list">
                             <div class="empty-state" style="padding:20px;">
                                 <i class="fas fa-question-circle"></i>
                                 <p>You haven't asked any questions yet.</p>
@@ -598,7 +624,7 @@
                         <h4 style="color:var(--primary-dark); margin-bottom:15px; font-size:1rem; display:flex; align-items:center; gap:8px;">
                             <i class="fas fa-star"></i> My Stories
                         </h4>
-                        <div id="myStoriesList">
+                        <div id="myStoriesList" class="my-contributions-list">
                             <div class="empty-state" style="padding:20px;">
                                 <i class="fas fa-star"></i>
                                 <p>You haven't shared any stories yet.</p>
@@ -1195,4 +1221,3 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
     </script>
 </body>
 </html>
-
