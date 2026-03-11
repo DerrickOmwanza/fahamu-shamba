@@ -298,27 +298,54 @@
              const photoInput = document.getElementById('photoUploadInput');
              if (!photoInput) return;
              
-             photoInput.addEventListener('change', function(e) {
+             photoInput.addEventListener('change', async function(e) {
                  const file = e.target.files[0];
                  if (file) {
-                     // Check file size (limit to 1MB for localStorage)
+                     // Check file size (limit to 1MB)
                      if (file.size > 1024 * 1024) {
                          showToast('Image is too large. Please select a photo under 1MB.', 'error');
                          return;
                      }
                      
                      const reader = new FileReader();
-                     reader.onload = function(event) {
+                     reader.onload = async function(event) {
                          const photoData = event.target.result;
                          
-                         // Update current user locally
-                         currentUser.profile_photo = photoData;
-                         
-                         // Update all display areas immediately
-                         displayUserData();
-                         
-                         // Show success message
-                         showToast('Photo uploaded successfully! Click "Save Changes" to save your profile permanently.', 'success');
+                         // Save to backend immediately
+                         const token = localStorage.getItem('token');
+                         if (token) {
+                             try {
+                                 const response = await fetch('/api/auth/upload-profile-photo', {
+                                     method: 'POST',
+                                     headers: {
+                                         'Content-Type': 'application/json',
+                                         'Authorization': `Bearer ${token}`
+                                     },
+                                     body: JSON.stringify({ profile_photo: photoData })
+                                 });
+                                 
+                                 const result = await response.json();
+                                 
+                                 if (result.status === 'success') {
+                                     // Update current user locally
+                                     currentUser.profile_photo = photoData;
+                                     localStorage.setItem('user', JSON.stringify(currentUser));
+                                     
+                                     // Update all display areas immediately
+                                     displayUserData();
+                                     
+                                     // Show success message
+                                     showToast('Profile photo uploaded successfully!', 'success');
+                                 } else {
+                                     showToast('Failed to upload photo: ' + result.message, 'error');
+                                 }
+                             } catch (error) {
+                                 console.error('Upload error:', error);
+                                 showToast('Failed to upload photo. Please try again.', 'error');
+                             }
+                         } else {
+                             showToast('Please log in to upload a photo.', 'error');
+                         }
                      };
                      reader.readAsDataURL(file);
                  }
@@ -382,4 +409,3 @@
     </script>
 </body>
 </html>
-

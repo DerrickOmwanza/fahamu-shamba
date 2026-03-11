@@ -262,14 +262,14 @@ export function initAuthRoutes(db, dbAsync = null) {
 
       // Find user by username only (matching create account page)
       let user = await dbHelper.get(
-        'SELECT id, phone, username, password_hash, name, preferred_language FROM users WHERE username = ?',
+        'SELECT id, phone, username, password_hash, name, preferred_language, profile_photo FROM users WHERE username = ?',
         [usernameIdentifier]
       );
        
       // If not found, try case-insensitive search as fallback
       if (!user) {
         console.log(`Trying case-insensitive search for: ${usernameIdentifier}`);
-        const allUsers = await dbHelper.all('SELECT id, phone, username, password_hash, name, preferred_language FROM users', []);
+        const allUsers = await dbHelper.all('SELECT id, phone, username, password_hash, name, preferred_language, profile_photo FROM users', []);
         const fallbackUser = allUsers.find(u => u.username && u.username.toLowerCase() === usernameIdentifier);
         if (fallbackUser) {
           console.log(`Found user via case-insensitive search: ${fallbackUser.username}`);
@@ -325,7 +325,8 @@ export function initAuthRoutes(db, dbAsync = null) {
           ward: farm ? farm.ward : null,
           farm_size: farm ? farm.farm_size : null,
           farm_size_unit: farm ? farm.farm_size_unit : 'acres',
-          preferred_language: user.preferred_language || 'english'
+          preferred_language: user.preferred_language || 'english',
+          profile_photo: user.profile_photo || null
         }
       });
     } catch (error) {
@@ -362,7 +363,7 @@ export function initAuthRoutes(db, dbAsync = null) {
       let user = null;
       let farm = null;
       try {
-        user = await dbHelper.get('SELECT id, phone, username, name FROM users WHERE id = ?', [decoded.userId]);
+        user = await dbHelper.get('SELECT id, phone, username, name, profile_photo FROM users WHERE id = ?', [decoded.userId]);
         
         if (user) {
           farm = await dbHelper.get('SELECT location, ward, farm_size, farm_size_unit FROM farms WHERE user_id = ?', [user.id]);
@@ -399,7 +400,8 @@ export function initAuthRoutes(db, dbAsync = null) {
           location: farm ? farm.location : null,
           ward: farm ? farm.ward : null,
           farm_size: farm ? farm.farm_size : null,
-          farm_size_unit: farm ? farm.farm_size_unit : 'acres'
+          farm_size_unit: farm ? farm.farm_size_unit : 'acres',
+          profile_photo: user.profile_photo || null
         }
       });
     } catch (error) {
@@ -529,6 +531,63 @@ export function initAuthRoutes(db, dbAsync = null) {
       res.status(500).json({
         status: 'error',
         message: 'Failed to update language preference'
+      });
+    }
+  });
+
+  // POST /api/auth/upload-profile-photo - Upload profile photo
+  router.post('/upload-profile-photo', async (req, res) => {
+    try {
+      const token = req.headers.authorization?.split(' ')[1];
+
+      if (!token) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'No token provided'
+        });
+      }
+
+      const decoded = req.verifyToken(token);
+
+      if (!decoded) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Invalid or expired token'
+        });
+      }
+
+      const { profile_photo } = req.body;
+
+      if (!profile_photo) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Profile photo data is required'
+        });
+      }
+
+      // Update profile photo in database
+      const result = await dbHelper.run(
+        'UPDATE users SET profile_photo = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [profile_photo, decoded.userId]
+      );
+
+      if (result.changes > 0) {
+        return res.json({
+          status: 'success',
+          message: 'Profile photo updated successfully',
+          profile_photo
+        });
+      }
+
+      res.status(404).json({
+        status: 'error',
+        message: 'User not found'
+      });
+    } catch (error) {
+      console.error('Upload profile photo error:', error);
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to upload profile photo'
       });
     }
   });
