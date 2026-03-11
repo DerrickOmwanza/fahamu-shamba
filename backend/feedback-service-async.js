@@ -356,8 +356,8 @@ export async function getFeedbackAnalytics() {
     `SELECT 
       COUNT(*) as total_feedback,
       AVG(rating) as avg_rating,
-      SUM(CASE WHEN was_helpful = 1 THEN 1 ELSE 0 END) as helpful_count,
-      SUM(CASE WHEN would_recommend = 1 THEN 1 ELSE 0 END) as recommend_count
+      SUM(CASE WHEN was_helpful IS TRUE THEN 1 ELSE 0 END) as helpful_count,
+      SUM(CASE WHEN would_recommend IS TRUE THEN 1 ELSE 0 END) as recommend_count
     FROM enhanced_feedback
     WHERE rating IS NOT NULL`
   );
