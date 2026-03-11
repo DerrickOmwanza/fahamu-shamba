@@ -4,25 +4,14 @@
  */
 
 import express from 'express';
-import feedbackService from './feedback-service.js';
+import feedbackService from './feedback-service-async.js';
 
 const router = express.Router();
-
-// Initialize feedback database
-let initialized = false;
-
-function ensureInitialized(req, res, next) {
-  if (!initialized) {
-    feedbackService.initializeFeedbackDatabase();
-    initialized = true;
-  }
-  next();
-}
 
 // ==================== RATINGS ====================
 
 // Submit rating for a prediction
-router.post('/feedback/rate', ensureInitialized, (req, res) => {
+router.post('/feedback/rate', async (req, res) => {
   try {
     const { predictionId, phoneNumber, crop, rating, subCounty, soilType, season } = req.body;
     
@@ -40,7 +29,7 @@ router.post('/feedback/rate', ensureInitialized, (req, res) => {
       });
     }
     
-    const result = feedbackService.submitRating({
+    const result = await feedbackService.submitRating({
       predictionId,
       phoneNumber,
       crop,
@@ -58,7 +47,7 @@ router.post('/feedback/rate', ensureInitialized, (req, res) => {
 });
 
 // Submit detailed feedback
-router.post('/feedback/submit', ensureInitialized, (req, res) => {
+router.post('/feedback/submit', async (req, res) => {
   try {
     const {
       predictionId,
@@ -82,7 +71,7 @@ router.post('/feedback/submit', ensureInitialized, (req, res) => {
       });
     }
     
-    const result = feedbackService.submitFeedback({
+    const result = await feedbackService.submitFeedback({
       predictionId,
       phoneNumber,
       cropRecommended,
@@ -105,7 +94,7 @@ router.post('/feedback/submit', ensureInitialized, (req, res) => {
 });
 
 // Simple feedback submission (for quick feedback and detailed feedback)
-router.post('/feedback', ensureInitialized, (req, res) => {
+router.post('/feedback', async (req, res) => {
   try {
     const { helpful, comments, feedback_type, rating, phoneNumber } = req.body;
     
@@ -130,7 +119,7 @@ router.post('/feedback', ensureInitialized, (req, res) => {
       phone = `guest_${Date.now()}`;
     }
     
-    const result = feedbackService.submitSimpleFeedback({
+    const result = await feedbackService.submitSimpleFeedback({
       phoneNumber: phone,
       helpful,
       comments,
@@ -146,12 +135,12 @@ router.post('/feedback', ensureInitialized, (req, res) => {
 });
 
 // Get user's feedback history
-router.get('/feedback/user/:phoneNumber', ensureInitialized, (req, res) => {
+router.get('/feedback/user/:phoneNumber', async (req, res) => {
   try {
     const { phoneNumber } = req.params;
     const { limit = 10 } = req.query;
     
-    const result = feedbackService.getUserFeedback(phoneNumber, parseInt(limit));
+    const result = await feedbackService.getUserFeedback(phoneNumber, parseInt(limit));
     res.json(result);
   } catch (error) {
     console.error('Error fetching user feedback:', error);
@@ -160,11 +149,11 @@ router.get('/feedback/user/:phoneNumber', ensureInitialized, (req, res) => {
 });
 
 // Get all feedback (admin)
-router.get('/feedback/all', ensureInitialized, (req, res) => {
+router.get('/feedback/all', async (req, res) => {
   try {
     const { page, limit, crop, subCounty, minRating } = req.query;
     
-    const result = feedbackService.getAllFeedback({
+    const result = await feedbackService.getAllFeedback({
       page: parseInt(page) || 1,
       limit: parseInt(limit) || 20,
       crop,
@@ -182,7 +171,7 @@ router.get('/feedback/all', ensureInitialized, (req, res) => {
 // ==================== YIELD TRACKING ====================
 
 // Record yield
-router.post('/feedback/yield', ensureInitialized, (req, res) => {
+router.post('/feedback/yield', async (req, res) => {
   try {
     let {
       phoneNumber,
@@ -226,7 +215,7 @@ router.post('/feedback/yield', ensureInitialized, (req, res) => {
       });
     }
     
-    const result = feedbackService.recordYield({
+    const result = await feedbackService.recordYield({
       phoneNumber,
       crop,
       subCounty,
@@ -247,11 +236,11 @@ router.post('/feedback/yield', ensureInitialized, (req, res) => {
 });
 
 // Get user yield history - requires phoneNumber in URL
-router.get('/feedback/yields/:phoneNumber', ensureInitialized, (req, res) => {
+router.get('/feedback/yields/:phoneNumber', async (req, res) => {
   try {
     const { phoneNumber } = req.params;
     
-    const result = feedbackService.getUserYields(phoneNumber);
+    const result = await feedbackService.getUserYields(phoneNumber);
     res.json(result);
   } catch (error) {
     console.error('Error fetching yields:', error);
@@ -260,7 +249,7 @@ router.get('/feedback/yields/:phoneNumber', ensureInitialized, (req, res) => {
 });
 
 // Get current user's yield history (from token)
-router.get('/feedback/yields', ensureInitialized, (req, res) => {
+router.get('/feedback/yields', async (req, res) => {
   try {
     // Extract phoneNumber from token
     let phoneNumber = null;
@@ -281,7 +270,7 @@ router.get('/feedback/yields', ensureInitialized, (req, res) => {
       });
     }
     
-    const result = feedbackService.getUserYields(phoneNumber);
+    const result = await feedbackService.getUserYields(phoneNumber);
     // Return in format expected by frontend: { success, data }
     res.json({
       success: result.success,
@@ -294,11 +283,11 @@ router.get('/feedback/yields', ensureInitialized, (req, res) => {
 });
 
 // Get yield analytics
-router.get('/feedback/yields/analytics', ensureInitialized, (req, res) => {
+router.get('/feedback/yields/analytics', async (req, res) => {
   try {
     const { crop, subCounty } = req.query;
     
-    const result = feedbackService.getYieldAnalytics(crop, subCounty);
+    const result = await feedbackService.getYieldAnalytics(crop, subCounty);
     res.json(result);
   } catch (error) {
     console.error('Error fetching yield analytics:', error);
@@ -309,9 +298,9 @@ router.get('/feedback/yields/analytics', ensureInitialized, (req, res) => {
 // ==================== ANALYTICS ====================
 
 // Get comprehensive feedback analytics
-router.get('/feedback/analytics', ensureInitialized, (req, res) => {
+router.get('/feedback/analytics', async (req, res) => {
   try {
-    const result = feedbackService.getFeedbackAnalytics();
+    const result = await feedbackService.getFeedbackAnalytics();
     
     // Transform to format expected by frontend
     if (result.success && result.analytics) {
@@ -348,11 +337,11 @@ router.get('/feedback/analytics', ensureInitialized, (req, res) => {
 });
 
 // Get recent feedback
-router.get('/feedback/recent', ensureInitialized, (req, res) => {
+router.get('/feedback/recent', async (req, res) => {
   try {
     const { limit } = req.query;
     
-    const result = feedbackService.getRecentFeedback({
+    const result = await feedbackService.getRecentFeedback({
       limit: parseInt(limit) || 10
     });
     res.json(result);
@@ -363,11 +352,11 @@ router.get('/feedback/recent', ensureInitialized, (req, res) => {
 });
 
 // Get ML training data
-router.get('/feedback/ml-data', ensureInitialized, (req, res) => {
+router.get('/feedback/ml-data', async (req, res) => {
   try {
     const { minRatings } = req.query;
     
-    const result = feedbackService.getMLTrainingData({
+    const result = await feedbackService.getMLTrainingData({
       minRatings: parseInt(minRatings) || 5
     });
     res.json(result);
@@ -380,7 +369,7 @@ router.get('/feedback/ml-data', ensureInitialized, (req, res) => {
 // ==================== PRICE ALERTS ====================
 
 // Subscribe to price alert
-router.post('/feedback/price-alert', ensureInitialized, (req, res) => {
+router.post('/feedback/price-alert', async (req, res) => {
   try {
     const { phoneNumber, crop, thresholdType, thresholdPrice, notifySms, notifyPush } = req.body;
     
@@ -391,7 +380,7 @@ router.post('/feedback/price-alert', ensureInitialized, (req, res) => {
       });
     }
     
-    const result = feedbackService.subscribePriceAlert({
+    const result = await feedbackService.subscribePriceAlert({
       phoneNumber,
       crop,
       thresholdType,
@@ -408,11 +397,11 @@ router.post('/feedback/price-alert', ensureInitialized, (req, res) => {
 });
 
 // Get user price alerts
-router.get('/feedback/price-alerts/:phoneNumber', ensureInitialized, (req, res) => {
+router.get('/feedback/price-alerts/:phoneNumber', async (req, res) => {
   try {
     const { phoneNumber } = req.params;
     
-    const result = feedbackService.getUserPriceAlerts(phoneNumber);
+    const result = await feedbackService.getUserPriceAlerts(phoneNumber);
     res.json(result);
   } catch (error) {
     console.error('Error fetching price alerts:', error);
@@ -421,12 +410,12 @@ router.get('/feedback/price-alerts/:phoneNumber', ensureInitialized, (req, res) 
 });
 
 // Update price alert
-router.put('/feedback/price-alert/:id', ensureInitialized, (req, res) => {
+router.put('/feedback/price-alert/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { thresholdPrice, isActive } = req.body;
     
-    const result = feedbackService.updatePriceAlert(parseInt(id), {
+    const result = await feedbackService.updatePriceAlert(parseInt(id), {
       thresholdPrice,
       isActive
     });
@@ -439,11 +428,11 @@ router.put('/feedback/price-alert/:id', ensureInitialized, (req, res) => {
 });
 
 // Delete price alert
-router.delete('/feedback/price-alert/:id', ensureInitialized, (req, res) => {
+router.delete('/feedback/price-alert/:id', async (req, res) => {
   try {
     const { id } = req.params;
     
-    const result = feedbackService.deletePriceAlert(parseInt(id));
+    const result = await feedbackService.deletePriceAlert(parseInt(id));
     res.json(result);
   } catch (error) {
     console.error('Error deleting price alert:', error);
@@ -452,4 +441,3 @@ router.delete('/feedback/price-alert/:id', ensureInitialized, (req, res) => {
 });
 
 export default router;
-

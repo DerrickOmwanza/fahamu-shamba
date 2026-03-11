@@ -22,7 +22,7 @@ import { handleUSSD } from './ussd-service.js';
 import communityRoutes from './community-routes.js';
 import feedbackRoutes from './feedback-routes.js';
 import communityService from './community-service-async.js';
-import feedbackService from './feedback-service.js';
+import feedbackService from './feedback-service-async.js';
 import marketRoutes from './market-routes.js';
 import marketPricesApi from './market-prices-api.js';
 import weatherRoutes from './weather-routes.js';
@@ -201,16 +201,16 @@ try {
   console.error('⚠️ Error initializing community service:', error.message);
 }
 
-if (!USE_POSTGRES) {
-  console.log('📝 Initializing feedback database...');
-  try {
-    feedbackService.initializeFeedbackDatabase(db, dbAsync);
-    console.log('✅ Feedback database initialized');
-  } catch (error) {
-    console.error('⚠️ Error initializing feedback database:', error.message);
+console.log('📝 Initializing feedback service...');
+try {
+  feedbackService.initializeFeedbackDatabase(db, dbAsync);
+  if (USE_POSTGRES) {
+    console.log('✅ Feedback service initialized (PostgreSQL)');
+  } else {
+    console.log('✅ Feedback service initialized (SQLite)');
   }
-} else {
-  console.log('✅ Using PostgreSQL - feedback tables already migrated');
+} catch (error) {
+  console.error('⚠️ Error initializing feedback service:', error.message);
 }
 
 // Initialize weather database tables
