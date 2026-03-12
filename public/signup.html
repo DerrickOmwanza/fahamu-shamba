@@ -250,9 +250,11 @@
                 </select>
             </div>
             <div class="form-group">
-                <label data-i18n="ward"></label>
-                <input type="text" id="ward" data-i18n-placeholder="enter_ward" required>
-            </div>
+                 <label data-i18n="ward"></label>
+                 <select id="ward" required>
+                     <option value="" data-i18n="select_ward"></option>
+                 </select>
+             </div>
             <div class="form-group">
                 <label data-i18n="farm_size"></label>
                 <input type="number" id="farmSize" data-i18n-placeholder="example_farm_size" required>
@@ -285,10 +287,87 @@
         </div>
     </div>
     <script>
-        // Initialize language on page load
-        document.addEventListener('DOMContentLoaded', () => {
-           initializeLanguage();
-        });
+         // Ward mapping for each sub-county in Siaya County, Kenya
+         const wardMapping = {
+             'bondo': [
+                 'Central Bondo',
+                 'East Bondo',
+                 'North Bondo',
+                 'South Bondo',
+                 'West Bondo'
+             ],
+             'ugenya': [
+                 'Central Ugenya',
+                 'East Ugenya',
+                 'North Ugenya',
+                 'South Ugenya',
+                 'West Ugenya'
+             ],
+             'ugunja': [
+                 'Blasdel',
+                 'Central',
+                 'East',
+                 'Kolanya',
+                 'West'
+             ],
+             'gem': [
+                 'Arwiny',
+                 'Central',
+                 'East',
+                 'North',
+                 'South'
+             ],
+             'alego': [
+                 'Alego Central',
+                 'Boro',
+                 'East Alego',
+                 'North Alego',
+                 'West Alego'
+             ],
+             'rarieda': [
+                 'Central Rarieda',
+                 'East Rarieda',
+                 'North Rarieda',
+                 'South Rarieda',
+                 'West Rarieda'
+             ]
+         };
+         
+         // Update ward dropdown based on selected sub-county
+         function updateWardDropdown() {
+             const subcountySelect = document.getElementById('subcounty');
+             const wardSelect = document.getElementById('ward');
+             const selectedSubcounty = subcountySelect.value;
+             
+             // Clear current ward options (except first empty option)
+             while (wardSelect.options.length > 1) {
+                 wardSelect.remove(1);
+             }
+             
+             // Reset ward selection
+             wardSelect.value = '';
+             
+             // Populate wards if a sub-county is selected
+             if (selectedSubcounty && wardMapping[selectedSubcounty]) {
+                 wardMapping[selectedSubcounty].forEach(ward => {
+                     const option = document.createElement('option');
+                     option.value = ward.toLowerCase().replace(/\s+/g, '_');
+                     option.textContent = ward;
+                     wardSelect.appendChild(option);
+                 });
+             }
+         }
+         
+         // Initialize language on page load
+         document.addEventListener('DOMContentLoaded', () => {
+            initializeLanguage();
+            
+            // Add event listener for sub-county change
+            const subcountySelect = document.getElementById('subcounty');
+            if (subcountySelect) {
+                subcountySelect.addEventListener('change', updateWardDropdown);
+            }
+         });
         
         // Language functions
         function changeLanguage(lang) {

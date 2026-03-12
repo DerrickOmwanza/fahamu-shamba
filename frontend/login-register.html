@@ -118,11 +118,31 @@
             }
         }
 
-        input:focus {
-            outline: none;
-            border-color: #4CAF50;
-            box-shadow: 0 0 4px rgba(76, 175, 80, 0.2);
-        }
+        input:focus, select:focus {
+             outline: none;
+             border-color: #4CAF50;
+             box-shadow: 0 0 4px rgba(76, 175, 80, 0.2);
+         }
+         
+         select {
+             width: 100%;
+             padding: 12px 16px;
+             border: 1px solid #E0E0E0;
+             border-radius: 6px;
+             font-size: 16px;
+             transition: border-color 0.3s;
+             background-color: white;
+             cursor: pointer;
+             font-family: inherit;
+         }
+         
+         @media (max-width: 480px) {
+             select {
+                 padding: 11px 14px;
+                 font-size: 16px;
+                 border-radius: 5px;
+             }
+         }
 
         input[type="checkbox"] {
             width: 18px;
@@ -499,15 +519,26 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="farmerLocation" data-i18n="county">County / Location</label>
-                    <input type="text" id="farmerLocation" name="location" data-i18n="enter_county" placeholder="e.g., Siaya County" required>
-                    <div class="error-message" id="farmerLocationError"></div>
-                </div>
+                     <label for="farmerLocation" data-i18n="sub_county">Sub-County</label>
+                     <select id="farmerLocation" name="location" required>
+                         <option value="" data-i18n="select_sub_county">Select Sub-County</option>
+                         <option value="bondo">Bondo</option>
+                         <option value="ugenya">Ugenya</option>
+                         <option value="ugunja">Ugunja</option>
+                         <option value="gem">Gem</option>
+                         <option value="alego">Alego Usonga</option>
+                         <option value="rarieda">Rarieda</option>
+                     </select>
+                     <div class="error-message" id="farmerLocationError"></div>
+                 </div>
 
-                <div class="form-group">
-                    <label for="farmerWard" data-i18n="ward_label">Ward (Optional)</label>
-                    <input type="text" id="farmerWard" name="ward" data-i18n="enter_ward" placeholder="e.g., West Gem">
-                </div>
+                 <div class="form-group">
+                     <label for="farmerWard" data-i18n="ward_label">Ward</label>
+                     <select id="farmerWard" name="ward">
+                         <option value="" data-i18n="select_ward">Select Ward</option>
+                     </select>
+                     <div class="error-message" id="farmerWardError"></div>
+                 </div>
 
                 <div class="form-group">
                     <label for="farmSize" data-i18n="farm_size_label">Farm Size</label>
@@ -531,13 +562,84 @@
     </div>
 
     <script>
-        const API_URL = '/api/auth';
+         const API_URL = '/api/auth';
+         
+         // Ward mapping for each sub-county in Siaya County, Kenya
+         const wardMapping = {
+             'bondo': [
+                 'Central Bondo',
+                 'East Bondo',
+                 'North Bondo',
+                 'South Bondo',
+                 'West Bondo'
+             ],
+             'ugenya': [
+                 'Central Ugenya',
+                 'East Ugenya',
+                 'North Ugenya',
+                 'South Ugenya',
+                 'West Ugenya'
+             ],
+             'ugunja': [
+                 'Blasdel',
+                 'Central',
+                 'East',
+                 'Kolanya',
+                 'West'
+             ],
+             'gem': [
+                 'Arwiny',
+                 'Central',
+                 'East',
+                 'North',
+                 'South'
+             ],
+             'alego': [
+                 'Alego Central',
+                 'Boro',
+                 'East Alego',
+                 'North Alego',
+                 'West Alego'
+             ],
+             'rarieda': [
+                 'Central Rarieda',
+                 'East Rarieda',
+                 'North Rarieda',
+                 'South Rarieda',
+                 'West Rarieda'
+             ]
+         };
+         
+         // Update ward dropdown based on selected sub-county
+         function updateWardDropdown() {
+             const subcountySelect = document.getElementById('farmerLocation');
+             const wardSelect = document.getElementById('farmerWard');
+             const selectedSubcounty = subcountySelect.value;
+             
+             // Clear current ward options (except first empty option)
+             while (wardSelect.options.length > 1) {
+                 wardSelect.remove(1);
+             }
+             
+             // Reset ward selection
+             wardSelect.value = '';
+             
+             // Populate wards if a sub-county is selected
+             if (selectedSubcounty && wardMapping[selectedSubcounty]) {
+                 wardMapping[selectedSubcounty].forEach(ward => {
+                     const option = document.createElement('option');
+                     option.value = ward.toLowerCase().replace(/\s+/g, '_');
+                     option.textContent = ward;
+                     wardSelect.appendChild(option);
+                 });
+             }
+         }
 
-        // Language management
-        function changeLanguage(lang) {
-            setLanguage(lang);
-            translatePage(lang);
-        }
+         // Language management
+         function changeLanguage(lang) {
+             setLanguage(lang);
+             translatePage(lang);
+         }
 
         // Check URL parameter to auto-switch forms
         function initializeFormMode() {
@@ -570,6 +672,14 @@
         function backToStep1() {
             document.getElementById('registerStep2Form').classList.add('hidden');
             document.getElementById('registerForm').classList.remove('hidden');
+        }
+        
+        // Setup ward dropdown listener
+        function setupWardDropdownListener() {
+            const subcountySelect = document.getElementById('farmerLocation');
+            if (subcountySelect) {
+                subcountySelect.addEventListener('change', updateWardDropdown);
+            }
         }
 
         // Utility: Show/hide error
@@ -696,6 +806,9 @@
                 window.currentUserId = data.userId;
                 document.getElementById('registerForm').classList.add('hidden');
                 document.getElementById('registerStep2Form').classList.remove('hidden');
+                
+                // Setup ward dropdown listener when Step 2 is shown
+                setupWardDropdownListener();
             } catch (error) {
                 console.error('Registration error:', error);
                 showError('registerFormError', 'Network error. Please check your connection.');
