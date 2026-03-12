@@ -242,39 +242,44 @@ async function seedMarketDataPostgres() {
 
 // ==================== MARKET PRICES ====================
 
-// Get current prices
+// Get current prices - simplified query for PostgreSQL compatibility
 export async function getCurrentPricesPostgres(options = {}) {
   const { crop, market } = options;
 
-  let query = `
-    SELECT mp.*, mc.location, mc.county
-    FROM market_prices mp
-    LEFT JOIN market_centers mc ON mp.market = mc.name
-    WHERE mp.recorded_at = (
-      SELECT MAX(recorded_at) FROM market_prices mp2 WHERE mp2.crop = mp.crop AND mp2.market = mp.market
-    )
-  `;
-  const params = [];
-  let paramIndex = 0;
+  try {
+    let query = `
+      SELECT mp.*, mc.location, mc.county
+      FROM market_prices mp
+      LEFT JOIN market_centers mc ON mp.market = mc.name
+      WHERE 1=1
+    `;
+    const params = [];
+    let paramIndex = 0;
 
-  if (crop) {
-    query += ` AND mp.crop = $${++paramIndex}`;
-    params.push(crop);
+    if (crop) {
+      query += ` AND mp.crop = $${++paramIndex}`;
+      params.push(crop);
+    }
+    if (market) {
+      query += ` AND mp.market = $${++paramIndex}`;
+      params.push(market);
+    }
+
+    query += ' ORDER BY mp.crop, mp.market';
+
+    console.log('🔍 Executing query:', query.substring(0, 100));
+    const result = await pool.query(query, params);
+    console.log('✅ Query returned', result.rows.length, 'rows');
+
+    return {
+      success: true,
+      prices: result.rows,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('❌ PostgreSQL query error:', error.message);
+    throw error;
   }
-  if (market) {
-    query += ` AND mp.market = $${++paramIndex}`;
-    params.push(market);
-  }
-
-  query += ' ORDER BY mp.crop, mp.market';
-
-  const result = await pool.query(query, params);
-
-  return {
-    success: true,
-    prices: result.rows,
-    timestamp: new Date().toISOString()
-  };
 }
 
 // Get price history
