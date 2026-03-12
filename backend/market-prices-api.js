@@ -1,28 +1,39 @@
 /**
  * Market Prices API for Fahamu Shamba
  * Provides market prices in the format expected by the frontend
+ * Supports both SQLite and PostgreSQL
  */
 
 import express from 'express';
 import marketService from './market-service.js';
+import * as marketServicePostgres from './market-service-postgres.js';
 
 const router = express.Router();
+
+// Detect which database to use
+const USE_POSTGRES = process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgres');
 
 // Initialize market database
 let initialized = false;
 
-function ensureInitialized(req, res, next) {
+async function ensureInitialized(req, res, next) {
   if (!initialized) {
-    marketService.initializeMarketDatabase();
+    if (USE_POSTGRES) {
+      await marketServicePostgres.initializeMarketDatabasePostgres();
+    } else {
+      marketService.initializeMarketDatabase();
+    }
     initialized = true;
   }
   next();
 }
 
 // Get market prices in frontend-compatible format
-router.get('/api/market/prices', ensureInitialized, (req, res) => {
+router.get('/api/market/prices', ensureInitialized, async (req, res) => {
   try {
-    const result = marketService.getCurrentPrices();
+    const result = USE_POSTGRES
+      ? await marketServicePostgres.getCurrentPricesPostgres()
+      : marketService.getCurrentPrices();
     
     if (!result.success || !result.prices || result.prices.length === 0) {
       return res.json({
@@ -94,7 +105,7 @@ router.get('/api/market/prices', ensureInitialized, (req, res) => {
 });
 
 // Get market trends for Chart.js
-router.get('/api/market-trends', ensureInitialized, (req, res) => {
+router.get('/api/market-trends', ensureInitialized, async (req, res) => {
   try {
     const { crop } = req.query;
     
@@ -106,7 +117,9 @@ router.get('/api/market-trends', ensureInitialized, (req, res) => {
     }
 
     // Get price history for the last 8 weeks
-    const history = marketService.getPriceHistory(crop, 'Siaya Town Market', 56);
+    const history = USE_POSTGRES
+      ? await marketServicePostgres.getPriceHistoryPostgres(crop, 'Siaya Town Market', 56)
+      : marketService.getPriceHistory(crop, 'Siaya Town Market', 56);
     
     if (!history.success || !history.history || history.history.length === 0) {
       // Return demo data if no history available
