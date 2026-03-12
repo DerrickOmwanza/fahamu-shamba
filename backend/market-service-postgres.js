@@ -135,7 +135,7 @@ async function seedMarketDataPostgres() {
     const result = await pool.query('SELECT COUNT(*) as count FROM market_centers');
     const existingMarkets = result.rows[0];
 
-    if (existingMarkets.count === 0) {
+    if (existingMarkets.count < 7) {  // Changed from === 0 to < 7, since we have 6
       // Seed market centers - Fixed to use correct sub-county names (all 6 valid Siaya sub-counties)
       const markets = [
         { name: 'Siaya Town Market', location: 'Siaya', county: 'Siaya', sub_county: 'Alego Usonga', operating_days: 'Mon-Sat', main_crops: 'Maize,Beans,Rice' },
