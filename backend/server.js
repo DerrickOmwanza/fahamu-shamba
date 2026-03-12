@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import Database from 'better-sqlite3';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -110,6 +109,8 @@ if (USE_POSTGRES) {
   console.log('✅ Using PostgreSQL database (persistent storage for Vercel)');
   db = null; // PostgreSQL doesn't use better-sqlite3
 } else {
+  // Use dynamic import for better-sqlite3 to prevent Vercel crashes
+  const { default: Database } = await import('better-sqlite3');
   const databasePath = IS_VERCEL
     ? (process.env.SQLITE_DB_PATH || '/tmp/fahamu_shamba.db')
     : path.join(__dirname, 'fahamu_shamba.db');

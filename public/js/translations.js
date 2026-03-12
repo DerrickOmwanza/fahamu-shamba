@@ -94,6 +94,18 @@ class TranslationManager {
 
     // Update page direction if needed (for RTL languages in future)
     document.documentElement.lang = this.currentLanguage;
+    
+    // Once content is translated, make the body visible and remove loader
+    document.body.classList.add('loaded');
+    
+    // Hide splash screen if present
+    const loader = document.getElementById('page-loader') || document.getElementById('pageLoader');
+    if (loader) {
+      loader.style.opacity = '0';
+      setTimeout(() => {
+        loader.style.display = 'none';
+      }, 500);
+    }
   }
 
   /**

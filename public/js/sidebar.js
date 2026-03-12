@@ -73,6 +73,18 @@
                 if (mainContent) {
                     mainContent.style.opacity = '1';
                 }
+
+                // HIDE PAGE LOADER if exists
+                const loader = document.getElementById('page-loader');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                        document.body.classList.add('loaded');
+                    }, 400);
+                } else {
+                    document.body.classList.add('loaded');
+                }
             });
             
             console.log('Sidebar and main content loaded together seamlessly');

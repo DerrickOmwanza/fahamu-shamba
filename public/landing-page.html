@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="max-age=31536000, must-revalidate">
     <title>Fahamu Shamba - Smart Farming Intelligence for Siaya County</title>
+    
+    <!-- Preload Critical Assets -->
+    <link rel="preload" href="/fahamu-logo.png" as="image">
+    <link rel="preload" href="/css/mobile-responsiveness-fixes.css" as="style">
+    
     <link rel="icon" href="/fahamu-logo.png" type="image/png">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2d7649">
@@ -52,8 +58,12 @@
             background: #ffffff;
             color: var(--text);
             line-height: 1.6;
+            opacity: 0; /* Hide body initially to prevent FOUC and seeing un-translated text */
+            transition: opacity 0.4s ease-in;
+        }
+        
+        body.loading {
             opacity: 0;
-            transition: opacity 0.3s ease-in;
         }
         
         body.loaded {
@@ -72,8 +82,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.3s ease-out;
+            z-index: 10000; /* Ensure it's above everything */
+            transition: opacity 0.5s ease-out;
+            visibility: visible;
         }
         
         #page-loader.hidden {

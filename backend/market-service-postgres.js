@@ -133,9 +133,14 @@ export async function initializeMarketDatabasePostgres() {
 async function seedMarketDataPostgres() {
   try {
     const result = await pool.query('SELECT COUNT(*) as count FROM market_centers');
-    const existingMarkets = result.rows[0];
+    const count = parseInt(result.rows[0].count);
 
-    if (existingMarkets.count < 7) {  // Changed from === 0 to < 7, since we have 6
+    if (count < 7) {
+      console.log('🌱 Seeding fresh market data...');
+      // Clear existing to avoid duplicates if partially seeded
+      await pool.query('DELETE FROM market_prices');
+      await pool.query('DELETE FROM market_centers');
+      
       // Seed market centers - Fixed to use correct sub-county names (all 6 valid Siaya sub-counties)
       const markets = [
         { name: 'Siaya Town Market', location: 'Siaya', county: 'Siaya', sub_county: 'Alego Usonga', operating_days: 'Mon-Sat', main_crops: 'Maize,Beans,Rice' },
