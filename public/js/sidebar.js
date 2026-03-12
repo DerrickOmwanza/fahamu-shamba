@@ -243,8 +243,45 @@
                     e.stopPropagation();
                     toggleMobileSidebar();
                 };
+                // Add touch feedback
+                btn.addEventListener('touchstart', function() {
+                    this.style.opacity = '0.8';
+                });
+                btn.addEventListener('touchend', function() {
+                    this.style.opacity = '1';
+                });
             });
         });
+    }
+    
+    /**
+     * Add swipe gesture support for closing sidebar on mobile
+     */
+    function initSwipeGestures() {
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar) return;
+        
+        sidebar.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        sidebar.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+        
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            // Swiped left (off the screen)
+            if (diff > swipeThreshold) {
+                closeMobileSidebar();
+            }
+        }
     }
     
     // Logout function
@@ -279,7 +316,10 @@
             }
         });
 
-        // 3. Handle Desktop State
+        // 3. Initialize swipe gestures for mobile
+        initSwipeGestures();
+
+        // 4. Handle Desktop State
         if (window.innerWidth > 992) {
             const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
             if (isCollapsed) {
@@ -294,7 +334,7 @@
             }
         }
 
-        // 4. Auto-close on resize
+        // 5. Auto-close on resize
         window.addEventListener('resize', () => {
             if (window.innerWidth > 992) {
                 closeMobileSidebar();

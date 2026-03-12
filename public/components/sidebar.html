@@ -1,53 +1,53 @@
 <!-- SHARED SIDEBAR COMPONENT -->
-<div class="sidebar" id="sidebar">
-    <button class="sidebar-close" onclick="closeMobileSidebar()">
-        <i class="fas fa-times"></i>
+<div class="sidebar" id="sidebar" role="navigation" aria-label="Main Navigation">
+    <button class="sidebar-close" onclick="closeMobileSidebar()" aria-label="Close Menu" title="Close Menu">
+        <i class="fas fa-times" aria-hidden="true"></i>
     </button>
     <div class="sidebar-header">
-        <div class="sidebar-logo">
+        <div class="sidebar-logo" aria-hidden="true">
             <i class="fas fa-seedling"></i>
         </div>
         <div class="sidebar-brand">
             <h2>Fahamu Shamba</h2>
             <p>Smart Farming Assistant</p>
         </div>
-        <button class="sidebar-toggle" onclick="toggleSidebar()">
-            <i class="fas fa-chevron-left"></i>
+        <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle Sidebar Width" title="Collapse/Expand Sidebar">
+            <i class="fas fa-chevron-left" aria-hidden="true"></i>
         </button>
     </div>
-    <nav class="sidebar-nav">
-        <a href="/dashboard.html" class="nav-item" id="nav-dashboard">
-            <i class="fas fa-th-large"></i>
+    <nav class="sidebar-nav" role="menubar">
+        <a href="/dashboard.html" class="nav-item" id="nav-dashboard" role="menuitem">
+            <i class="fas fa-th-large" aria-hidden="true"></i>
             <span>Dashboard</span>
         </a>
-        <a href="/recommendations.html" class="nav-item" id="nav-recommendations">
-            <i class="fas fa-lightbulb"></i>
+        <a href="/recommendations.html" class="nav-item" id="nav-recommendations" role="menuitem">
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
             <span>Recommendations</span>
         </a>
-        <a href="/market.html" class="nav-item" id="nav-market">
-            <i class="fas fa-shopping-basket"></i>
+        <a href="/market.html" class="nav-item" id="nav-market" role="menuitem">
+            <i class="fas fa-shopping-basket" aria-hidden="true"></i>
             <span>Market Trends</span>
         </a>
-        <a href="/community.html" class="nav-item" id="nav-community">
-            <i class="fas fa-users"></i>
+        <a href="/community.html" class="nav-item" id="nav-community" role="menuitem">
+            <i class="fas fa-users" aria-hidden="true"></i>
             <span>Community</span>
         </a>
-        <a href="/feedback.html" class="nav-item" id="nav-feedback">
-            <i class="fas fa-comment-alt"></i>
+        <a href="/feedback.html" class="nav-item" id="nav-feedback" role="menuitem">
+            <i class="fas fa-comment-alt" aria-hidden="true"></i>
             <span>Feedback</span>
         </a>
-        <a href="/profile.html" class="nav-item" id="nav-profile">
-            <i class="fas fa-user-circle"></i>
+        <a href="/profile.html" class="nav-item" id="nav-profile" role="menuitem">
+            <i class="fas fa-user-circle" aria-hidden="true"></i>
             <span>My Profile</span>
         </a>
-        <a href="/settings.html" class="nav-item" id="nav-settings">
-            <i class="fas fa-cog"></i>
+        <a href="/settings.html" class="nav-item" id="nav-settings" role="menuitem">
+            <i class="fas fa-cog" aria-hidden="true"></i>
             <span>Settings</span>
         </a>
     </nav>
     <div class="sidebar-footer">
         <div class="user-info">
-            <div class="user-avatar" id="sidebar-user-avatar">
+            <div class="user-avatar" id="sidebar-user-avatar" aria-hidden="true">
                 <i class="fas fa-user"></i>
             </div>
             <div class="user-details">
@@ -55,10 +55,10 @@
                 <div class="user-phone" id="sidebar-user-phone">+254...</div>
             </div>
         </div>
-        <button class="logout-btn" onclick="logout()">
-            <i class="fas fa-sign-out-alt"></i>
+        <button class="logout-btn" onclick="logout()" aria-label="Logout">
+            <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
             <span>Logout</span>
         </button>
     </div>
 </div>
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()" role="presentation" aria-hidden="true"></div>
