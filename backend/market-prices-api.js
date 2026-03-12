@@ -16,17 +16,28 @@ const USE_POSTGRES = process.env.DATABASE_URL && process.env.DATABASE_URL.starts
 // Initialize market database
 let initialized = false;
 
-async function ensureInitialized(req, res, next) {
-  if (!initialized) {
-    if (USE_POSTGRES) {
-      await marketServicePostgres.initializeMarketDatabasePostgres();
-    } else {
-      marketService.initializeMarketDatabase();
+const ensureInitialized = async (req, res, next) => {
+  try {
+    if (!initialized) {
+      console.log('🔧 Initializing market database, USE_POSTGRES:', USE_POSTGRES);
+      if (USE_POSTGRES) {
+        await marketServicePostgres.initializeMarketDatabasePostgres();
+      } else {
+        marketService.initializeMarketDatabase();
+      }
+      initialized = true;
+      console.log('✅ Market database initialized');
     }
-    initialized = true;
+    next();
+  } catch (error) {
+    console.error('❌ Initialization error:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to initialize database',
+      debug: error.message
+    });
   }
-  next();
-}
+};
 
 // Get market prices in frontend-compatible format
 router.get('/api/market/prices', ensureInitialized, async (req, res) => {
