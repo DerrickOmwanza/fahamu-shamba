@@ -378,23 +378,29 @@
                 <!-- Price Trends View -->
                 <div id="marketTrendsView" style="display: none;">
                     <div class="form-group">
-                        <label>Select Crop for Trend Analysis</label>
-                        <select id="trendCropSelect" onchange="loadMarketTrends()">
-                            <option value="beans">Beans</option>
-                            <option value="maize">Maize</option>
-                            <option value="rice">Rice</option>
-                            <option value="sorghum">Sorghum</option>
-                            <option value="millet">Millet</option>
+                        <label>📌 Choose Crop to View Prices Across Sub-Counties:</label>
+                        <select id="cropSelect" onchange="onCropChange()">
+                            <option value="Maize">🌾 Maize</option>
+                            <option value="Beans">🫘 Beans</option>
+                            <option value="Rice">🍚 Rice</option>
+                            <option value="Sorghum">🌾 Sorghum</option>
+                            <option value="Groundnuts">🥜 Groundnuts</option>
+                            <option value="Cassava">🥔 Cassava</option>
+                            <option value="Sweet Potatoes">🍠 Sweet Potatoes</option>
+                            <option value="Tomatoes">🍅 Tomatoes</option>
+                            <option value="Kales">🥬 Kales</option>
+                            <option value="Cowpeas">🫘 Cowpeas</option>
                         </select>
                     </div>
                     
-                    <div class="chart-controls">
-                        <button class="chart-btn active" onclick="changeTrendPeriod('7d')">7 Days</button>
-                        <button class="chart-btn" onclick="changeTrendPeriod('30d')">30 Days</button>
-                        <button class="chart-btn" onclick="changeTrendPeriod('90d')">90 Days</button>
+                    <div style="margin: 30px 0;">
+                        <h2 style="color: var(--primary-dark); font-size: 1.5rem; text-align: center; margin-bottom: 20px;">
+                            <i class="fas fa-chart-bar" style="margin-right: 10px;"></i>
+                            Sub-County Price Comparison
+                        </h2>
                     </div>
                     
-                    <div class="chart-container">
+                    <div class="chart-container" style="height: 450px;">
                         <canvas id="trendChart"></canvas>
                     </div>
                     
@@ -555,35 +561,138 @@
         }
         
         // Load market trends
+        let selectedCrop = 'Maize';
+        
         function loadMarketTrends() {
             const ctx = document.getElementById('trendChart').getContext('2d');
             
             if (trendChart) trendChart.destroy();
             
+            // Get selected crop from dropdown
+            const cropSelect = document.getElementById('cropSelect');
+            if (cropSelect) {
+                selectedCrop = cropSelect.value || 'Maize';
+            }
+            
+            // Base prices for each crop (in KSh/kg)
+            const cropPrices = {
+                'Maize': { alego: 63, bondo: 65, gem: 66, rarieda: 63, ugenya: 64, ugunja: 68 },
+                'Beans': { alego: 86, bondo: 85, gem: 84, rarieda: 86, ugenya: 83, ugunja: 82 },
+                'Rice': { alego: 122, bondo: 120, gem: 119, rarieda: 122, ugenya: 125, ugunja: 118 },
+                'Sorghum': { alego: 97, bondo: 95, gem: 94, rarieda: 97, ugenya: 98, ugunja: 92 },
+                'Groundnuts': { alego: 111, bondo: 110, gem: 109, rarieda: 111, ugenya: 112, ugunja: 108 },
+                'Cassava': { alego: 38, bondo: 35, gem: 34, rarieda: 38, ugenya: 38, ugunja: 32 },
+                'Sweet Potatoes': { alego: 41, bondo: 40, gem: 39, rarieda: 41, ugenya: 42, ugunja: 38 },
+                'Tomatoes': { alego: 76, bondo: 75, gem: 74, rarieda: 76, ugenya: 78, ugunja: 72 },
+                'Kales': { alego: 51, bondo: 50, gem: 49, rarieda: 51, ugenya: 52, ugunja: 48 },
+                'Cowpeas': { alego: 70, bondo: 70, gem: 70, rarieda: 70, ugenya: 70, ugunja: 68 }
+            };
+            
+            const prices = cropPrices[selectedCrop] || cropPrices['Maize'];
+            const subcounties = ['Alego', 'Bondo', 'Gem', 'Rarieda', 'Ugenya', 'Ugunja'];
+            const priceValues = [prices.alego, prices.bondo, prices.gem, prices.rarieda, prices.ugenya, prices.ugunja];
+            
             trendChart = new Chart(ctx, {
-                type: 'line',
+                type: 'bar',
                 data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    labels: subcounties,
                     datasets: [{
-                        label: 'Price (KSh/kg)',
-                        data: [65, 68, 64, 70, 72, 69, 65],
-                        borderColor: '#2d7649',
-                        backgroundColor: 'rgba(45, 118, 73, 0.1)',
-                        fill: true,
-                        tension: 0.4
+                        label: `${selectedCrop} Price (KSh/kg)`,
+                        data: priceValues,
+                        backgroundColor: [
+                            'rgba(45, 118, 73, 0.85)',      // Alego - Primary green
+                            'rgba(74, 157, 111, 0.85)',     // Bondo - Light green
+                            'rgba(155, 89, 182, 0.85)',     // Gem - Purple
+                            'rgba(230, 126, 34, 0.85)',     // Rarieda - Orange
+                            'rgba(52, 152, 219, 0.85)',     // Ugenya - Blue
+                            'rgba(22, 160, 133, 0.85)'      // Ugunja - Teal
+                        ],
+                        borderColor: [
+                            '#1e5631',
+                            '#2d7649',
+                            '#8b5a8e',
+                            '#c45f1a',
+                            '#2980b9',
+                            '#117a65'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        hoverBackgroundColor: [
+                            'rgba(45, 118, 73, 1)',
+                            'rgba(74, 157, 111, 1)',
+                            'rgba(155, 89, 182, 1)',
+                            'rgba(230, 126, 34, 1)',
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(22, 160, 133, 1)'
+                        ]
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    indexAxis: 'x',
                     plugins: {
-                        legend: { display: true }
+                        legend: { 
+                            display: true,
+                            labels: {
+                                font: { size: 12, weight: 'bold' },
+                                padding: 20,
+                                color: '#2c3e50'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 },
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'KSh ' + context.parsed.y + '/kg';
+                                }
+                            }
+                        }
                     },
                     scales: {
-                        y: { beginAtZero: false }
+                        y: { 
+                            beginAtZero: true,
+                            max: Math.max(...priceValues) + 20,
+                            title: {
+                                display: true,
+                                text: 'Price (KSh/kg)',
+                                font: { size: 12, weight: 'bold' }
+                            },
+                            ticks: {
+                                font: { size: 11 },
+                                color: '#7f8c8d'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Sub-County',
+                                font: { size: 12, weight: 'bold' }
+                            },
+                            ticks: {
+                                font: { size: 11, weight: 500 },
+                                color: '#2c3e50'
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
                     }
                 }
             });
+        }
+        
+        // Update chart when crop is selected
+        function onCropChange() {
+            loadMarketTrends();
         }
         
         // Load market comparison
