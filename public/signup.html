@@ -41,10 +41,21 @@
             height: 100%;
             background: #ffffff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .loader-logo {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         .page-loader.fade-out {
             opacity: 0;
@@ -77,7 +88,7 @@
             margin-bottom: 20px;
         }
         .logo img {
-            height: 60px;
+            height: 80px;
             margin-bottom: 10px;
         }
         .logo h1 {
@@ -242,6 +253,7 @@
 </head>
 <body class="loading">
     <div class="page-loader" id="pageLoader">
+        <img src="/fahamu-logo.png" alt="Loading..." class="loader-logo">
         <div class="loader-spinner"></div>
     </div>
     <div class="container">

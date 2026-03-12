@@ -14,3 +14,5 @@ android-studio/FahamuShamba/.idea/deviceManager.xml
 
 # OpenMemory - IDE/Assistant specific rules
 .cursor\rules\openmemory.mdc
+.cursor\rules\openmemory.mdc
+.codebuddy
