@@ -433,22 +433,33 @@
         // Display prices table
         function displayPrices(data) {
             const crops = data.prices;
-            const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego', 'rarieda', 'ugenya'];
+            // Use ONLY the 6 valid sub-counties (removed 'yala')
+            const subcounties = ['bondo', 'ugunja', 'gem', 'alego', 'rarieda', 'ugenya'];
             
             let html = '<table class="price-table"><thead><tr><th>Crop</th>';
             subcounties.forEach(sc => {
-                html += `<th>${sc.charAt(0).toUpperCase() + sc.slice(1)}</th>`;
+                const names = {
+                    'bondo': 'Bondo',
+                    'ugunja': 'Ugunja',
+                    'gem': 'Gem',
+                    'alego': 'Alego',
+                    'rarieda': 'Rarieda',
+                    'ugenya': 'Ugenya'
+                };
+                html += `<th>${names[sc]}</th>`;
             });
             html += '</tr></thead><tbody>';
             
             crops.forEach(crop => {
-                html += `<tr><td>${crop.crop}</td>`;
+                html += `<tr><td><strong>${crop.crop}</strong></td>`;
                 subcounties.forEach(sc => {
                     const price = crop[sc] || 0;
                     const trend = crop.trend || 'stable';
                     const icon = trend === 'up' ? ' <i class="fas fa-arrow-up price-up"></i>' : 
                                  trend === 'down' ? ' <i class="fas fa-arrow-down price-down"></i>' : '';
-                    html += `<td>${formatPrice(price)}${icon}</td>`;
+                    // Only show formatted price if not zero
+                    const display = price > 0 ? `${formatPrice(price)}${icon}` : `${formatPrice(0)}${icon}`;
+                    html += `<td>${display}</td>`;
                 });
                 html += '</tr>';
             });
