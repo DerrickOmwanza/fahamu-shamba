@@ -1,10 +1,11 @@
 {
     "header":  {
-                   "tagline":  "Pachi Mabith"
+                   "tagline":  "Pachi maber ne Siaya"
                },
     "nav":  {
                 "login":  "Donyo",
-                "signup":  "Yie Akaunti"
+                "signup":  "Yie Akaunti",
+                "createAccount":  "Yie Akaunti"
             },
     "hero":  {
                  "headline":  "Yie Pachi gi AI",

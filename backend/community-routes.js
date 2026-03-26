@@ -106,6 +106,93 @@ router.get('/community/my-stories', async (req, res) => {
   }
 });
 
+// Service marketplace: create service request
+router.post('/community/service-requests', async (req, res) => {
+  try {
+    const result = await communityService.postServiceRequest(req.body);
+    if (result.success) return res.json(result);
+    return res.status(400).json(result);
+  } catch (error) {
+    console.error('Error creating service request:', error);
+    res.status(500).json({ success: false, error: 'Failed to create service request', details: error.message });
+  }
+});
+
+// Service marketplace: list service requests
+router.get('/community/service-requests', async (req, res) => {
+  try {
+    const { page, limit, subCounty, status, serviceType, crop, search } = req.query;
+    const result = await communityService.getServiceRequests({
+      page: parseInt(page) || 1,
+      limit: parseInt(limit) || 20,
+      subCounty,
+      status,
+      serviceType,
+      crop,
+      search
+    });
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching service requests:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch service requests', details: error.message });
+  }
+});
+
+// Service marketplace: farmer-owned requests with applications
+router.get('/community/my-service-requests', async (req, res) => {
+  try {
+    const { farmerPhone } = req.query;
+    if (!farmerPhone) {
+      return res.status(400).json({ success: false, error: 'farmerPhone query parameter is required' });
+    }
+    const result = await communityService.getFarmerServiceRequests(farmerPhone);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching farmer service requests:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch farmer service requests', details: error.message });
+  }
+});
+
+// Service marketplace: apply to a request
+router.post('/community/service-requests/:id/applications', async (req, res) => {
+  try {
+    const requestId = parseInt(req.params.id);
+    const result = await communityService.applyToServiceRequest({ ...req.body, requestId });
+    if (result.success) return res.json(result);
+    return res.status(400).json(result);
+  } catch (error) {
+    console.error('Error applying to service request:', error);
+    res.status(500).json({ success: false, error: 'Failed to apply to service request', details: error.message });
+  }
+});
+
+// Service marketplace: get applications for a request
+router.get('/community/service-requests/:id/applications', async (req, res) => {
+  try {
+    const requestId = parseInt(req.params.id);
+    const result = await communityService.getServiceRequestApplications(requestId);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching applications for service request:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch applications', details: error.message });
+  }
+});
+
+// Service marketplace: provider applications
+router.get('/community/service-applications', async (req, res) => {
+  try {
+    const { providerPhone } = req.query;
+    if (!providerPhone) {
+      return res.status(400).json({ success: false, error: 'providerPhone query parameter is required'});
+    }
+    const result = await communityService.getProviderApplications(providerPhone);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching provider applications:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch provider applications', details: error.message });
+  }
+});
+
 // Get single question with answers
 router.get('/community/questions/:id', async (req, res) => {
   try {
@@ -367,6 +454,42 @@ router.get('/community/stats', async (req, res) => {
   } catch (error) {
     console.error('Error fetching stats:', error);
     res.status(500).json({ success: false, error: 'Failed to fetch stats', details: error.message });
+  }
+});
+
+router.get('/community/active-members', async (req, res) => {
+  try {
+    const { limit } = req.query;
+    const result = await communityService.getActiveCommunityMembers(parseInt(limit) || 12);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching active community members:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch active members', details: error.message });
+  }
+});
+
+router.post('/community/presence', async (req, res) => {
+  try {
+    const { memberPhone, memberName, subCounty, currentPage, status } = req.body;
+
+    if (!memberPhone) {
+      return res.status(400).json({
+        success: false,
+        error: 'memberPhone is required'
+      });
+    }
+
+    const result = await communityService.updateCommunityPresence({
+      memberPhone,
+      memberName,
+      subCounty,
+      currentPage,
+      status
+    });
+    res.json(result);
+  } catch (error) {
+    console.error('Error updating community presence:', error);
+    res.status(500).json({ success: false, error: 'Failed to update presence', details: error.message });
   }
 });
 

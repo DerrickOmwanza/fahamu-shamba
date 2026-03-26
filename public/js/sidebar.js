@@ -56,6 +56,12 @@
             
             // Set user info from localStorage
             setUserInfo();
+
+            if (typeof window.translatePage === 'function' && typeof window.getCurrentLanguage === 'function') {
+                window.translatePage(window.getCurrentLanguage());
+            } else if (window.translator && typeof window.translator.updatePageContent === 'function') {
+                window.translator.updatePageContent();
+            }
             
             // Add "subside" transition to all sidebar links
             addNavEventListeners();
@@ -109,6 +115,8 @@
             '/dashboard.html': 'nav-dashboard',
             '/recommendations': 'nav-recommendations',
             '/recommendations.html': 'nav-recommendations',
+            '/soil-map': 'nav-soil-map',
+            '/soil-map.html': 'nav-soil-map',
             '/market': 'nav-market',
             '/market.html': 'nav-market',
             '/market-trends': 'nav-market',
@@ -120,7 +128,9 @@
             '/profile': 'nav-profile',
             '/profile.html': 'nav-profile',
             '/settings': 'nav-settings',
-            '/settings.html': 'nav-settings'
+            '/settings.html': 'nav-settings',
+            '/service-market': 'nav-service-market',
+            '/service-market.html': 'nav-service-market'
         };
 
         const activeId = navItems[path];

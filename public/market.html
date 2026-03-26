@@ -11,221 +11,554 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #2d7649; --primary-light: #4a9d6f; --primary-dark: #1e5631;
-            --secondary: #f57c00; --accent: #87ceeb; --success: #27ae60;
-            --warning: #f39c12; --danger: #e74c3c; --info: #3498db;
-            --light: #f9f7f4; --lighter: #ecf0f1; --dark: #2c3e50;
-            --text: #34495e; --text-light: #7f8c8d; --border: #e0e6ed;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08); --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
-            --shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
-            --sidebar-width: 260px; --sidebar-collapsed: 70px;
+            --primary: #2d7649;
+            --primary-dark: #1e5631;
+            --primary-light: #5da97f;
+            --secondary: #f0a12a;
+            --success: #2e8b57;
+            --warning: #d98f00;
+            --danger: #c94f45;
+            --info: #1f7a8c;
+            --text: #284034;
+            --text-light: #6d7f75;
+            --border: #dfe8e2;
+            --surface: #ffffff;
+            --surface-soft: #f6fbf7;
+            --bg: #f4f1eb;
+            --shadow-sm: 0 10px 24px rgba(26, 66, 43, 0.08);
+            --shadow-md: 0 18px 38px rgba(26, 66, 43, 0.12);
+            --sidebar-width: 260px;
         }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Roboto','Segoe UI',sans-serif; background: var(--light); min-height: 100vh; color: var(--text); line-height: 1.6; }
-        
-        /* ===== SIDEBAR ===== */
-        .sidebar { position: fixed; left: 0; top: 0; width: var(--sidebar-width); height: 100vh; background: linear-gradient(180deg,var(--primary-dark) 0%,var(--primary) 100%); color: white; z-index: 1000; transition: width 0.3s ease; display: flex; flex-direction: column; box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
-        .sidebar.collapsed { width: var(--sidebar-collapsed); }
-        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
-        .sidebar-logo { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
-        .sidebar-brand { overflow: hidden; white-space: nowrap; }
-        .sidebar-brand h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 2px; }
-        .sidebar-brand p { font-size: 0.7rem; opacity: 0.8; }
-        .sidebar-nav { flex: 1; padding: 15px 10px; overflow-y: auto; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 10px; color: rgba(255,255,255,0.8); text-decoration: none; margin-bottom: 5px; transition: all 0.3s ease; cursor: pointer; }
-        .nav-item:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(5px); }
-        .nav-item.active { background: rgba(255,255,255,0.25); color: white; border-left: 3px solid var(--secondary); }
-        .nav-item i { font-size: 1.2rem; width: 24px; text-align: center; }
-        .sidebar-footer { padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .user-info { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 12px; }
-        .user-avatar { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        .user-name { font-weight: 600; font-size: 0.95rem; }
-        .user-phone { font-size: 0.75rem; opacity: 0.8; }
-        .logout-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: rgba(231,76,60,0.2); border: 1px solid rgba(231,76,60,0.3); color: #ff8a80; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
-        .logout-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
-        
-        /* ===== MAIN CONTENT ===== */
-        .main-content { margin-left: var(--sidebar-width); min-height: 100vh; }
-        .top-header { background: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
-        .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.4rem; color: var(--primary); cursor: pointer; padding: 5px; }
-        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 999; }
-        
-        /* ===== MARKET PAGE STYLES ===== */
-        .market-header-section {
-            background: linear-gradient(135deg,rgba(45,118,73,0.08) 0%,rgba(74,157,111,0.08) 100%);
-            border-radius: 12px;
-            padding: 30px;
-            margin: 25px 30px;
-            border-left: 5px solid var(--secondary);
+
+        body {
+            font-family: "Segoe UI", Roboto, sans-serif;
+            background: radial-gradient(circle at top, rgba(93, 169, 127, 0.12), transparent 35%), var(--bg);
+            color: var(--text);
+            min-height: 100vh;
         }
-        
-        .market-header-title { font-size: 1.8rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 10px; }
-        .market-header-subtitle { color: var(--text-light); font-size: 1rem; }
-        
-        .market-section { padding: 0 30px; margin-bottom: 25px; }
-        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        
-        .market-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
         }
-        
-        /* Price Table */
-        .price-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .price-table th, .price-table td { padding: 14px 12px; text-align: center; border-bottom: 1px solid var(--border); }
-        .price-table th { background: var(--primary); color: white; font-weight: 600; }
-        .price-table th:first-child { border-radius: 8px 0 0 0; }
-        .price-table th:last-child { border-radius: 0 8px 0 0; }
-        .price-table tr:hover { background: var(--light); }
-        .price-table td:first-child { font-weight: 600; color: var(--primary-dark); text-align: left; }
-        .price-up { color: var(--success); font-weight: 700; }
-        .price-down { color: var(--danger); font-weight: 700; }
-        
-        /* Top 3 Crops Card */
-        .top-crops-section { padding: 0 30px; margin-bottom: 25px; }
-        .top-crops-card {
-            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
-            border-left: 4px solid var(--success);
-        }
-        .top-crops-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
-        .top-crops-title { font-size: 1.2rem; font-weight: 700; color: var(--primary-dark); display: flex; align-items: center; gap: 10px; }
-        .top-crop-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--success); box-shadow: var(--shadow-sm); }
-        .top-crop-info { display: flex; align-items: center; gap: 15px; }
-        .crop-icon { font-size: 1.5rem; }
-        .crop-name { font-weight: 700; font-size: 1.1rem; color: var(--primary-dark); }
-        .crop-price { font-size: 1.2rem; font-weight: 700; color: var(--success); }
-        .crop-rank { background: var(--success); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; margin-right: 10px; }
-        
-        /* Chart Section */
-        .chart-section { background: white; border-radius: 12px; padding: 25px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); margin: 25px 30px; }
-        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
-        .crop-selector { display: flex; align-items: center; gap: 10px; }
-        .crop-selector label { font-weight: 600; color: var(--primary-dark); }
-        .crop-selector select { padding: 10px 16px; border: 2px solid var(--primary); border-radius: 8px; font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); background: white; cursor: pointer; }
-        .crop-selector select:focus { outline: none; border-color: var(--primary-dark); }
-        .chart-container { position: relative; height: 400px; }
-        .chart-fallback { text-align: center; padding: 40px; color: var(--text-light); font-size: 1.1rem; }
-        .chart-fallback i { font-size: 2rem; color: var(--primary); margin-bottom: 15px; display: block; }
-        
-        /* Update Info */
-        .update-info {
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            color: var(--text-light);
-            border-left: 4px solid var(--success);
-        }
-        .update-info i { color: var(--success); margin-right: 5px; }
-        
-        /* Currency Toggle */
-        .currency-toggle { display: flex; align-items: center; gap: 8px; }
-        .currency-toggle button { padding: 8px 14px; border: 2px solid var(--border); background: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
-        .currency-toggle button.active { background: var(--primary); color: white; border-color: var(--primary); }
-        
-        /* Loading */
-        .loading { text-align: center; padding: 40px; color: var(--primary); }
-        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* Back Button */
-        .back-btn { padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
-        .back-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
-        
-        /* ===== LANGUAGE SELECTOR ===== */
-        .language-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .language-label {
-            font-weight: bold;
-            color: var(--primary-dark);
-            font-size: 0.9rem;
-        }
-        
-        /* Custom Language Dropdown Button */
-        .language-dropdown-container {
-            position: relative;
-            display: inline-block;
-        }
-        .language-dropdown-btn {
+
+        .top-nav {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(16px);
+            padding: 15px 28px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
-            padding: 8px 16px;
-            background: var(--primary);
-            color: white;
-            border: 2px solid white;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            min-width: 140px;
-            transition: all 0.3s ease;
+            gap: 12px;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 90;
         }
-        .language-dropdown-btn:hover {
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-center {
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-page-title {
+            font-size: 1.35rem;
+            color: var(--primary-dark);
+            font-weight: 800;
+        }
+
+        .nav-hamburger,
+        .nav-back-btn,
+        .refresh-btn {
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .nav-hamburger {
+            width: 44px;
+            height: 44px;
+            color: #fff;
             background: var(--primary-dark);
+            font-size: 1.1rem;
         }
-        .language-dropdown-btn i {
-            font-size: 0.8rem;
-        }
-        .language-dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-            z-index: 1000;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        .language-dropdown-menu.show {
-            display: block;
-        }
-        .language-option {
-            padding: 12px 16px;
-            color: var(--text);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-        .language-option:hover {
+
+        .nav-back-btn,
+        .refresh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 16px;
+            font-weight: 700;
             background: var(--primary);
-            color: white;
+            color: #fff;
         }
-        
-        /* Responsive */
+
+        .refresh-btn {
+            background: var(--surface-soft);
+            color: var(--primary-dark);
+            border: 1px solid rgba(45, 118, 73, 0.14);
+        }
+
+        .nav-back-btn:hover,
+        .refresh-btn:hover,
+        .nav-hamburger:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--surface-soft);
+            cursor: pointer;
+        }
+
+        .nav-profile-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .nav-profile-name {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .page-shell {
+            padding: 28px;
+            display: grid;
+            gap: 22px;
+        }
+
+        .hero-card,
+        .panel,
+        .summary-card,
+        .tip-card,
+        .price-card,
+        .table-panel,
+        .chart-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .hero-card {
+            border-radius: 24px;
+            padding: 28px;
+            background:
+                linear-gradient(120deg, rgba(30, 86, 49, 0.94), rgba(45, 118, 73, 0.88)),
+                linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+            color: #fff;
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr);
+            gap: 22px;
+        }
+
+        .hero-title {
+            font-size: clamp(1.8rem, 2.6vw, 2.6rem);
+            line-height: 1.05;
+            font-weight: 900;
+            margin-bottom: 12px;
+        }
+
+        .hero-subtitle {
+            max-width: 700px;
+            color: rgba(255, 255, 255, 0.86);
+            font-size: 1rem;
+            margin-bottom: 18px;
+        }
+
+        .hero-pills,
+        .legend-list,
+        .chip-list,
+        .market-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .hero-pill,
+        .legend-pill,
+        .chip {
+            border-radius: 999px;
+            padding: 9px 14px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .hero-pill {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        .hero-side {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 20px;
+            padding: 20px;
+            align-self: stretch;
+        }
+
+        .hero-side h3 {
+            font-size: 1.05rem;
+            margin-bottom: 14px;
+        }
+
+        .hero-steps {
+            display: grid;
+            gap: 12px;
+        }
+
+        .hero-step {
+            display: grid;
+            grid-template-columns: 36px 1fr;
+            gap: 12px;
+            align-items: start;
+        }
+
+        .step-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.16);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        .summary-grid,
+        .tip-grid,
+        .prices-grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        .summary-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .summary-card {
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .summary-label {
+            color: var(--text-light);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+        }
+
+        .summary-value {
+            font-size: 1.45rem;
+            font-weight: 900;
+            color: var(--primary-dark);
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .summary-copy {
+            color: var(--text-light);
+            font-size: 0.92rem;
+        }
+
+        .panel {
+            border-radius: 22px;
+            padding: 22px;
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--primary-dark);
+        }
+
+        .panel-copy {
+            color: var(--text-light);
+            max-width: 720px;
+        }
+
+        .tip-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .tip-card {
+            border-radius: 18px;
+            padding: 18px;
+            background: linear-gradient(180deg, #fbfefb, #f5fbf6);
+        }
+
+        .tip-card h3 {
+            color: var(--primary-dark);
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .tip-card p {
+            color: var(--text-light);
+            font-size: 0.92rem;
+        }
+
+        .legend-pill.good { background: rgba(46, 139, 87, 0.12); color: var(--success); }
+        .legend-pill.fair { background: rgba(217, 143, 0, 0.12); color: var(--warning); }
+        .legend-pill.low { background: rgba(201, 79, 69, 0.12); color: var(--danger); }
+        .legend-pill.live { background: rgba(31, 122, 140, 0.12); color: var(--info); }
+        .legend-pill.fallback { background: rgba(109, 127, 117, 0.14); color: var(--text); }
+
+        .chip-list {
+            align-items: center;
+        }
+
+        .chip {
+            border: 1px solid var(--border);
+            background: var(--surface-soft);
+            color: var(--primary-dark);
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 180px;
+            flex: 1;
+        }
+
+        .filter-group label {
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .filter-group select {
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .action-band {
+            border-radius: 18px;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, rgba(240, 161, 42, 0.12), rgba(45, 118, 73, 0.08));
+            border: 1px solid rgba(45, 118, 73, 0.12);
+            margin-top: 16px;
+        }
+
+        .action-band strong {
+            color: var(--primary-dark);
+        }
+
+        .prices-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .price-card {
+            border-radius: 20px;
+            padding: 18px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .price-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .price-crop {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--primary-dark);
+        }
+
+        .signal-badge {
+            border-radius: 999px;
+            padding: 7px 10px;
+            font-size: 0.74rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .signal-badge.good { background: rgba(46, 139, 87, 0.12); color: var(--success); }
+        .signal-badge.fair { background: rgba(217, 143, 0, 0.12); color: var(--warning); }
+        .signal-badge.low { background: rgba(201, 79, 69, 0.12); color: var(--danger); }
+
+        .price-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .metric-box {
+            border-radius: 14px;
+            padding: 14px;
+            background: var(--surface-soft);
+        }
+
+        .metric-label {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .metric-value {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--primary-dark);
+        }
+
+        .market-tags {
+            gap: 8px;
+        }
+
+        .market-tag {
+            border-radius: 999px;
+            padding: 7px 10px;
+            background: #f0f6f2;
+            color: var(--primary-dark);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .table-panel,
+        .chart-panel {
+            border-radius: 22px;
+            padding: 22px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+        }
+
+        .price-table th,
+        .price-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .price-table th {
+            color: var(--primary-dark);
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: #f5faf6;
+        }
+
+        .price-table td {
+            font-size: 0.95rem;
+        }
+
+        .price-table tr:hover {
+            background: #fbfdfb;
+        }
+
+        .chart-wrap {
+            height: 360px;
+            position: relative;
+        }
+
+        .empty-state,
+        .loading {
+            text-align: center;
+            padding: 42px 18px;
+            color: var(--text-light);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 4px solid #e6efe8;
+            border-top-color: var(--primary);
+            margin: 0 auto 14px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1100px) {
+            .summary-grid,
+            .tip-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .hero-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 992px) {
-            .sidebar { transform: translateX(-100%); width: var(--sidebar-width) !important; }
-            .sidebar.mobile-open { transform: translateX(0); }
-            .main-content { margin-left: 0 !important; }
+            .main-content { margin-left: 0; }
         }
-        @media (max-width: 768px) {
-            .market-header-section { padding: 20px; margin: 15px; }
-            .market-section { padding: 0 15px; }
-            .chart-container { height: 300px; }
-            .price-table { font-size: 0.85rem; }
-            .price-table th, .price-table td { padding: 10px 6px; }
+
+        @media (max-width: 720px) {
+            .page-shell { padding: 16px; }
+            .top-nav { padding: 14px 16px; }
+            .summary-grid,
+            .tip-grid,
+            .price-metrics {
+                grid-template-columns: 1fr;
+            }
+            .nav-profile-name { display: none; }
+            .chart-wrap { height: 300px; }
         }
     </style>
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/toast.css">
-    <script src="/language-utils.js"></script>
     <script src="/js/sidebar.js" defer></script>
     <script src="/js/navbar.js" defer></script>
     <script src="/js/toast.js" defer></script>
@@ -234,604 +567,627 @@
 <body>
     <div id="sidebar-container"></div>
 
-    
-    <!-- Main Content -->
     <div class="main-content">
         <header class="top-nav">
             <div class="nav-left">
-                <!-- Hamburger Button -->
                 <button class="nav-hamburger" onclick="toggleMobileSidebar()" aria-label="Open menu">
                     <i class="fas fa-bars"></i>
                 </button>
-                <!-- Back to Dashboard Button -->
-                <button class="nav-back-btn" id="navBackBtn" onclick="goToDashboard()">
+                <button class="nav-back-btn" onclick="goToDashboard()">
                     <i class="fas fa-arrow-left"></i>
                     <span>Back</span>
                 </button>
             </div>
-            <!-- Center: Page Title -->
             <div class="nav-center">
-                <h1 class="nav-page-title active" id="navPageTitle">Market Prices</h1>
+                <h1 class="nav-page-title">Market Prices</h1>
             </div>
-            <!-- Right: Farmer Profile -->
             <div class="nav-right">
+                <button class="refresh-btn" id="refreshBtn" type="button">
+                    <i class="fas fa-rotate"></i>
+                    <span>Refresh</span>
+                </button>
                 <div class="nav-profile" onclick="goToProfile()">
-                    <div class="nav-profile-avatar" id="navProfileAvatar">👤</div>
+                    <div class="nav-profile-avatar" id="navProfileAvatar">F</div>
                     <span class="nav-profile-name" id="navProfileName">Farmer</span>
                 </div>
             </div>
         </header>
-        
-        <!-- Market Header -->
-        <div class="market-header-section">
-            <div class="market-header-title">📊 Market Prices - Siaya County</div>
-            <div class="market-header-subtitle">Current weekly crop prices across all sub-counties in Siaya County</div>
-        </div>
-        
-        <!-- Top 3 Crops This Week -->
-        <div class="top-crops-section">
-            <div class="top-crops-card">
-                <div class="top-crops-header">
-                    <div class="top-crops-title">
-                        <i class="fas fa-trophy"></i> Top 3 Crops This Week
-                    </div>
-                    <div class="update-info" style="margin: 0; border-left: none; background: transparent; color: var(--text-light);">
-                        <i class="fas fa-info-circle"></i> Based on average prices across all sub-counties
-                    </div>
-                </div>
-                <div id="topCropsList">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        <div>Loading top crops...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Prices Table -->
-        <div class="market-section">
-            <div class="market-card">
-                <div class="section-title">
-                    <i class="fas fa-table"></i> Current Weekly Prices (KSh/kg)
-                </div>
-                <div id="pricesTable">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        <div>Loading market data...</div>
+        <main class="page-shell">
+            <section class="hero-card">
+                <div>
+                    <div class="hero-title">See where the price is better before you sell.</div>
+                    <p class="hero-subtitle">
+                        This page turns market numbers into simple action. Green means the price is stronger.
+                        Orange means normal. Red means the price is weak and you may wait if you can.
+                    </p>
+                    <div class="hero-pills" id="heroMeta">
+                        <span class="hero-pill">Loading source...</span>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Trend Chart -->
-        <div class="chart-section">
-            <div class="chart-header">
-                <div class="section-title" style="margin-bottom: 0;">
-                    <i class="fas fa-chart-line"></i> Weekly Price Trends
+                <aside class="hero-side">
+                    <h3>Simple selling guide</h3>
+                    <div class="hero-steps">
+                        <div class="hero-step">
+                            <div class="step-badge">1</div>
+                            <div>Look at your crop and check the best market.</div>
+                        </div>
+                        <div class="hero-step">
+                            <div class="step-badge">2</div>
+                            <div>Use the retail and wholesale prices to know the likely range.</div>
+                        </div>
+                        <div class="hero-step">
+                            <div class="step-badge">3</div>
+                            <div>If the badge is green, it is a stronger selling point today.</div>
+                        </div>
+                    </div>
+                </aside>
+            </section>
+
+            <section class="summary-grid" id="summaryGrid">
+                <div class="summary-card"><div class="loading"><div class="loading-spinner"></div>Loading market summary...</div></div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-title">Farmer-friendly meaning</div>
+                        <p class="panel-copy">These notes help even first-time users understand what to do with the price information.</p>
+                    </div>
+                    <div class="legend-list">
+                        <span class="legend-pill good">Green: strong price</span>
+                        <span class="legend-pill fair">Orange: normal price</span>
+                        <span class="legend-pill low">Red: weak price</span>
+                    </div>
                 </div>
-                <div class="crop-selector">
-                    <label for="cropSelect">Choose Crop:</label>
-                    <select id="cropSelect" onchange="loadTrends(this.value)">
-                        <option value="Maize">🌾 Maize</option>
-                        <option value="Beans">🫘 Beans</option>
-                        <option value="Sorghum">🌿 Sorghum</option>
-                        <option value="Millet">🌾 Millet</option>
-                        <option value="Rice">🍚 Rice</option>
-                        <option value="Groundnuts">🥜 Groundnuts</option>
-                    </select>
+                <div class="tip-grid">
+                    <article class="tip-card">
+                        <h3><i class="fas fa-circle-dollar-to-slot"></i> Sell where the price is higher</h3>
+                        <p>Choose the market with the best price if transport cost still leaves you with more money.</p>
+                    </article>
+                    <article class="tip-card">
+                        <h3><i class="fas fa-scale-balanced"></i> Compare wholesale and retail</h3>
+                        <p>Wholesale helps when you have large quantity. Retail can be better if you sell in smaller amounts.</p>
+                    </article>
+                    <article class="tip-card">
+                        <h3><i class="fas fa-clock"></i> Check the update date</h3>
+                        <p>Older data should be treated carefully. Fresh data gives a better sign of what the market is doing now.</p>
+                    </article>
                 </div>
-            </div>
-            <div class="chart-container">
-                <canvas id="priceChart"></canvas>
-            </div>
-        </div>
-        
-        <div style="height: 50px;"></div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-title">Filter what you want to see</div>
+                        <p class="panel-copy">Choose one crop or one market to keep the page simple and focused.</p>
+                    </div>
+                </div>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="cropFilter">Crop</label>
+                        <select id="cropFilter">
+                            <option value="all">All crops</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="marketFilter">Market</label>
+                        <select id="marketFilter">
+                            <option value="all">All markets</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="chartCropSelect">Compare crop by market</label>
+                        <select id="chartCropSelect"></select>
+                    </div>
+                </div>
+                <div class="action-band" id="actionBand">
+                    Loading advice...
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-title">Top crops to watch now</div>
+                        <p class="panel-copy">These are ranked by average retail price from the available Siaya market records.</p>
+                    </div>
+                    <div class="chip-list" id="sourceStatus">
+                        <span class="chip">Checking source...</span>
+                    </div>
+                </div>
+                <div class="prices-grid" id="topCropsGrid">
+                    <div class="loading"><div class="loading-spinner"></div>Loading top crops...</div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-title">Price cards</div>
+                        <p class="panel-copy">Each card shows the best selling point, the average price, and the markets where that crop was seen.</p>
+                    </div>
+                </div>
+                <div class="prices-grid" id="priceCards">
+                    <div class="loading"><div class="loading-spinner"></div>Loading price cards...</div>
+                </div>
+            </section>
+
+            <section class="table-panel">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-title">Detailed market board</div>
+                        <p class="panel-copy">Use this table when you want the exact market, wholesale price, retail price, and observed date.</p>
+                    </div>
+                </div>
+                <div class="table-wrap" id="tableWrap">
+                    <div class="loading"><div class="loading-spinner"></div>Loading table...</div>
+                </div>
+            </section>
+
+            <section class="chart-panel">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-title">Market comparison</div>
+                        <p class="panel-copy">This chart compares the selected crop across available Siaya markets using retail price.</p>
+                    </div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="marketChart"></canvas>
+                </div>
+            </section>
+        </main>
     </div>
-    
+
     <script>
-        let chartInstance = null;
-        let currentCurrency = 'KES';
-        let marketData = null;
-        
-        // Exchange rate (approximate)
-        const KES_TO_USD = 0.0087;
-        
-        // Navigation
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/login.html';
+        let liveMarketSnapshot = null;
+        let comparisonChart = null;
+
+        const cropIcons = {
+            'Maize': '🌽',
+            'Beans': '🫘',
+            'Rice': '🍚',
+            'Sorghum': '🌾',
+            'Millet': '🌾',
+            'Groundnuts': '🥜',
+            'Cassava': '🥔',
+            'Sweet Potatoes': '🍠',
+            'Tomatoes': '🍅',
+            'Kales': '🥬',
+            'Cowpeas': '🫛'
+        };
+
+        function goToDashboard() {
+            window.location.href = '/dashboard.html';
         }
-        
-        // Currency toggle
-        function setCurrency(currency) {
-            currentCurrency = currency;
-            document.querySelectorAll('.currency-toggle button').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent === currency);
+
+        function goToProfile() {
+            window.location.href = '/profile.html';
+        }
+
+        function formatMoney(value) {
+            if (value === null || value === undefined || Number.isNaN(Number(value))) return 'Not available';
+            return `KSh ${new Intl.NumberFormat('en-KE', { maximumFractionDigits: 0 }).format(Math.round(Number(value)))}`;
+        }
+
+        function formatDate(value) {
+            if (!value) return 'Date not available';
+            const parsed = new Date(value);
+            return Number.isNaN(parsed.getTime()) ? String(value) : parsed.toLocaleDateString('en-KE', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
             });
-            if (marketData) {
-                displayPrices(marketData);
-            }
-        }
-        
-        // Format price
-        function formatPrice(price) {
-            if (currentCurrency === 'USD') {
-                return '$' + (price * KES_TO_USD).toFixed(2);
-            }
-            return 'KSh ' + price;
-        }
-        
-        // Load prices from API
-        async function loadPrices() {
-            try {
-                // Primary route (market module), fallback to legacy demo route.
-                let response = await fetch('/api/market-prices');
-                let data = await response.json();
-
-                if (!data.success) {
-                    response = await fetch('/api/market-prices');
-                    data = await response.json();
-                }
-
-                if (!data.success) {
-                    throw new Error('No successful market payload');
-                }
-
-                // Normalize payload shapes from both APIs.
-                if (data.prices && Array.isArray(data.prices)) {
-                    marketData = normalizeMarketPrices(data.prices, data.timestamp);
-                } else if (data.data && Array.isArray(data.data.prices)) {
-                    marketData = normalizeLegacyPrices(data.data.prices, data.data.timestamp || data.timestamp);
-                } else {
-                    throw new Error('Unexpected market response format');
-                }
-
-                displayPrices(marketData);
-                loadTopCrops(marketData);
-            } catch (error) {
-                console.error('Error loading prices:', error);
-                document.getElementById('pricesTable').innerHTML = 
-                    '<p style="text-align:center;color:var(--danger);">Failed to load market data</p>';
-                document.getElementById('topCropsList').innerHTML = 
-                    '<p style="text-align:center;color:var(--danger);">Failed to load top crops</p>';
-            }
         }
 
-        // Convert row-per-market API to page table shape (crop row with sub-counties columns)
-        function normalizeMarketPrices(rawRows, timestamp) {
-            const map = new Map();
-            const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego', 'rarieda', 'ugenya'];
-            rawRows.forEach(row => {
-                const crop = row.crop;
-                const marketRaw = String(row.market || '').toLowerCase();
-                if (!map.has(crop)) {
-                    map.set(crop, { crop, bondo: 0, ugunja: 0, yala: 0, gem: 0, alego: 0, rarieda: 0, ugenya: 0, trend: 'stable' });
-                }
-                const matched = subcounties.find(sc => marketRaw.includes(sc));
-                if (matched) {
-                    map.get(crop)[matched] = Number(row.price || 0);
-                }
+        function statusText(signal) {
+            if (signal === 'good') return 'Strong price';
+            if (signal === 'low') return 'Weak price';
+            return 'Fair price';
+        }
+
+        function getFilteredRows() {
+            const cropValue = document.getElementById('cropFilter').value;
+            const marketValue = document.getElementById('marketFilter').value;
+            const rows = liveMarketSnapshot?.prices || [];
+
+            return rows.filter((row) => {
+                const cropMatch = cropValue === 'all' || row.crop === cropValue;
+                const marketMatch = marketValue === 'all' || row.market === marketValue;
+                return cropMatch && marketMatch;
             });
-            return {
-                success: true,
-                prices: Array.from(map.values()),
-                lastUpdated: timestamp ? new Date(timestamp).toLocaleString() : new Date().toLocaleString()
-            };
         }
 
-        // Legacy /api/market-prices payload already grouped by crop.
-        function normalizeLegacyPrices(rawRows, timestamp) {
-            return {
-                success: true,
-                prices: rawRows,
-                lastUpdated: timestamp ? new Date(timestamp).toLocaleString() : new Date().toLocaleString()
-            };
-        }
-        
-        // Display prices table
-        function displayPrices(data) {
-            const crops = data.prices;
-            // Use ONLY the 6 valid sub-counties (removed 'yala')
-            const subcounties = ['bondo', 'ugunja', 'gem', 'alego', 'rarieda', 'ugenya'];
-            
-            let html = '<table class="price-table"><thead><tr><th>Crop</th>';
-            subcounties.forEach(sc => {
-                const names = {
-                    'bondo': 'Bondo',
-                    'ugunja': 'Ugunja',
-                    'gem': 'Gem',
-                    'alego': 'Alego',
-                    'rarieda': 'Rarieda',
-                    'ugenya': 'Ugenya'
-                };
-                html += `<th>${names[sc]}</th>`;
-            });
-            html += '</tr></thead><tbody>';
-            
-            crops.forEach(crop => {
-                html += `<tr><td><strong>${crop.crop}</strong></td>`;
-                subcounties.forEach(sc => {
-                    const price = crop[sc] || 0;
-                    const trend = crop.trend || 'stable';
-                    const icon = trend === 'up' ? ' <i class="fas fa-arrow-up price-up"></i>' : 
-                                 trend === 'down' ? ' <i class="fas fa-arrow-down price-down"></i>' : '';
-                    // Only show formatted price if not zero
-                    const display = price > 0 ? `${formatPrice(price)}${icon}` : `${formatPrice(0)}${icon}`;
-                    html += `<td>${display}</td>`;
-                });
-                html += '</tr>';
-            });
-            
-            html += '</tbody></table>';
-            html += `<div class="update-info">
-                <i class="fas fa-clock"></i> Last updated: ${data.lastUpdated} | 
-                <i class="fas fa-sync"></i> Next update: Weekly (Every Monday)
-            </div>`;
-            
-            document.getElementById('pricesTable').innerHTML = html;
-        }
-        
-        // Load top 3 crops this week
-        function loadTopCrops(data) {
-            if (!data || !data.prices || data.prices.length === 0) {
-                document.getElementById('topCropsList').innerHTML = 
-                    '<p style="text-align:center;color:var(--danger);">No crop data available this week</p>';
-                return;
-            }
+        function buildCropSummaries(rows) {
+            const grouped = new Map();
 
-            // Calculate average price for each crop across all sub-counties
-            const cropsWithAverages = data.prices.map(crop => {
-                const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego', 'rarieda', 'ugenya'];
-                const prices = subcounties.map(sc => crop[sc] || 0);
-                const validPrices = prices.filter(p => p > 0);
-                
-                const avgPrice = validPrices.length > 0 
-                    ? validPrices.reduce((sum, price) => sum + price, 0) / validPrices.length 
-                    : 0;
+            rows.forEach((row) => {
+                if (!grouped.has(row.crop)) {
+                    grouped.set(row.crop, {
+                        crop: row.crop,
+                        prices: [],
+                        markets: [],
+                        rows: []
+                    });
+                }
+
+                const bucket = grouped.get(row.crop);
+                if (row.retailPrice) bucket.prices.push(row.retailPrice);
+                bucket.markets.push(row.market);
+                bucket.rows.push(row);
+            });
+
+            return Array.from(grouped.values()).map((entry) => {
+                const averageRetail = entry.prices.length
+                    ? entry.prices.reduce((sum, value) => sum + value, 0) / entry.prices.length
+                    : null;
+                const bestRow = entry.rows
+                    .filter((row) => row.retailPrice)
+                    .sort((a, b) => (b.retailPrice || 0) - (a.retailPrice || 0))[0] || entry.rows[0];
 
                 return {
-                    ...crop,
-                    avgPrice: Math.round(avgPrice),
-                    validPrices: validPrices.length
+                    crop: entry.crop,
+                    averageRetail,
+                    marketCount: new Set(entry.markets).size,
+                    bestRow,
+                    rows: entry.rows,
+                    signal: bestRow?.signal || 'fair'
                 };
-            });
+            }).sort((a, b) => (b.averageRetail || 0) - (a.averageRetail || 0));
+        }
 
-            // Filter out crops with no data and sort by average price
-            const validCrops = cropsWithAverages.filter(crop => crop.avgPrice > 0);
-            const sortedCrops = validCrops.sort((a, b) => b.avgPrice - a.avgPrice);
-            const top3Crops = sortedCrops.slice(0, 3);
+        function populateFilters(rows) {
+            const cropFilter = document.getElementById('cropFilter');
+            const marketFilter = document.getElementById('marketFilter');
+            const chartCropSelect = document.getElementById('chartCropSelect');
 
-            if (top3Crops.length === 0) {
-                document.getElementById('topCropsList').innerHTML = 
-                    '<p style="text-align:center;color:var(--danger);">No crop data available this week</p>';
+            const crops = [...new Set(rows.map((row) => row.crop))].sort();
+            const markets = [...new Set(rows.map((row) => row.market))].sort();
+
+            cropFilter.innerHTML = '<option value="all">All crops</option>' + crops.map((crop) => `<option value="${crop}">${crop}</option>`).join('');
+            marketFilter.innerHTML = '<option value="all">All markets</option>' + markets.map((market) => `<option value="${market}">${market}</option>`).join('');
+            chartCropSelect.innerHTML = crops.map((crop) => `<option value="${crop}">${crop}</option>`).join('');
+        }
+
+        function renderHeroMeta(snapshot) {
+            const freshnessDate = snapshot.observedAt || snapshot.fetchedAt;
+            const providerLabel = snapshot.provider === 'mkulima_bora' ? 'External live feed' : 'Local fallback prices';
+            document.getElementById('heroMeta').innerHTML = `
+                <span class="hero-pill"><i class="fas fa-database"></i> ${providerLabel}</span>
+                <span class="hero-pill"><i class="fas fa-calendar-day"></i> Seen on ${formatDate(freshnessDate)}</span>
+                <span class="hero-pill"><i class="fas fa-location-dot"></i> Siaya County</span>
+            `;
+        }
+
+        function renderSummary(rows) {
+            const summaries = buildCropSummaries(rows);
+            const bestCrop = summaries[0];
+            const bestRow = [...rows].filter((row) => row.retailPrice).sort((a, b) => (b.retailPrice || 0) - (a.retailPrice || 0))[0];
+            const coveredMarkets = new Set(rows.map((row) => row.market)).size;
+            const freshness = liveMarketSnapshot?.observedAt || liveMarketSnapshot?.fetchedAt;
+            const sourceCopy = liveMarketSnapshot?.isFallback ? 'Fallback data is being shown' : 'Live external feed connected';
+
+            document.getElementById('summaryGrid').innerHTML = `
+                <article class="summary-card">
+                    <div class="summary-label">Best Crop Now</div>
+                    <div class="summary-value">${bestCrop ? `${cropIcons[bestCrop.crop] || '🌾'} ${bestCrop.crop}` : 'No crop data'}</div>
+                    <p class="summary-copy">${bestCrop ? `${formatMoney(bestCrop.averageRetail)} average retail price` : 'Waiting for market feed'}</p>
+                </article>
+                <article class="summary-card">
+                    <div class="summary-label">Best Market Seen</div>
+                    <div class="summary-value">${bestRow ? bestRow.market : 'No market yet'}</div>
+                    <p class="summary-copy">${bestRow ? `${bestRow.crop} at ${formatMoney(bestRow.retailPrice)}` : 'Waiting for market feed'}</p>
+                </article>
+                <article class="summary-card">
+                    <div class="summary-label">Markets Covered</div>
+                    <div class="summary-value">${coveredMarkets}</div>
+                    <p class="summary-copy">Markets with current rows in the loaded Siaya snapshot.</p>
+                </article>
+                <article class="summary-card">
+                    <div class="summary-label">Source Status</div>
+                    <div class="summary-value">${formatDate(freshness)}</div>
+                    <p class="summary-copy">${sourceCopy}</p>
+                </article>
+            `;
+        }
+
+        function renderSourceStatus() {
+            const statusClass = liveMarketSnapshot?.isFallback ? 'fallback' : 'live';
+            const providerText = liveMarketSnapshot?.isFallback ? 'Fallback local snapshot' : 'Live external snapshot';
+            const observedText = formatDate(liveMarketSnapshot?.observedAt || liveMarketSnapshot?.fetchedAt);
+            document.getElementById('sourceStatus').innerHTML = `
+                <span class="legend-pill ${statusClass}">${providerText}</span>
+                <span class="chip">Observed: ${observedText}</span>
+                ${liveMarketSnapshot?.sourceUrl ? `<span class="chip">Source linked</span>` : '<span class="chip">No external URL</span>'}
+            `;
+        }
+
+        function renderActionBand(rows) {
+            const summaries = buildCropSummaries(rows);
+            const bestCrop = summaries[0];
+            const bestRow = bestCrop?.bestRow;
+            const actionBand = document.getElementById('actionBand');
+
+            if (!bestCrop || !bestRow) {
+                actionBand.innerHTML = 'No live market rows are available for advice right now.';
                 return;
             }
 
-            displayTopCrops(top3Crops);
+            actionBand.innerHTML = `
+                <strong>What to do now:</strong> If you are selling <strong>${bestCrop.crop}</strong>,
+                start by checking <strong>${bestRow.market}</strong>. The best retail price seen in this view is
+                <strong>${formatMoney(bestRow.retailPrice)}</strong>. Compare transport cost before moving produce.
+            `;
         }
 
-        // Display top 3 crops
-        function displayTopCrops(crops) {
-            let html = '';
-            
-            crops.forEach((crop, index) => {
-                const rank = index + 1;
-                const rankColor = rank === 1 ? '#FFD700' : rank === 2 ? '#C0C0C0' : '#CD7F32';
-                const rankBg = rank === 1 ? '#FFD700' : rank === 2 ? '#C0C0C0' : '#CD7F32';
-                
-                // Crop icon mapping
-                const cropIcons = {
-                    'Maize': '🌽',
-                    'Beans': '🫘',
-                    'Sorghum': '🌿',
-                    'Millet': '🌾',
-                    'Rice': '🍚',
-                    'Groundnuts': '🥜',
-                    'Cassava': '🥔',
-                    'Kales': '🥬'
-                };
-                
-                const icon = cropIcons[crop.crop] || '🌾';
-                
-                html += `
-                    <div class="top-crop-item">
-                        <div class="top-crop-info">
-                            <div class="crop-rank" style="background: ${rankBg}; color: ${rankColor === '#FFD700' ? '#8B5A2B' : 'white'}">
-                                ${rank}
-                            </div>
-                            <div class="crop-icon">${icon}</div>
-                            <div class="crop-name">${crop.crop}</div>
+        function renderTopCrops(rows) {
+            const summaries = buildCropSummaries(rows).slice(0, 3);
+            const container = document.getElementById('topCropsGrid');
+
+            if (!summaries.length) {
+                container.innerHTML = '<div class="empty-state">No market rows match the current filter.</div>';
+                return;
+            }
+
+            container.innerHTML = summaries.map((entry, index) => `
+                <article class="price-card">
+                    <div class="price-head">
+                        <div>
+                            <div class="summary-label">Rank ${index + 1}</div>
+                            <div class="price-crop">${cropIcons[entry.crop] || '🌾'} ${entry.crop}</div>
                         </div>
-                        <div class="crop-price">${formatPrice(crop.avgPrice)}</div>
+                        <span class="signal-badge ${entry.signal}">${statusText(entry.signal)}</span>
                     </div>
+                    <div class="price-metrics">
+                        <div class="metric-box">
+                            <div class="metric-label">Average Retail</div>
+                            <div class="metric-value">${formatMoney(entry.averageRetail)}</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-label">Best Market</div>
+                            <div class="metric-value">${entry.bestRow?.market || 'N/A'}</div>
+                        </div>
+                    </div>
+                    <div class="market-tags">
+                        <span class="market-tag">${entry.marketCount} market${entry.marketCount === 1 ? '' : 's'}</span>
+                        ${entry.bestRow?.retailPrice ? `<span class="market-tag">Best seen: ${formatMoney(entry.bestRow.retailPrice)}</span>` : ''}
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        function renderPriceCards(rows) {
+            const summaries = buildCropSummaries(rows);
+            const container = document.getElementById('priceCards');
+
+            if (!summaries.length) {
+                container.innerHTML = '<div class="empty-state">No crop cards match the selected filter.</div>';
+                return;
+            }
+
+            container.innerHTML = summaries.map((entry) => {
+                const bestWholesale = entry.rows
+                    .map((row) => row.wholesalePrice)
+                    .filter(Boolean)
+                    .sort((a, b) => b - a)[0] || null;
+
+                return `
+                    <article class="price-card">
+                        <div class="price-head">
+                            <div>
+                                <div class="price-crop">${cropIcons[entry.crop] || '🌾'} ${entry.crop}</div>
+                                <div class="summary-copy">Best place seen: ${entry.bestRow?.market || 'Not available'}</div>
+                            </div>
+                            <span class="signal-badge ${entry.signal}">${statusText(entry.signal)}</span>
+                        </div>
+                        <div class="price-metrics">
+                            <div class="metric-box">
+                                <div class="metric-label">Average Retail</div>
+                                <div class="metric-value">${formatMoney(entry.averageRetail)}</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">Best Wholesale</div>
+                                <div class="metric-value">${formatMoney(bestWholesale)}</div>
+                            </div>
+                        </div>
+                        <div class="market-tags">
+                            ${entry.rows.slice(0, 4).map((row) => `<span class="market-tag">${row.market}</span>`).join('')}
+                        </div>
+                    </article>
                 `;
-            });
-
-            document.getElementById('topCropsList').innerHTML = html;
+            }).join('');
         }
 
-        // Load trend chart
-        async function loadTrends(crop = 'Maize') {
-            try {
-                const response = await fetch(`/api/market-trends?crop=${encodeURIComponent(crop)}`);
-                const data = await response.json();
-                
-                if (data.success && data.trends) {
-                    renderChart(crop, data.trends);
-                } else if (data.success && data.data) {
-                    renderChart(crop, mapMarketCentersToTrendRows(data.data, crop));
-                } else {
-                    // Use demo data if no trends available
-                    renderChart(crop, generateDemoTrends(crop));
-                }
-            } catch (error) {
-                console.error('Error loading trends:', error);
-                renderChart(crop, generateDemoTrends(crop));
+        function renderTable(rows) {
+            const container = document.getElementById('tableWrap');
+
+            if (!rows.length) {
+                container.innerHTML = '<div class="empty-state">No detailed rows match the selected filter.</div>';
+                return;
             }
+
+            container.innerHTML = `
+                <table class="price-table">
+                    <thead>
+                        <tr>
+                            <th>Crop</th>
+                            <th>Market</th>
+                            <th>Sub-County</th>
+                            <th>Wholesale</th>
+                            <th>Retail</th>
+                            <th>Signal</th>
+                            <th>Observed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows.map((row) => `
+                            <tr>
+                                <td><strong>${row.crop}</strong></td>
+                                <td>${row.market}</td>
+                                <td>${row.subCounty || 'Not mapped'}</td>
+                                <td>${formatMoney(row.wholesalePrice)}</td>
+                                <td>${formatMoney(row.retailPrice)}</td>
+                                <td>${statusText(row.signal)}</td>
+                                <td>${formatDate(row.observedAt)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
         }
 
-        function mapMarketCentersToTrendRows(marketCenters, crop) {
-            const rows = [];
-            Object.entries(marketCenters).forEach(([key, center]) => {
-                const cropEntry = (center.crops || []).find(c => String(c.crop).toLowerCase() === String(crop).toLowerCase());
-                if (!cropEntry || !Array.isArray(cropEntry.history)) return;
-                
-                // Map the history array to trend rows
-                cropEntry.history.forEach((price, idx) => {
-                    // Create a date for this week
-                    const date = new Date();
-                    date.setDate(date.getDate() - (cropEntry.history.length - idx - 1) * 7);
-                    const weekStart = date.toISOString().split('T')[0];
-                    
-                    rows.push({
-                        subcounty: key,
-                        week_start: weekStart,
-                        price: Number(price || 0)
-                    });
+        function renderChart(selectedCrop) {
+            const rows = (liveMarketSnapshot?.prices || []).filter((row) => row.crop === selectedCrop && row.retailPrice);
+            const ctx = document.getElementById('marketChart').getContext('2d');
+
+            if (comparisonChart) {
+                comparisonChart.destroy();
+            }
+
+            if (!rows.length) {
+                comparisonChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['No data'],
+                        datasets: [{
+                            label: 'Retail price',
+                            data: [0],
+                            backgroundColor: ['rgba(109,127,117,0.35)']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
                 });
-            });
-            return rows.length ? rows : generateDemoTrends(crop);
-        }
-        
-        // Generate demo trends
-        function generateDemoTrends(crop) {
-            const weeks = [];
-            const basePrice = crop === 'Maize' ? 55 : crop === 'Beans' ? 90 : 70;
-            
-            for (let i = 8; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - (i * 7));
-                const weekStart = date.toISOString().split('T')[0];
-                
-                const subcounties = ['bondo', 'ugunja', 'yala', 'gem', 'alego', 'rarieda', 'ugenya'];
-                const trends = subcounties.map(sc => ({
-                    subcounty: sc,
-                    week_start: weekStart,
-                    price: basePrice + Math.floor(Math.random() * 10) - 5
-                }));
-                weeks.push(...trends);
+                return;
             }
-            return weeks;
-        }
-        
-        // Render chart
-        function renderChart(crop, trends) {
-            const ctx = document.getElementById('priceChart').getContext('2d');
-            
-            // Base prices for each crop (KSh/kg)
-            const cropPrices = {
-                'Maize': { alego: 63, bondo: 65, gem: 66, rarieda: 63, ugenya: 64, ugunja: 68 },
-                'Beans': { alego: 86, bondo: 85, gem: 84, rarieda: 86, ugenya: 83, ugunja: 82 },
-                'Rice': { alego: 122, bondo: 120, gem: 119, rarieda: 122, ugenya: 125, ugunja: 118 },
-                'Sorghum': { alego: 97, bondo: 95, gem: 94, rarieda: 97, ugenya: 98, ugunja: 92 },
-                'Millet': { alego: 95, bondo: 93, gem: 92, rarieda: 95, ugenya: 96, ugunja: 90 },
-                'Groundnuts': { alego: 111, bondo: 110, gem: 109, rarieda: 111, ugenya: 112, ugunja: 108 }
-            };
-            
-            const prices = cropPrices[crop] || cropPrices['Maize'];
-            const subcounties = ['Alego', 'Bondo', 'Gem', 'Rarieda', 'Ugenya', 'Ugunja'];
-            const priceValues = [prices.alego, prices.bondo, prices.gem, prices.rarieda, prices.ugenya, prices.ugunja];
-            
-            const barColors = [
-                'rgba(45, 118, 73, 0.85)',      // Alego - Primary green
-                'rgba(74, 157, 111, 0.85)',     // Bondo - Light green
-                'rgba(155, 89, 182, 0.85)',     // Gem - Purple
-                'rgba(230, 126, 34, 0.85)',     // Rarieda - Orange
-                'rgba(52, 152, 219, 0.85)',     // Ugenya - Blue
-                'rgba(22, 160, 133, 0.85)'      // Ugunja - Teal
-            ];
-            
-            const borderColors = [
-                '#1e5631', '#2d7649', '#8b5a8e', '#c45f1a', '#2980b9', '#117a65'
-            ];
-            
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-            
-            chartInstance = new Chart(ctx, {
+
+            comparisonChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: subcounties,
+                    labels: rows.map((row) => row.market),
                     datasets: [{
-                        label: `${crop} Price (KSh/kg)`,
-                        data: priceValues,
-                        backgroundColor: barColors,
-                        borderColor: borderColors,
-                        borderWidth: 2,
-                        borderRadius: 8,
-                        hoverBackgroundColor: [
-                            'rgba(45, 118, 73, 1)',
-                            'rgba(74, 157, 111, 1)',
-                            'rgba(155, 89, 182, 1)',
-                            'rgba(230, 126, 34, 1)',
-                            'rgba(52, 152, 219, 1)',
-                            'rgba(22, 160, 133, 1)'
-                        ]
+                        label: `${selectedCrop} retail price`,
+                        data: rows.map((row) => row.retailPrice),
+                        backgroundColor: rows.map((row) => row.signal === 'good'
+                            ? 'rgba(46, 139, 87, 0.82)'
+                            : row.signal === 'low'
+                                ? 'rgba(201, 79, 69, 0.78)'
+                                : 'rgba(217, 143, 0, 0.78)'),
+                        borderRadius: 10
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: 'x',
                     plugins: {
-                        title: {
-                            display: true,
-                            text: `${crop} Prices Across Siaya Sub-Counties`,
-                            font: { size: 16, weight: 'bold' },
-                            color: '#2d7649',
-                            padding: 20
-                        },
-                        legend: {
-                            display: true,
-                            labels: {
-                                font: { size: 12, weight: 'bold' },
-                                padding: 20,
-                                color: '#2c3e50'
-                            }
-                        },
+                        legend: { display: false },
                         tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            padding: 12,
-                            titleFont: { size: 14, weight: 'bold' },
-                            bodyFont: { size: 13 },
-                            displayColors: false,
                             callbacks: {
-                                label: function(context) {
-                                    return 'KSh ' + context.parsed.y + '/kg';
-                                }
+                                label: (context) => `${formatMoney(context.parsed.y)} per kg`
                             }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            max: Math.max(...priceValues) + 20,
-                            title: {
-                                display: true,
-                                text: 'Price (KSh/kg)',
-                                font: { size: 12, weight: 'bold' }
-                            },
                             ticks: {
-                                font: { size: 11 },
-                                color: '#7f8c8d'
-                            },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)',
-                                drawBorder: false
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Sub-County',
-                                font: { size: 12, weight: 'bold' }
-                            },
-                            ticks: {
-                                font: { size: 11, weight: 500 },
-                                color: '#2c3e50'
-                            },
-                            grid: {
-                                display: false
+                                callback: (value) => `KSh ${value}`
                             }
                         }
                     }
                 }
             });
         }
-        
-        // Load user data
-        function loadUserData() {
-            const cached = localStorage.getItem('user');
-            const nameEl = document.getElementById('userName');
-            const phoneEl = document.getElementById('userPhone');
-            
-            if (cached) {
-                try {
-                    const user = JSON.parse(cached);
-                    if (nameEl) nameEl.textContent = user.name || user.username || 'Farmer';
-                    if (phoneEl) phoneEl.textContent = user.phone || '—';
-                } catch (e) {
-                    if (nameEl) nameEl.textContent = 'Farmer';
+
+        function renderFilteredView() {
+            const filteredRows = getFilteredRows();
+            renderActionBand(filteredRows);
+            renderTopCrops(filteredRows);
+            renderPriceCards(filteredRows);
+            renderTable(filteredRows);
+        }
+
+        async function loadLiveMarketPrices(forceRefresh = false) {
+            const refreshBtn = document.getElementById('refreshBtn');
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Refreshing</span>';
+
+            try {
+                const response = await fetch(`/api/market/live/prices${forceRefresh ? '?refresh=1' : ''}`);
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || 'Failed to load live market prices');
                 }
-            } else {
-                if (nameEl) nameEl.textContent = 'Farmer';
+
+                liveMarketSnapshot = data;
+                populateFilters(data.prices || []);
+                renderHeroMeta(data);
+                renderSummary(data.prices || []);
+                renderSourceStatus();
+                renderFilteredView();
+
+                const firstCrop = document.getElementById('chartCropSelect').value;
+                renderChart(firstCrop);
+            } catch (error) {
+                console.error('Market load error:', error);
+                document.getElementById('summaryGrid').innerHTML = '<div class="summary-card"><div class="empty-state">Failed to load market prices.</div></div>';
+                document.getElementById('topCropsGrid').innerHTML = '<div class="empty-state">Market feed could not be loaded.</div>';
+                document.getElementById('priceCards').innerHTML = '<div class="empty-state">Market feed could not be loaded.</div>';
+                document.getElementById('tableWrap').innerHTML = '<div class="empty-state">Market feed could not be loaded.</div>';
+                document.getElementById('actionBand').textContent = 'The market feed is unavailable right now.';
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = '<i class="fas fa-rotate"></i><span>Refresh</span>';
             }
         }
-        
-        // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
-            // Load user's language preference from database
+
+        function loadUserData() {
+            const cached = localStorage.getItem('user');
+            const navNameEl = document.getElementById('navProfileName');
+            const avatarEl = document.getElementById('navProfileAvatar');
+
+            if (!cached) return;
+
+            try {
+                const user = JSON.parse(cached);
+                const name = user.name || user.username || 'Farmer';
+                navNameEl.textContent = name;
+                avatarEl.textContent = (name.charAt(0) || 'F').toUpperCase();
+            } catch (error) {
+                console.warn('Could not parse user cache:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const userStr = localStorage.getItem('user');
                 if (userStr) {
                     const user = JSON.parse(userStr);
-                    if (user && user.preferred_language) {
+                    if (user?.preferred_language && typeof setLanguage === 'function') {
                         setLanguage(user.preferred_language);
                         localStorage.setItem('fahamuShamba_language', user.preferred_language);
                     }
                 }
-            } catch (e) {
-                console.warn('Could not load user language preference:', e);
+            } catch (error) {
+                console.warn('Could not load preferred language:', error);
             }
-            
-            const lang = getCurrentLanguage();
-            const select = document.getElementById('languageSelect');
-            // Only set value if there's a saved language
-            if (select && lang) {
-                select.value = lang;
-                // Update button text based on saved language
-                const langNames = {
-                    'en': '🌐 English',
-                    'sw': '🌐 Kiswahili',
-                    'luo': '🌐 Dholuo'
-                };
-                const btnText = document.getElementById('languageBtnText');
-                if (btnText && langNames[lang]) {
-                    btnText.textContent = langNames[lang];
-                }
+
+            if (typeof initializeLanguage === 'function') {
+                initializeLanguage();
             }
-            translatePage(lang);
+
             loadUserData();
-            loadPrices();
-            loadTrends('Maize');
-        });
-        
-        // Language functions
-        function changeLanguage(lang) {
-            setLanguage(lang);
-            translatePage(lang);
-        }
-        
-        // Custom dropdown functions
-        function toggleLanguageDropdown() {
-            const menu = document.getElementById('languageDropdownMenu');
-            if (menu) menu.classList.toggle('show');
-        }
-        
-        function selectLanguage(lang, text) {
-            const btnText = document.getElementById('languageBtnText');
-            if (btnText) btnText.textContent = text;
-            const select = document.getElementById('languageSelect');
-            if (select) select.value = lang;
-            const menu = document.getElementById('languageDropdownMenu');
-            if (menu) menu.classList.remove('show');
-            changeLanguage(lang);
-        }
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const container = document.querySelector('.language-dropdown-container');
-            if (container && !container.contains(event.target)) {
-                const menu = document.getElementById('languageDropdownMenu');
-                if (menu) menu.classList.remove('show');
-            }
+            await loadLiveMarketPrices(false);
+
+            document.getElementById('cropFilter').addEventListener('change', renderFilteredView);
+            document.getElementById('marketFilter').addEventListener('change', renderFilteredView);
+            document.getElementById('chartCropSelect').addEventListener('change', (event) => renderChart(event.target.value));
+            document.getElementById('refreshBtn').addEventListener('click', () => loadLiveMarketPrices(true));
         });
     </script>
 </body>
 </html>
-
-
-

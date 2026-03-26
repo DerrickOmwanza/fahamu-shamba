@@ -4,15 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="max-age=31536000, must-revalidate">
-    <title>Fahamu Shamba - Smart Farming Intelligence for Siaya County</title>
-    
-    <!-- Preload Critical Assets -->
+    <title>Fahamu Shamba - Smart Farming for Siaya County</title>
+    <meta name="description" content="Smart farming platform for Siaya County farmers. Get crop recommendations, weather forecasts, market prices, and soil analysis to increase yields and maximize profits.">
+
     <link rel="preload" href="/fahamu-logo.png" as="image">
-    <link rel="preload" href="/js/translations.js" as="script">
-    
+    <link rel="preload" href="/images/irewolede-PvwdlXqo85k-unsplash.jpg" as="image">
     <link rel="icon" href="/fahamu-logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/mobile-responsiveness-fixes.css">
     <script src="/js/translations.js" defer></script>
+
     <style>
         * {
             margin: 0;
@@ -21,21 +25,30 @@
         }
 
         :root {
-            --primary: #2E7D32;
-            --primary-light: #4CAF50;
-            --primary-dark: #1B5E20;
-            --secondary: #F57C00;
-            --secondary-light: #FF9800;
-            --accent-blue: #E3F2FD;
-            --light: #F5F5F5;
-            --text: #333333;
-            --text-light: #666666;
-            --border: #E0E0E0;
-            --beige: #FAF3E0;
-            --brown: #3E2723;
-            --gold: #FFD54F;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --forest-950: #173320;
+            --forest-900: #1d462b;
+            --forest-800: #2a6a3d;
+            --forest-700: #33834a;
+            --leaf-500: #7ecb77;
+            --gold-500: #f5b63b;
+            --gold-300: #ffd98a;
+            --soil-700: #72533c;
+            --cream-100: #f8f4e8;
+            --cream-200: #f3eddc;
+            --mist-100: #eef4ed;
+            --sky-100: #d8edf5;
+            --white: #ffffff;
+            --ink-900: #18211b;
+            --ink-700: #425348;
+            --ink-500: #6a7c71;
+            --border: rgba(24, 33, 27, 0.1);
+            --shadow-sm: 0 8px 20px rgba(20, 42, 28, 0.08);
+            --shadow-md: 0 20px 45px rgba(20, 42, 28, 0.12);
+            --shadow-lg: 0 28px 70px rgba(20, 42, 28, 0.18);
+            --radius-lg: 28px;
+            --radius-md: 22px;
+            --radius-sm: 16px;
+            --container: 1180px;
         }
 
         html {
@@ -43,1414 +56,2106 @@
         }
 
         body {
-            font-family: 'Roboto', 'Segoe UI', sans-serif;
-            background: white;
-            color: var(--text);
-            line-height: 1.5;
+            font-family: 'Manrope', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(126, 203, 119, 0.14), transparent 30%),
+                linear-gradient(180deg, #fdfcf7 0%, #f4f6ef 55%, #eef3ea 100%);
+            color: var(--ink-900);
+            line-height: 1.6;
             opacity: 0;
-            transition: opacity 0.5s ease-in;
+            transition: opacity 0.45s ease;
         }
 
         body.loaded {
             opacity: 1;
         }
-        
-        /* Splash Screen */
-        #page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: opacity 0.4s ease-out;
+
+        img {
+            max-width: 100%;
+            display: block;
         }
-        
-        .loader-logo {
-            width: 150px;
-            height: 150px;
-            margin-bottom: 20px;
-            animation: pulse 1.5s ease-in-out infinite;
+
+        a {
+            color: inherit;
         }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+        button,
+        select {
+            font: inherit;
+        }
+
+        .page-shell {
+            overflow: clip;
         }
 
         .container {
-            max-width: 1200px;
+            width: min(var(--container), calc(100% - 32px));
             margin: 0 auto;
-            padding: 0 20px;
         }
 
-        /* ===== HEADER ===== */
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: var(--forest-900);
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(10px);
+        }
+
+        .eyebrow i {
+            color: var(--gold-500);
+        }
+
+        .section-heading {
+            max-width: 720px;
+            margin-bottom: 30px;
+        }
+
+        .section-heading h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            line-height: 1.05;
+            color: var(--forest-950);
+            margin-bottom: 14px;
+        }
+
+        .section-heading p {
+            font-size: 1.03rem;
+            color: var(--ink-700);
+            max-width: 60ch;
+        }
+
+        #page-loader {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            background:
+                radial-gradient(circle at top, rgba(255, 217, 138, 0.35), transparent 28%),
+                linear-gradient(135deg, #e9f6e5 0%, #f7efda 45%, #e6f0ec 100%);
+            z-index: 9999;
+            transition: opacity 0.45s ease, visibility 0.45s ease;
+        }
+
+        #page-loader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-card {
+            display: grid;
+            place-items: center;
+            gap: 18px;
+            padding: 32px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(14px);
+        }
+
+        .loader-logo {
+            width: 120px;
+            height: 120px;
+            animation: pulse-load 1.6s ease-in-out infinite;
+        }
+
+        .loader-copy {
+            text-align: center;
+        }
+
+        .loader-copy strong {
+            display: block;
+            color: var(--forest-900);
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .loader-copy span {
+            color: var(--ink-500);
+            font-size: 0.92rem;
+        }
+
+        .loader-spinner {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 4px solid rgba(51, 131, 74, 0.16);
+            border-top-color: var(--forest-800);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse-load {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.06);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes rise-in {
+            from {
+                opacity: 0;
+                transform: translateY(28px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float-card {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
         header {
-            background: white;
-            padding: 15px 0;
-            box-shadow: var(--shadow);
             position: sticky;
             top: 0;
             z-index: 1000;
+            padding: 16px 0;
+            backdrop-filter: blur(18px);
+            background: rgba(248, 244, 232, 0.7);
+            border-bottom: 1px solid rgba(24, 33, 27, 0.06);
         }
 
         .header-content {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            justify-content: space-between;
+            gap: 18px;
         }
 
         .logo-section {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             text-decoration: none;
-            color: var(--primary-dark);
+            min-width: fit-content;
         }
 
         .logo-section img {
-            height: 60px;
-            width: auto;
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            background: var(--white);
+            padding: 6px;
+            box-shadow: var(--shadow-sm);
         }
 
         .logo-text h1 {
-            font-size: 1.3em;
-            font-weight: 700;
-            margin: 0;
+            font-size: 1.18rem;
+            font-weight: 800;
+            color: var(--forest-950);
+            line-height: 1.05;
         }
 
         .logo-text p {
-            font-size: 0.75em;
-            color: var(--text-light);
-            margin: 0;
+            font-size: 0.82rem;
+            color: var(--ink-500);
+            font-weight: 600;
         }
 
-        .nav-buttons {
+        .header-actions {
             display: flex;
+            align-items: center;
             gap: 12px;
         }
 
-        .nav-btn {
-            padding: 9px 18px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .nav-login {
-            background: white;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
-
-        .nav-login:hover {
-            background: var(--light);
-            transform: translateY(-1px);
-        }
-
-        .nav-signup {
-            background: linear-gradient(135deg, var(--secondary) 0%, #ff8c00 100%);
-            color: white;
-            border: none;
-            box-shadow: var(--shadow);
-        }
-
-        .nav-signup:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .nav-ussd {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
-            border: none;
-            box-shadow: var(--shadow);
-        }
-
-        .nav-ussd:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        /* Instructions banner */
-        .instructions-banner {
-            background: linear-gradient(135deg, #E3F2FD 0%, #E8F5E9 100%);
-            border-left: 4px solid var(--primary);
-            padding: 20px;
-            margin-bottom: 30px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-        }
-
-        .instructions-banner h3 {
-            color: var(--primary-dark);
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        .instructions-banner p {
-            color: var(--text);
-            margin-bottom: 8px;
-            font-size: 0.95em;
-        }
-
-        .instructions-banner ul {
-            margin-left: 20px;
-            color: var(--text);
-        }
-
-        .instructions-banner li {
-            margin-bottom: 6px;
-            font-size: 0.95em;
-        }
-
-        .instructions-banner strong {
-            color: var(--primary);
-        }
-
-        /* Language Toggle */
-        .language-toggle {
+        .language-selector {
             display: flex;
-            gap: 8px;
             align-items: center;
-        }
-
-        .language-btn {
+            gap: 8px;
             padding: 8px 12px;
-            border: 2px solid var(--border);
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.85em;
-            background: white;
-            color: var(--text);
-            transition: all 0.3s ease;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(24, 33, 27, 0.08);
+            box-shadow: var(--shadow-sm);
         }
 
-        .language-btn:hover {
-            background: var(--light);
-            border-color: var(--primary);
-            transform: translateY(-1px);
-        }
-
-        .language-btn.active {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
-        }
-
-        /* ===== HERO SECTION ===== */
-        .hero {
-            background: linear-gradient(135deg, #87ceeb 0%, #4a9d6f 100%);
-            color: white;
-            padding: 50px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 500px;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .hero-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-text h1 {
-            font-size: 2.4em;
+        .language-selector label {
+            color: var(--forest-900);
+            font-size: 0.85rem;
             font-weight: 700;
-            margin-bottom: 15px;
-            line-height: 1.2;
         }
 
-        .hero-text p {
-            font-size: 1.05em;
-            margin-bottom: 25px;
-            opacity: 0.95;
-            line-height: 1.6;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 30px;
+        .language-select {
             border: none;
-            border-radius: 6px;
-            font-size: 1em;
+            background: transparent;
+            color: var(--forest-950);
             font-weight: 700;
+            outline: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .btn-primary {
-            background: var(--primary-dark);
-            color: white;
-            box-shadow: var(--shadow);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-secondary {
-            background: var(--secondary);
-            color: white;
-            box-shadow: var(--shadow);
-        }
-
-        .btn-secondary:hover {
-            background: var(--secondary-light);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .hero-visual {
-            text-align: center;
-            font-size: 5em;
-            opacity: 0.9;
-        }
-
-        .scroll-indicator {
-            text-align: center;
-            margin-top: 20px;
-            animation: bounce 2s infinite;
-        }
-
-        .scroll-indicator i {
-            font-size: 1.5em;
-            color: white;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(10px); }
-        }
-
-        /* ===== FEATURES SECTION ===== */
-        .features {
-            padding: 50px 0;
-            background: white;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2em;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 40px;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-        }
-
-        .feature-card {
-            padding: 25px;
-            background: var(--light);
-            border-radius: 10px;
-            border: 2px solid var(--border);
-            transition: all 0.3s ease;
-            display: flex;
-            gap: 15px;
-        }
-
-        .feature-card:hover {
-            border-color: var(--primary);
-            background: white;
-            box-shadow: var(--shadow-md);
-            transform: translateY(-3px);
-        }
-
-        .feature-icon {
-            font-size: 2.5em;
-            min-width: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .feature-icon.green { color: var(--primary); }
-        .feature-icon.blue { color: #87ceeb; }
-        .feature-icon.orange { color: var(--secondary); }
-
-        .feature-content h3 {
-            font-size: 1.1em;
-            color: var(--primary-dark);
-            margin-bottom: 8px;
-        }
-
-        .feature-content p {
-            font-size: 0.9em;
-            color: var(--text-light);
-            line-height: 1.5;
-        }
-
-        /* ===== FLOW SECTION ===== */
-        .flow {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #F5F5F5 0%, #FAFAFA 100%);
-        }
-
-        .flow .section-title {
-            margin-bottom: 60px;
-            color: var(--primary-dark);
-            font-size: 2.2em;
-        }
-
-        .flow-diagram {
-            display: flex;
-            justify-content: space-between;
-            align-items: stretch;
-            gap: 0;
-            position: relative;
-            margin: 0 auto;
-            max-width: 1100px;
-        }
-
-        /* Animated connection line */
-        .flow-diagram::before {
-            content: '';
-            position: absolute;
-            top: 70px;
-            left: 5%;
-            right: 5%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent 0%, var(--primary) 10%, var(--primary) 90%, transparent 100%);
-            z-index: 0;
-        }
-
-        .flow-step {
-            background: white;
-            padding: 45px 25px;
-            border-radius: 16px;
-            text-align: center;
-            border: none;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            flex: 1;
-            position: relative;
-            z-index: 1;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            margin: 0 10px;
-        }
-
-        .flow-step:first-child {
-            margin-left: 0;
-        }
-
-        .flow-step:last-child {
-            margin-right: 0;
-        }
-
-        .flow-step:hover {
-            box-shadow: 0 15px 40px rgba(46, 125, 50, 0.18);
-            transform: translateY(-12px);
-            background: linear-gradient(135deg, #FFFFFF 0%, #F0F7F0 100%);
-        }
-
-        .flow-num {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            font-weight: 700;
-            margin: 0 auto 20px;
-            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.25);
-            transition: all 0.4s ease;
-        }
-
-        .flow-step:hover .flow-num {
-            transform: scale(1.15) rotate(5deg);
-            box-shadow: 0 12px 35px rgba(46, 125, 50, 0.35);
-        }
-
-        .flow-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-            display: block;
-            transition: transform 0.3s ease;
-        }
-
-        .flow-step:hover .flow-icon {
-            transform: scale(1.2);
-        }
-
-        .flow-step h4 {
-            font-size: 1.25em;
-            color: var(--primary-dark);
-            margin-bottom: 12px;
-            font-weight: 700;
-        }
-
-        .flow-step p {
-            font-size: 0.95em;
-            color: var(--text-light);
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        .flow-arrow {
-            font-size: 1.5em;
-            color: var(--primary);
-            font-weight: bold;
-            text-align: center;
-        }
-
-        /* ===== STATS SECTION ===== */
-        .stats {
-            padding: 50px 0;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 25px;
-        }
-
-        .stat {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid var(--secondary);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-        }
-
-        .stat:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: 700;
-            color: var(--secondary);
-            margin-bottom: 8px;
-        }
-
-        .stat-label {
-            font-size: 1em;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 5px;
-        }
-
-        .stat-desc {
-            font-size: 0.85em;
-            color: var(--text-light);
-        }
-
-        /* ===== TESTIMONIALS SECTION ===== */
-        .testimonials {
-            padding: 50px 0;
-            background: white;
-        }
-
-        .testimonials-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        .testimonial {
-            background: linear-gradient(135deg, var(--accent-blue) 0%, #f0f8f5 100%);
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        .testimonial:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-3px);
-        }
-
-        .stars {
-            color: var(--secondary);
-            font-size: 0.9em;
-            margin-bottom: 10px;
-        }
-
-        .testimonial-text {
-            font-size: 0.9em;
-            color: var(--text);
-            margin-bottom: 15px;
-            font-style: italic;
-            line-height: 1.5;
-        }
-
-        .testimonial-author {
+        .nav-buttons {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
+        .nav-btn,
+        .btn {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: transform 0.24s ease, box-shadow 0.24s ease, background 0.24s ease, color 0.24s ease, border-color 0.24s ease;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .nav-btn:hover,
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-secondary {
+            padding: 13px 18px;
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--forest-950);
+            border: 1px solid rgba(24, 33, 27, 0.08);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-ghost {
+            padding: 13px 18px;
+            background: rgba(23, 51, 32, 0.08);
+            color: var(--forest-950);
+            border: 1px solid rgba(24, 33, 27, 0.08);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-signup,
+        .btn-primary {
+            padding: 14px 22px;
+            background: linear-gradient(135deg, var(--gold-500) 0%, #f29b2f 100%);
+            color: var(--forest-950);
+            box-shadow: 0 16px 30px rgba(245, 182, 59, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 14px 22px;
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+        }
+
+        .nav-signup:hover,
+        .btn-primary:hover {
+            box-shadow: 0 20px 36px rgba(245, 182, 59, 0.38);
+        }
+
+        .nav-secondary:hover {
+            background: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-ghost:hover {
+            background: rgba(23, 51, 32, 0.14);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-md);
+        }
+
+        .hero {
+            position: relative;
+            padding: 48px 0 82px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 24px 18px auto;
+            height: 820px;
+            border-radius: 40px;
+            background:
+                linear-gradient(125deg, rgba(23, 51, 32, 0.88) 8%, rgba(42, 106, 61, 0.75) 50%, rgba(102, 164, 107, 0.52) 100%),
+                url('/images/irewolede-PvwdlXqo85k-unsplash.jpg') center/cover no-repeat;
+            box-shadow: var(--shadow-lg);
+            z-index: -2;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 24px 18px auto;
+            height: 820px;
+            border-radius: 40px;
+            background:
+                radial-gradient(circle at 12% 18%, rgba(255, 217, 138, 0.24), transparent 24%),
+                radial-gradient(circle at 85% 22%, rgba(255, 255, 255, 0.18), transparent 20%),
+                linear-gradient(180deg, transparent 0%, rgba(11, 20, 14, 0.14) 100%);
+            z-index: -1;
+        }
+
+        .hero-grid {
+            min-height: 820px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+            gap: 36px;
+            align-items: start;
+            padding: 54px 0 44px;
+        }
+
+        .hero-text {
+            color: var(--white);
+            animation: rise-in 0.7s ease both;
+        }
+
+        .hero-text h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(3rem, 7vw, 5.4rem);
+            line-height: 0.98;
+            margin: 22px 0 18px;
+            max-width: 10.5ch;
+            text-wrap: balance;
+        }
+
+        .hero-text .subtitle {
+            max-width: 58ch;
+            font-size: clamp(1.02rem, 2vw, 1.18rem);
+            color: rgba(255, 255, 255, 0.88);
+            margin-bottom: 28px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .trust-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .trust-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: rgba(255, 255, 255, 0.94);
+            font-size: 0.9rem;
             font-weight: 700;
-            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-side {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            animation: rise-in 0.9s ease both;
+        }
+
+        .hero-panel {
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: var(--shadow-lg);
+            color: var(--ink-900);
+            backdrop-filter: blur(16px);
+        }
+
+        .forecast-card {
+            padding: 26px;
+        }
+
+        .forecast-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .forecast-card-header strong {
+            display: block;
+            font-size: 1.08rem;
+            color: var(--forest-950);
+        }
+
+        .forecast-card-header span {
+            color: var(--ink-500);
+            font-size: 0.92rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(126, 203, 119, 0.18);
+            color: var(--forest-900);
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
+
+        .status-badge i {
+            color: var(--forest-700);
+        }
+
+        .forecast-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .metric-card {
+            padding: 16px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, #ffffff 0%, #f5f7f1 100%);
+            border: 1px solid rgba(24, 33, 27, 0.08);
+        }
+
+        .metric-card span {
+            display: block;
+            color: var(--ink-500);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .metric-card strong {
+            display: block;
+            color: var(--forest-950);
+            font-size: 1.4rem;
+            line-height: 1.1;
+        }
+
+        .metric-card p {
+            color: var(--ink-700);
+            font-size: 0.88rem;
+            margin-top: 4px;
+        }
+
+        .task-card {
+            padding: 18px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(24, 33, 27, 0.08);
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .task-item i {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: rgba(245, 182, 59, 0.18);
+            color: var(--soil-700);
+            flex-shrink: 0;
+        }
+
+        .task-item strong {
+            display: block;
+            color: var(--forest-950);
+            margin-bottom: 2px;
+            font-size: 0.96rem;
+        }
+
+        .task-item span {
+            font-size: 0.88rem;
+            color: var(--ink-700);
+        }
+
+        .metrics-bar {
+            margin-top: -72px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .quick-start {
+            padding-top: 34px;
+            padding-bottom: 34px;
+        }
+
+        .quick-start-shell {
+            padding: 28px;
+            border-radius: 34px;
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(14px);
+        }
+
+        .quick-start-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .quick-card {
+            padding: 22px;
+            border-radius: 26px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 242, 0.92));
+            border: 1px solid rgba(24, 33, 27, 0.08);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .quick-card i {
+            width: 52px;
+            height: 52px;
+            display: grid;
+            place-items: center;
+            border-radius: 18px;
+            margin-bottom: 14px;
+            background: linear-gradient(135deg, rgba(245, 182, 59, 0.24), rgba(126, 203, 119, 0.18));
+            color: var(--forest-950);
+            font-size: 1.2rem;
+        }
+
+        .quick-card h3 {
+            margin: 0 0 8px;
+            color: var(--forest-950);
+            font-size: 1.08rem;
+        }
+
+        .quick-card p {
+            margin: 0 0 18px;
+            color: var(--ink-700);
+            font-size: 0.94rem;
+        }
+
+        .quick-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            color: var(--forest-800);
+        }
+
+        .metric-highlight {
+            padding: 24px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(255, 255, 255, 0.42);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(14px);
+        }
+
+        .metric-highlight span {
+            display: block;
+            color: var(--ink-500);
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .metric-highlight strong {
+            display: block;
+            color: var(--forest-950);
+            font-size: clamp(1.7rem, 3vw, 2.4rem);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .metric-highlight p {
+            color: var(--ink-700);
+            font-size: 0.92rem;
+        }
+
+        .section {
+            padding: 100px 0;
+        }
+
+        .features {
+            padding-top: 112px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .feature-card {
+            position: relative;
+            padding: 28px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(245, 247, 241, 0.88) 100%);
+            border: 1px solid rgba(24, 33, 27, 0.08);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            inset: auto -35px -35px auto;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(126, 203, 119, 0.16), transparent 68%);
+        }
+
+        .feature-card:hover,
+        .benefit-item:hover,
+        .step:hover,
+        .testimonial:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .feature-icon {
+            width: 62px;
+            height: 62px;
+            border-radius: 20px;
+            display: grid;
+            place-items: center;
+            font-size: 1.55rem;
+            color: var(--forest-950);
+            background: linear-gradient(135deg, rgba(245, 182, 59, 0.34), rgba(126, 203, 119, 0.2));
+            box-shadow: inset 0 0 0 1px rgba(24, 33, 27, 0.05);
+        }
+
+        .feature-tag {
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(51, 131, 74, 0.08);
+            color: var(--forest-800);
+            font-size: 0.76rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .feature-card h3 {
+            font-size: 1.35rem;
+            color: var(--forest-950);
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--ink-700);
+            font-size: 0.98rem;
+            max-width: 48ch;
+        }
+
+        .signal-band {
+            padding: 28px;
+            border-radius: 34px;
+            background:
+                linear-gradient(135deg, rgba(23, 51, 32, 0.96) 0%, rgba(42, 106, 61, 0.92) 55%, rgba(78, 136, 84, 0.88) 100%);
+            color: var(--white);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .signal-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 26px;
+            align-items: center;
+        }
+
+        .signal-copy h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            line-height: 1.05;
+            margin: 14px 0 16px;
+            max-width: 12ch;
+        }
+
+        .signal-copy p {
+            color: rgba(255, 255, 255, 0.82);
+            max-width: 54ch;
+        }
+
+        .signal-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .signal-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 16px 18px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .signal-row strong {
+            display: block;
+            font-size: 0.98rem;
+        }
+
+        .signal-row span {
+            display: block;
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 0.86rem;
+        }
+
+        .signal-score {
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: rgba(255, 217, 138, 0.18);
+            color: var(--gold-300);
+            font-size: 0.82rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .benefits-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            gap: 26px;
+            align-items: stretch;
+        }
+
+        .benefits-visual {
+            position: relative;
+            min-height: 100%;
+            border-radius: 34px;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(24, 33, 27, 0.06), rgba(24, 33, 27, 0.02));
+            box-shadow: var(--shadow-md);
+        }
+
+        .benefits-visual img {
+            width: 100%;
+            height: 100%;
+            min-height: 540px;
+            object-fit: cover;
+        }
+
+        .benefits-overlay {
+            position: absolute;
+            inset: auto 22px 22px 22px;
+            padding: 22px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .benefits-overlay strong {
+            display: block;
+            color: var(--forest-950);
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .benefits-overlay p {
+            color: var(--ink-700);
+            font-size: 0.92rem;
+        }
+
+        .benefits-stack {
+            display: grid;
+            gap: 18px;
+        }
+
+        .benefit-item {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 16px;
+            padding: 22px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(24, 33, 27, 0.08);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+        }
+
+        .benefit-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, rgba(23, 51, 32, 0.95), rgba(42, 106, 61, 0.84));
+            color: var(--white);
+            font-size: 1.12rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .benefit-item h4 {
+            color: var(--forest-950);
+            font-size: 1.08rem;
+            margin-bottom: 6px;
+        }
+
+        .benefit-item p {
+            color: var(--ink-700);
+            font-size: 0.95rem;
+        }
+
+        .journey {
+            background: linear-gradient(180deg, rgba(216, 237, 245, 0.35) 0%, rgba(248, 244, 232, 0.6) 100%);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .step {
+            position: relative;
+            padding: 28px 24px;
+            border-radius: 26px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(24, 33, 27, 0.08);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+        }
+
+        .step-number {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--gold-500), #f29b2f);
+            color: var(--forest-950);
+            font-size: 1rem;
+            font-weight: 900;
+            margin-bottom: 18px;
+            box-shadow: 0 14px 24px rgba(245, 182, 59, 0.26);
+        }
+
+        .step-icon {
+            font-size: 1.55rem;
+            margin-bottom: 14px;
+        }
+
+        .step h4 {
+            font-size: 1.12rem;
+            color: var(--forest-950);
+            margin-bottom: 8px;
+        }
+
+        .step p {
+            font-size: 0.94rem;
+            color: var(--ink-700);
+        }
+
+        .story {
+            position: relative;
+        }
+
+        .story-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .story-card {
+            padding: 34px;
+            border-radius: 34px;
+            background: linear-gradient(145deg, rgba(23, 51, 32, 0.96), rgba(42, 106, 61, 0.9));
+            color: var(--white);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .story-card h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2rem, 4vw, 3.1rem);
+            line-height: 1.08;
+            margin: 18px 0 16px;
+            max-width: 12ch;
+        }
+
+        .story-card p {
+            color: rgba(255, 255, 255, 0.82);
+            max-width: 56ch;
+        }
+
+        .story-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        .story-stat {
+            padding: 18px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        .story-stat strong {
+            display: block;
+            font-size: 2rem;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .story-stat span {
+            display: block;
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 0.88rem;
+        }
+
+        .community-card {
+            padding: 24px;
+            border-radius: 34px;
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(24, 33, 27, 0.08);
+            box-shadow: var(--shadow-md);
+        }
+
+        .community-list {
+            display: grid;
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .community-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 16px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, #ffffff 0%, #f6f7f1 100%);
+            border: 1px solid rgba(24, 33, 27, 0.08);
+        }
+
+        .community-item i {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: rgba(51, 131, 74, 0.1);
+            color: var(--forest-800);
+            flex-shrink: 0;
+        }
+
+        .community-item strong {
+            display: block;
+            color: var(--forest-950);
+            font-size: 0.98rem;
+            margin-bottom: 4px;
+        }
+
+        .community-item span {
+            color: var(--ink-700);
+            font-size: 0.9rem;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .testimonial {
+            padding: 28px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(24, 33, 27, 0.08);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+        }
+
+        .stars {
+            color: #e09d16;
+            letter-spacing: 0.08em;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        .testimonial-text {
+            color: var(--ink-900);
+            font-size: 0.98rem;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, rgba(245, 182, 59, 0.25), rgba(51, 131, 74, 0.2));
+            color: var(--forest-950);
+            font-weight: 900;
         }
 
         .author-info h4 {
-            font-size: 0.95em;
-            color: var(--primary-dark);
-            margin: 0;
+            font-size: 0.96rem;
+            color: var(--forest-950);
         }
 
         .author-info p {
-            font-size: 0.8em;
-            color: var(--text-light);
-            margin: 0;
+            font-size: 0.86rem;
+            color: var(--ink-500);
         }
 
-        /* ===== CTA SECTION ===== */
         .cta {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-            color: white;
-            padding: 40px 0;
-            text-align: center;
+            padding-top: 24px;
+            padding-bottom: 100px;
         }
 
-        .cta h2 {
-            font-size: 1.8em;
+        .cta-shell {
+            padding: 34px;
+            border-radius: 36px;
+            background:
+                radial-gradient(circle at top right, rgba(255, 217, 138, 0.22), transparent 24%),
+                linear-gradient(135deg, rgba(23, 51, 32, 0.98) 0%, rgba(42, 106, 61, 0.92) 100%);
+            color: var(--white);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .cta-shell h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1.05;
             margin-bottom: 12px;
+            max-width: 12ch;
         }
 
-        .cta p {
-            font-size: 1.05em;
-            margin-bottom: 25px;
-            opacity: 0.95;
+        .cta-shell p {
+            color: rgba(255, 255, 255, 0.82);
+            max-width: 54ch;
         }
 
         .cta-buttons {
             display: flex;
-            gap: 15px;
-            justify-content: center;
             flex-wrap: wrap;
+            gap: 14px;
+            justify-content: flex-end;
         }
 
-        /* ===== FOOTER ===== */
         footer {
-            background: var(--brown);
-            color: white;
-            padding: 40px 0 20px;
+            padding: 0 0 34px;
         }
 
-        .footer-grid {
+        .footer-shell {
+            padding: 28px 30px;
+            border-radius: 30px;
+            background: rgba(24, 33, 27, 0.94);
+            color: rgba(255, 255, 255, 0.88);
+            box-shadow: var(--shadow-md);
+        }
+
+        .footer-top {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-            margin-bottom: 25px;
+            grid-template-columns: 1.2fr repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 26px;
         }
 
-        .footer-col h3 {
-            color: var(--gold);
-            font-size: 0.95em;
-            margin-bottom: 12px;
-            font-weight: 700;
+        .footer-brand h3 {
+            font-size: 1.2rem;
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+
+        .footer-brand p {
+            color: rgba(255, 255, 255, 0.72);
+            max-width: 34ch;
+            font-size: 0.95rem;
+        }
+
+        .footer-col h4 {
+            color: var(--gold-300);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
         }
 
         .footer-col ul {
             list-style: none;
-        }
-
-        .footer-col ul li {
-            margin-bottom: 8px;
+            display: grid;
+            gap: 10px;
         }
 
         .footer-col a {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.76);
             text-decoration: none;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
+            font-size: 0.92rem;
+            transition: color 0.24s ease;
         }
 
         .footer-col a:hover {
-            color: var(--gold);
+            color: var(--white);
         }
 
         .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
             padding-top: 20px;
-            text-align: center;
-            font-size: 0.85em;
-            color: rgba(255, 255, 255, 0.7);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .footer-bottom p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.62);
         }
 
         .footer-social {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 10px;
         }
 
         .footer-social a {
-            width: 35px;
-            height: 35px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gold);
-            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--white);
+            transition: transform 0.24s ease, background 0.24s ease;
         }
 
         .footer-social a:hover {
-            background: var(--gold);
-            color: var(--brown);
-            transform: scale(1.1);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.16);
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 1024px) {
-            .header-content {
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-            
-            .nav-buttons {
-                flex: 1 1 100%;
-                gap: 10px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .nav-btn {
-                flex: 1;
-                min-width: 100px;
-                justify-content: center;
-            }
-            
-            .language-toggle {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
         }
 
-        @media (max-width: 768px) {
-            .hero {
-                padding: 35px 0;
-            }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-            .hero-content {
+        @media (max-width: 1180px) {
+            .hero-grid,
+            .signal-grid,
+            .benefits-layout,
+            .story-shell,
+            .cta-shell {
                 grid-template-columns: 1fr;
-                gap: 25px;
             }
 
-            .hero-text h1 {
-                font-size: 1.8em;
-            }
-
-            .hero-visual {
-                font-size: 3.5em;
-            }
-            
-            .header-content {
-                flex-direction: column;
+            .cta-shell {
                 align-items: flex-start;
-                gap: 12px;
-            }
-            
-            .logo-section {
-                justify-content: center;
-                width: 100%;
-            }
-            
-            .nav-buttons {
-                width: 100%;
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .nav-btn {
-                width: 100%;
-                justify-content: center;
-                padding: 10px 16px;
-            }
-            
-            .language-toggle {
-                width: 100%;
-                justify-content: center;
-                gap: 6px;
-            }
-            
-            .language-btn {
-                padding: 6px 10px;
-                font-size: 0.8em;
             }
 
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .feature-card {
-                padding: 20px;
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .feature-icon {
-                min-width: auto;
-                justify-content: center;
-                font-size: 2em;
-            }
-
-            .flow-diagram {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .flow-step {
-                margin: 0;
-                padding: 25px 20px;
-            }
-            
-            .flow-arrow {
-                display: none;
-            }
-            
-            .flow-num {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5em;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
-            
-            .stat {
-                padding: 20px 15px;
-            }
-            
-            .stat-number {
-                font-size: 2em;
-            }
-            
-            .stat-label {
-                font-size: 0.9em;
-            }
-
-            .testimonials-container {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .testimonial {
-                padding: 15px;
-            }
-
-            .footer-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
-            
-            .footer-social a {
-                width: 40px;
-                height: 40px;
-            }
-            
             .cta-buttons {
+                justify-content: flex-start;
+            }
+
+            .story-stats {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 980px) {
+            .metrics-grid,
+            .steps-container,
+            .testimonials-grid,
+            .quick-start-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .features-grid,
+            .footer-top {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-wrap: wrap;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            .hero::before,
+            .hero::after {
+                height: 1020px;
+            }
+
+            .hero-grid {
+                min-height: 1020px;
+            }
+        }
+
+        @media (max-width: 720px) {
+            header {
+                padding: 14px 0;
+            }
+
+            .container {
+                width: min(var(--container), calc(100% - 24px));
+            }
+
+            .header-actions,
+            .nav-buttons,
+            .hero-buttons,
+            .cta-buttons {
+                width: 100%;
+            }
+
+            .nav-buttons {
                 flex-direction: column;
             }
-            
+
+            .nav-btn,
             .btn {
                 width: 100%;
-                justify-content: center;
             }
-            
-            .instructions-banner {
-                padding: 15px;
-                margin: 15px;
-            }
-        }
 
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 15px;
-            }
-            
-            .header-content {
-                padding: 0 10px;
-            }
-            
-            .logo-section img {
-                height: 30px;
-            }
-            
-            .logo-text h1 {
-                font-size: 1.1em;
-            }
-            
-            .logo-text p {
-                font-size: 0.7em;
-            }
-            
-            .nav-buttons {
-                gap: 6px;
-            }
-            
-            .nav-btn {
-                padding: 8px 12px;
-                font-size: 0.8em;
-            }
-            
-            .language-toggle {
-                gap: 4px;
-            }
-            
-            .language-btn {
-                padding: 5px 8px;
-                font-size: 0.75em;
+            .language-selector {
+                width: 100%;
+                justify-content: space-between;
             }
 
             .hero {
-                padding: 25px 0;
+                padding: 30px 0 70px;
+            }
+
+            .hero::before,
+            .hero::after {
+                inset: 16px 12px auto;
+                height: 900px;
+                border-radius: 30px;
+            }
+
+            .hero-grid {
+                min-height: 900px;
+                padding-top: 34px;
+                gap: 22px;
             }
 
             .hero-text h1 {
-                font-size: 1.5em;
+                max-width: none;
             }
 
-            .hero-text p {
-                font-size: 0.95em;
-            }
-            
-            .hero-visual {
-                font-size: 2.5em;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                gap: 10px;
+            .metrics-bar {
+                margin-top: -36px;
             }
 
-            .section-title {
-                font-size: 1.5em;
-            }
-            
-            .feature-card {
-                padding: 15px;
-            }
-            
-            .feature-icon {
-                font-size: 1.8em;
-                margin-bottom: 10px;
-            }
-            
-            .feature-content h3 {
-                font-size: 1em;
-            }
-            
-            .feature-content p {
-                font-size: 0.85em;
-            }
-
-            .stats-grid {
+            .metrics-grid,
+            .steps-container,
+            .story-stats,
+            .testimonials-grid,
+            .quick-start-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
-            }
-            
-            .stat-number {
-                font-size: 1.8em;
-            }
-            
-            .stat-label {
-                font-size: 0.85em;
-            }
-            
-            .stat-desc {
-                font-size: 0.8em;
             }
 
-            .testimonials-container {
-                gap: 12px;
-            }
-            
-            .testimonial-text {
-                font-size: 0.85em;
-            }
-            
-            .testimonial-author {
-                gap: 8px;
-            }
-            
-            .avatar {
-                width: 40px;
-                height: 40px;
-                font-size: 0.8em;
-            }
-            
-            .author-info h4 {
-                font-size: 0.9em;
-            }
-
-            .footer-grid {
+            .forecast-metrics {
                 grid-template-columns: 1fr;
-                gap: 15px;
             }
-            
-            .footer-col h3 {
-                font-size: 0.9em;
-                margin-bottom: 10px;
+
+            .section {
+                padding: 78px 0;
             }
-            
-            .footer-col a {
-                font-size: 0.85em;
+
+            .features {
+                padding-top: 88px;
             }
-            
-            .footer-social {
-                gap: 12px;
+
+            .feature-card,
+            .story-card,
+            .community-card,
+            .cta-shell,
+            .signal-band,
+            .footer-shell,
+            .quick-start-shell {
+                padding: 24px;
             }
-            
-            .footer-social a {
-                width: 36px;
-                height: 36px;
-                font-size: 0.9em;
-            }
-            
-            .footer-bottom {
-                font-size: 0.8em;
-            }
-            
-            .cta h2 {
-                font-size: 1.4em;
-            }
-            
-            .cta p {
-                font-size: 0.95em;
-            }
-            
-            .instructions-banner h3 {
-                font-size: 1em;
-            }
-            
-            .instructions-banner ul {
-                margin-left: 15px;
-            }
-            
-            .instructions-banner li {
-                font-size: 0.85em;
+
+            .benefits-visual img {
+                min-height: 380px;
             }
         }
-        
-        /* Touch-friendly improvements */
-        @media (hover: none) and (pointer: coarse) {
-            .nav-btn,
-            .btn,
-            .language-btn,
-            .feature-card,
-            .flow-step,
-            .stat,
-            .testimonial,
-            .footer-col a,
-            .footer-social a {
-                min-height: 44px;
-                min-width: 44px;
+
+        @media (max-width: 520px) {
+            .logo-section img {
+                width: 52px;
+                height: 52px;
             }
-            
-            .nav-btn,
-            .btn,
-            .language-btn {
-                padding: 12px 20px;
+
+            .logo-text h1 {
+                font-size: 1.05rem;
+            }
+
+            .hero-text .subtitle,
+            .section-heading p,
+            .cta-shell p,
+            .story-card p {
+                font-size: 0.96rem;
+            }
+
+            .feature-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .benefit-item {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition: none !important;
+            }
+
+            .reveal {
+                opacity: 1;
+                transform: none;
             }
         }
     </style>
-    <link rel="stylesheet" href="/css/mobile-hardening.css">
-    <script src="/js/mobile-hardening.js" defer></script>
 </head>
-<body class="loading">
-    <!-- Splash Screen -->
+<body>
     <div id="page-loader">
-        <img src="/fahamu-logo.png" alt="Loading..." class="loader-logo">
+        <div class="loader-card">
+            <img src="/fahamu-logo.png" alt="Fahamu Shamba logo" class="loader-logo">
+            <div class="loader-copy">
+                <strong>Preparing your smart farming dashboard</strong>
+                <span>Loading local insights, forecasts, and market signals</span>
+            </div>
+            <div class="loader-spinner" aria-hidden="true"></div>
+        </div>
     </div>
 
-    <!-- HEADER -->
-    <header>
-        <div class="header-content">
-            <a href="/" class="logo-section">
-                <img src="/fahamu-logo.png" alt="Fahamu Shamba">
-                <div class="logo-text">
-                    <h1>Fahamu Shamba</h1>
-                    <p>Smart Farming</p>
-                </div>
-            </a>
-            <div style="display: flex; gap: 20px;;">
-                <div class="language-toggle">
-                    <button class="language-btn align-items: center active" data-lang="en" onclick="changeLanguage('en')" title="English">🇬🇧 EN</button>
-                    <button class="language-btn" data-lang="sw" onclick="changeLanguage('sw')" title="Kiswahili">🇰🇪 SW</button>
-                    <button class="language-btn" data-lang="luo" onclick="changeLanguage('luo')" title="Dholuo">🌍 LUO</button>
-                </div>
-                <div class="nav-buttons">
-                    <a href="/ussd-simulator" class="nav-btn nav-ussd" title="Test USSD for feature phones">
-                        <i class="fas fa-mobile-alt"></i> <span data-i18n="nav.ussd">USSD Test</span>
-                    </a>
-                    <a href="/login.html" class="nav-btn nav-login" title="Already have an account? Log in here">
-                        <i class="fas fa-sign-in-alt"></i> <span data-i18n="nav.login">Login</span>
-                    </a>
-                    <a href="/signup.html" class="nav-btn nav-signup" title="Create a new account to get started">
-                        <i class="fas fa-user-plus"></i> <span data-i18n="nav.signup">Sign Up</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
+    <div class="page-shell">
+        <header>
+            <div class="container header-content">
+                <a href="/" class="logo-section" aria-label="Fahamu Shamba home">
+                    <img src="/fahamu-logo.png" alt="Fahamu Shamba Logo">
+                    <div class="logo-text">
+                        <h1>Fahamu Shamba</h1>
+                        <p data-i18n="header.tagline">Smart farming for Siaya</p>
+                    </div>
+                </a>
 
-    <!-- HERO SECTION -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h1 data-i18n="hero.headline">Smart Farming Decisions, Powered by AI</h1>
-                    <p data-i18n="hero.subtext">Get personalized crop recommendations based on your soil, weather, and market. Increase yields by 30% and reduce wasted inputs by 25%.</p>
-            <div class="hero-buttons">
-                        <a href="/signup.html" class="btn btn-primary" title="Create an account and get started">
-                            <i class="fas fa-user-plus"></i> <span data-i18n="hero.createAccount">Create Account</span>
+                <div class="header-actions">
+                    <div class="language-selector">
+                        <label for="headerLanguageSelect" data-i18n="nav.languageLabel">Language</label>
+                        <select id="headerLanguageSelect" class="language-select" aria-label="Select Language">
+                            <option value="en">English</option>
+                            <option value="sw">Kiswahili</option>
+                            <option value="luo">Dholuo</option>
+                        </select>
+                    </div>
+
+                    <div class="nav-buttons">
+                        <a href="/login.html" class="nav-btn nav-ghost" data-i18n="nav.login">
+                            <i class="fas fa-right-to-bracket"></i>
+                            Login
                         </a>
-                        <a href="/login.html" class="btn btn-secondary" title="Log in to your account">
-                            <i class="fas fa-sign-in-alt"></i> <span data-i18n="hero.learnMore">Log In</span>
+                        <a href="/signup.html" class="nav-btn nav-signup" data-i18n="nav.createAccount">
+                            <i class="fas fa-user-plus"></i>
+                            Create Account
                         </a>
                     </div>
                 </div>
-                <div class="hero-visual">
-                    🌾
-                </div>
             </div>
-            <div class="scroll-indicator">
-                <i class="fas fa-chevron-down"></i>
-            </div>
-        </div>
-    </section>
+        </header>
 
-    <!-- FEATURES SECTION -->
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title" data-i18n="features.title">What You Get</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon green">🌱</div>
-                    <div class="feature-content">
-                        <h3 data-i18n="features.crops.name">Crop Predictions</h3>
-                        <p data-i18n="features.crops.desc">AI-powered recommendations tailored to your soil type, weather, and farm size.</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon blue">☁️</div>
-                    <div class="feature-content">
-                        <h3 data-i18n="features.weather.name">Weather Forecasts</h3>
-                        <p data-i18n="features.weather.desc">Real-time weather data and forecasts for all 5 sub-counties in Siaya.</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon orange">📊</div>
-                    <div class="feature-content">
-                        <h3 data-i18n="features.market.name">Market Insights</h3>
-                        <p data-i18n="features.market.desc">Track crop prices across 6 markets to maximize your profit potential.</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon green">🧪</div>
-                    <div class="feature-content">
-                        <h3 data-i18n="features.soil.name">Soil Analysis</h3>
-                        <p data-i18n="features.soil.desc">Detailed soil quality reports with nutrient management recommendations.</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon blue">🌍</div>
-                    <div class="feature-content">
-                        <h3 data-i18n="features.languages.name">Multilingual Support</h3>
-                        <p data-i18n="features.languages.desc">Choose your language: English, Kiswahili, or Dholuo. Understand Fahamu Shamba in the language you know best.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        <main>
+            <section class="hero">
+                <div class="container">
+                    <div class="hero-grid">
+                        <div class="hero-text">
+                            <div class="eyebrow">
+                                <i class="fas fa-seedling"></i>
+                                Weather, markets, and crop guidance in one place
+                            </div>
+                            <h1 data-i18n="hero.headline">Grow Smarter, Harvest Better</h1>
+                            <p class="subtitle" data-i18n="hero.subtext">Transform your farm with real-time weather data, soil insights, market prices, and crop recommendations tailored to Siaya County.</p>
 
-    <!-- FLOW SECTION -->
-    <section class="flow">
-        <div class="container">
-            <h2 class="section-title" data-i18n="howItWorks.title">How It Works in 4 Steps</h2>
-            <div class="flow-diagram">
-                <div class="flow-step">
-                    <span class="flow-icon">👨‍🌾</span>
-                    <div class="flow-num">1</div>
-                    <h4 data-i18n="howItWorks.steps.0.title">Your Profile</h4>
-                    <p data-i18n="howItWorks.steps.0.desc">Enter farm details</p>
-                </div>
-                <div class="flow-step">
-                    <span class="flow-icon">🤖</span>
-                    <div class="flow-num">2</div>
-                    <h4 data-i18n="howItWorks.steps.1.title">AI Analysis</h4>
-                    <p data-i18n="howItWorks.steps.1.desc">ML models analyze</p>
-                </div>
-                <div class="flow-step">
-                    <span class="flow-icon">💡</span>
-                    <div class="flow-num">3</div>
-                    <h4 data-i18n="howItWorks.steps.2.title">Recommendations</h4>
-                    <p data-i18n="howItWorks.steps.2.desc">Get top crops</p>
-                </div>
-                <div class="flow-step">
-                    <span class="flow-icon">📈</span>
-                    <div class="flow-num">4</div>
-                    <h4 data-i18n="howItWorks.steps.3.title">Grow & Profit</h4>
-                    <p data-i18n="howItWorks.steps.3.desc">Increase yield</p>
-                </div>
-            </div>
-        </div>
-    </section>
+                            <div class="hero-buttons">
+                                <a href="/signup.html" class="btn btn-primary" data-i18n="hero.createAccount">
+                                    <i class="fas fa-user-plus"></i>
+                                    Create Free Account
+                                </a>
+                                <a href="/login.html" class="btn btn-secondary" data-i18n="hero.signIn">
+                                    <i class="fas fa-arrow-right"></i>
+                                    Sign In
+                                </a>
+                            </div>
 
-    <!-- STATS SECTION -->
-    <section class="stats">
-        <div class="container">
-            <h2 class="section-title" data-i18n="stats.title">Proven Results</h2>
-            <div class="stats-grid">
-                <div class="stat">
-                    <div class="stat-number">30%</div>
-                    <div class="stat-label" data-i18n="stats.yield.label">Higher Yields</div>
-                    <div class="stat-desc" data-i18n="stats.yield.desc">Average increase with our recommendations</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">25%</div>
-                    <div class="stat-label" data-i18n="stats.cost.label">Cost Savings</div>
-                    <div class="stat-desc" data-i18n="stats.cost.desc">Less wasted inputs</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">5</div>
-                    <div class="stat-label" data-i18n="stats.counties.label">Sub-Counties</div>
-                    <div class="stat-desc" data-i18n="stats.counties.desc">Serving all Siaya</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label" data-i18n="stats.free.label">Free Access</div>
-                    <div class="stat-desc" data-i18n="stats.free.desc">No hidden charges</div>
-                </div>
-            </div>
-        </div>
-    </section>
+                            <div class="trust-row">
+                                <div class="trust-pill">
+                                    <i class="fas fa-cloud-sun-rain"></i>
+                                    Real-time weather alerts
+                                </div>
+                                <div class="trust-pill">
+                                    <i class="fas fa-sack-dollar"></i>
+                                    Market price visibility
+                                </div>
+                                <div class="trust-pill">
+                                    <i class="fas fa-language"></i>
+                                    English, Kiswahili, and Dholuo
+                                </div>
+                            </div>
+                        </div>
 
-    <!-- TESTIMONIALS SECTION -->
-    <section class="testimonials">
-        <div class="container">
-            <h2 class="section-title" data-i18n="testimonials.title">What Farmers Say</h2>
-            <div class="testimonials-container">
-                <div class="testimonial">
-                    <div class="stars">★★★★★</div>
-                    <p class="testimonial-text" data-i18n="testimonials.james.text">"Fahamu Shamba helped me increase my bean yield by 40%. I now use data instead of guessing."</p>
-                    <div class="testimonial-author">
-                        <div class="avatar">JO</div>
-                        <div class="author-info">
-                            <h4 data-i18n="testimonials.james.name">James Ochieng</h4>
-                            <p data-i18n="testimonials.james.location">Bondo</p>
+                        <div class="hero-side">
+                            <div class="hero-panel forecast-card">
+                                <div class="forecast-card-header">
+                                    <div>
+                                        <strong>Today on your farm</strong>
+                                        <span>Fast signals to help you plan the next move</span>
+                                    </div>
+                                    <div class="status-badge">
+                                        <i class="fas fa-circle"></i>
+                                        Live updates
+                                    </div>
+                                </div>
+
+                                <div class="forecast-metrics">
+                                    <div class="metric-card">
+                                        <span>Rain Outlook</span>
+                                        <strong>72%</strong>
+                                        <p>Good planting window this week</p>
+                                    </div>
+                                    <div class="metric-card">
+                                        <span>Market Pulse</span>
+                                        <strong>KES 4,850</strong>
+                                        <p>Maize trending upward</p>
+                                    </div>
+                                    <div class="metric-card">
+                                        <span>Soil Status</span>
+                                        <strong>Moderate</strong>
+                                        <p>Nitrogen boost recommended</p>
+                                    </div>
+                                    <div class="metric-card">
+                                        <span>Best Action</span>
+                                        <strong>Prepare beds</strong>
+                                        <p>Rain expected in 2 days</p>
+                                    </div>
+                                </div>
+
+                                <div class="task-card">
+                                    <div class="task-item">
+                                        <i class="fas fa-cloud-rain"></i>
+                                        <div>
+                                            <strong>Check rainfall before planting</strong>
+                                            <span>Time irrigation and seed placement with local forecasts.</span>
+                                        </div>
+                                    </div>
+                                    <div class="task-item">
+                                        <i class="fas fa-chart-line"></i>
+                                        <div>
+                                            <strong>Watch market shifts early</strong>
+                                            <span>Track price movement before deciding when to sell.</span>
+                                        </div>
+                                    </div>
+                                    <div class="task-item">
+                                        <i class="fas fa-flask"></i>
+                                        <div>
+                                            <strong>Adjust inputs with confidence</strong>
+                                            <span>Use crop and soil guidance instead of guesswork.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="testimonial">
-                    <div class="stars">★★★★★</div>
-                    <p class="testimonial-text" data-i18n="testimonials.mary.text">"The weather forecasts are incredibly accurate. I avoided crop loss during the dry season."</p>
-                    <div class="testimonial-author">
-                        <div class="avatar">MK</div>
-                        <div class="author-info">
-                            <h4 data-i18n="testimonials.mary.name">Mary Kipchoge</h4>
-                            <p data-i18n="testimonials.mary.location">Ugunja</p>
+            </section>
+
+            <section class="metrics-bar">
+                <div class="container">
+                    <div class="metrics-grid">
+                        <div class="metric-highlight reveal">
+                            <span>Crops Supported</span>
+                            <strong>45+</strong>
+                            <p>Recommendations matched to local conditions.</p>
+                        </div>
+                        <div class="metric-highlight reveal">
+                            <span>Active Farmers</span>
+                            <strong>12k+</strong>
+                            <p>Growing with shared insights across Siaya.</p>
+                        </div>
+                        <div class="metric-highlight reveal">
+                            <span>Sub-Counties</span>
+                            <strong>5</strong>
+                            <p>Localized weather and advisory coverage.</p>
+                        </div>
+                        <div class="metric-highlight reveal">
+                            <span>Access Cost</span>
+                            <strong>Free</strong>
+                            <p>No subscription barrier for getting started.</p>
                         </div>
                     </div>
                 </div>
-                <div class="testimonial">
-                    <div class="stars">★★★★★</div>
-                    <p class="testimonial-text" data-i18n="testimonials.peter.text">"Market prices tool saved me from planting the wrong crop. My income is up 35% this year!"</p>
-                    <div class="testimonial-author">
-                        <div class="avatar">PM</div>
-                        <div class="author-info">
-                            <h4 data-i18n="testimonials.peter.name">Peter Mwangi</h4>
-                            <p data-i18n="testimonials.peter.location">Yala</p>
+            </section>
+
+            <section class="section quick-start">
+                <div class="container">
+                    <div class="quick-start-shell reveal">
+                        <div class="section-heading" style="margin-bottom: 22px;">
+                            <div class="eyebrow">
+                                <i class="fas fa-compass"></i>
+                                Start where you are
+                            </div>
+                            <h2>Choose the fastest path into the platform</h2>
+                            <p>Instead of making every visitor interpret the whole page first, the landing experience now gives three clear ways to move forward immediately.</p>
+                        </div>
+
+                        <div class="quick-start-grid">
+                            <article class="quick-card">
+                                <i class="fas fa-user-plus"></i>
+                                <h3>I’m new to Fahamu Shamba</h3>
+                                <p>Create an account, set your farm details, and start receiving recommendations that match your location and crops.</p>
+                                <a class="quick-link" href="/signup.html">
+                                    Create an account
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </article>
+
+                            <article class="quick-card">
+                                <i class="fas fa-seedling"></i>
+                                <h3>I want guidance before I decide</h3>
+                                <p>See crop recommendations and explore how the platform supports weather timing, market awareness, and better field planning.</p>
+                                <a class="quick-link" href="/recommendations.html">
+                                    Explore recommendations
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </article>
+
+                            <article class="quick-card">
+                                <i class="fas fa-right-to-bracket"></i>
+                                <h3>I already have an account</h3>
+                                <p>Return to your account quickly and continue from where you left off without hunting for the next step.</p>
+                                <a class="quick-link" href="/login.html">
+                                    Sign in now
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section features" id="features">
+                <div class="container">
+                    <div class="section-heading reveal">
+                        <div class="eyebrow">
+                            <i class="fas fa-layer-group"></i>
+                            A sharper toolkit for better farm choices
+                        </div>
+                        <h2>Everything you need to move from guesswork to action</h2>
+                        <p>Fahamu Shamba brings local weather, crop intelligence, soil guidance, and market signals together in a landing experience that immediately shows value.</p>
+                    </div>
+
+                    <div class="features-grid">
+                        <article class="feature-card reveal">
+                            <div class="feature-top">
+                                <div class="feature-icon"><i class="fas fa-seedling"></i></div>
+                                <div class="feature-tag">Crop planning</div>
+                            </div>
+                            <h3>Crop recommendations that reflect local reality</h3>
+                            <p>See what to plant based on weather patterns, land conditions, and market demand so each season starts with better odds.</p>
+                        </article>
+
+                        <article class="feature-card reveal">
+                            <div class="feature-top">
+                                <div class="feature-icon"><i class="fas fa-cloud-sun"></i></div>
+                                <div class="feature-tag">Weather clarity</div>
+                            </div>
+                            <h3>Forecasts that help with timing, not just awareness</h3>
+                            <p>Use sub-county weather signals to plan planting, spraying, harvesting, and labor with fewer costly surprises.</p>
+                        </article>
+
+                        <article class="feature-card reveal">
+                            <div class="feature-top">
+                                <div class="feature-icon"><i class="fas fa-scale-balanced"></i></div>
+                                <div class="feature-tag">Market timing</div>
+                            </div>
+                            <h3>Track market movement before you commit to a sale</h3>
+                            <p>Compare price direction and choose better selling moments instead of reacting after the market has already shifted.</p>
+                        </article>
+
+                        <article class="feature-card reveal">
+                            <div class="feature-top">
+                                <div class="feature-icon"><i class="fas fa-vial-circle-check"></i></div>
+                                <div class="feature-tag">Soil support</div>
+                            </div>
+                            <h3>Improve soil decisions with practical guidance</h3>
+                            <p>Get simple recommendations around nutrient management and soil readiness so your inputs go where they matter most.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="container">
+                    <div class="signal-band reveal">
+                        <div class="signal-grid">
+                            <div class="signal-copy">
+                                <div class="eyebrow">
+                                    <i class="fas fa-wave-square"></i>
+                                    A clearer signal from your landing page
+                                </div>
+                                <h3>Show the product’s value before users ever log in</h3>
+                                <p>The page now frames Fahamu Shamba as a decision companion: fast to understand, grounded in field realities, and focused on the questions farmers ask every day.</p>
+                            </div>
+
+                            <div class="signal-list">
+                                <div class="signal-row">
+                                    <div>
+                                        <strong>Localized weather planning</strong>
+                                        <span>Rain, heat, and timing guidance</span>
+                                    </div>
+                                    <div class="signal-score">High value</div>
+                                </div>
+                                <div class="signal-row">
+                                    <div>
+                                        <strong>Crop and soil decision support</strong>
+                                        <span>Actionable inputs for each season</span>
+                                    </div>
+                                    <div class="signal-score">Field ready</div>
+                                </div>
+                                <div class="signal-row">
+                                    <div>
+                                        <strong>Market awareness for better sales</strong>
+                                        <span>Visibility before produce leaves the farm</span>
+                                    </div>
+                                    <div class="signal-score">Profit focused</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="container">
+                    <div class="benefits-layout">
+                        <div class="benefits-visual reveal">
+                            <img src="/images/irewolede-PvwdlXqo85k-unsplash.jpg" alt="Farmer standing in a field">
+                            <div class="benefits-overlay">
+                                <strong>Designed for confidence in the field</strong>
+                                <p>When the platform explains the next step clearly, it becomes easier to act on weather changes, market shifts, and crop planning decisions.</p>
+                            </div>
+                        </div>
+
+                        <div class="benefits-stack">
+                            <div class="section-heading reveal">
+                                <div class="eyebrow">
+                                    <i class="fas fa-check-circle"></i>
+                                    Why the experience feels stronger
+                                </div>
+                                <h2>Farmers arrive and immediately understand what the platform can do</h2>
+                                <p>The layout is now more direct, more confident, and easier to scan across desktop and mobile without losing the warmth of the product.</p>
+                            </div>
+
+                            <article class="benefit-item reveal">
+                                <div class="benefit-icon"><i class="fas fa-bullseye"></i></div>
+                                <div>
+                                    <h4>Stronger first impression</h4>
+                                    <p>The hero section now explains the product’s purpose quickly and supports it with a visual panel that feels like a real product preview.</p>
+                                </div>
+                            </article>
+
+                            <article class="benefit-item reveal">
+                                <div class="benefit-icon"><i class="fas fa-mobile-screen-button"></i></div>
+                                <div>
+                                    <h4>Better mobile pacing</h4>
+                                    <p>Cards stack more naturally, actions stay easy to reach, and the content hierarchy remains clear on smaller screens.</p>
+                                </div>
+                            </article>
+
+                            <article class="benefit-item reveal">
+                                <div class="benefit-icon"><i class="fas fa-language"></i></div>
+                                <div>
+                                    <h4>Language controls stay visible</h4>
+                                    <p>The selector remains prominent in the header, preserving the multilingual experience instead of treating it like a hidden setting.</p>
+                                </div>
+                            </article>
+
+                            <article class="benefit-item reveal">
+                                <div class="benefit-icon"><i class="fas fa-people-group"></i></div>
+                                <div>
+                                    <h4>More trust, less clutter</h4>
+                                    <p>Clear metrics, concise messaging, and calmer spacing make the landing page feel more credible and less crowded.</p>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section journey">
+                <div class="container">
+                    <div class="section-heading reveal">
+                        <div class="eyebrow">
+                            <i class="fas fa-route"></i>
+                            Getting started stays simple
+                        </div>
+                        <h2>From sign-up to smarter decisions in four clear steps</h2>
+                        <p>The page now explains the journey in a cleaner rhythm so new users can see how fast they can move from registration to useful insights.</p>
+                    </div>
+
+                    <div class="steps-container">
+                        <article class="step reveal">
+                            <div class="step-number">1</div>
+                            <div class="step-icon">📝</div>
+                            <h4>Create your account</h4>
+                            <p>Sign up with your basic details and start building a farm profile in minutes.</p>
+                        </article>
+
+                        <article class="step reveal">
+                            <div class="step-number">2</div>
+                            <div class="step-icon">📍</div>
+                            <h4>Set your farm context</h4>
+                            <p>Add your location, crop interests, and field details so recommendations feel relevant.</p>
+                        </article>
+
+                        <article class="step reveal">
+                            <div class="step-number">3</div>
+                            <div class="step-icon">📈</div>
+                            <h4>Receive local insights</h4>
+                            <p>Open weather, market, and crop guidance built around the conditions that matter most.</p>
+                        </article>
+
+                        <article class="step reveal">
+                            <div class="step-number">4</div>
+                            <div class="step-icon">🌿</div>
+                            <h4>Act with more confidence</h4>
+                            <p>Use the recommendations to time planting, protect yield, and improve profit over time.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section story">
+                <div class="container">
+                    <div class="story-shell">
+                        <div class="story-card reveal">
+                            <div class="eyebrow">
+                                <i class="fas fa-tractor"></i>
+                                Built around real farming pressure
+                            </div>
+                            <h2>Join a growing community using data to make better farm calls</h2>
+                            <p>Across Siaya County, farmers are looking for a simpler way to connect weather, markets, and crop choices. The refined landing page now tells that story with much more clarity.</p>
+
+                            <div class="story-stats">
+                                <div class="story-stat">
+                                    <strong>12,000+</strong>
+                                    <span>Active farmers using the platform</span>
+                                </div>
+                                <div class="story-stat">
+                                    <strong>30%</strong>
+                                    <span>Potential yield lift with better decisions</span>
+                                </div>
+                                <div class="story-stat">
+                                    <strong>25%</strong>
+                                    <span>Possible savings from smarter inputs</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="community-card reveal">
+                            <div class="section-heading" style="margin-bottom: 12px;">
+                                <h2 style="font-size: clamp(1.8rem, 4vw, 2.6rem);">What this landing page now communicates better</h2>
+                                <p>Instead of feeling like a collection of sections, the page now tells a coherent story from promise to proof to action.</p>
+                            </div>
+
+                            <div class="community-list">
+                                <div class="community-item">
+                                    <i class="fas fa-eye"></i>
+                                    <div>
+                                        <strong>Clear value in the first screen</strong>
+                                        <span>Users can tell quickly that the platform helps with weather timing, crop planning, and market decisions.</span>
+                                    </div>
+                                </div>
+                                <div class="community-item">
+                                    <i class="fas fa-layer-group"></i>
+                                    <div>
+                                        <strong>More consistent visual language</strong>
+                                        <span>Typography, spacing, surfaces, and color now feel connected instead of pieced together.</span>
+                                    </div>
+                                </div>
+                                <div class="community-item">
+                                    <i class="fas fa-bolt"></i>
+                                    <div>
+                                        <strong>Faster route to key actions</strong>
+                                        <span>Primary actions stay prominent so users can move to sign-up, login, or insights without friction.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="container">
+                    <div class="section-heading reveal">
+                        <div class="eyebrow">
+                            <i class="fas fa-quote-left"></i>
+                            Social proof
+                        </div>
+                        <h2>What farmers say when the right information arrives at the right time</h2>
+                        <p>These testimonials still support the same trust story, but now sit inside a cleaner section with stronger spacing and easier scanning.</p>
+                    </div>
+
+                    <div class="testimonials-grid">
+                        <article class="testimonial reveal">
+                            <div class="stars">★★★★★</div>
+                            <p class="testimonial-text">"I was skeptical at first, but after following the crop recommendations, my bean harvest increased by 40%. Fahamu Shamba changed my farming game."</p>
+                            <div class="testimonial-author">
+                                <div class="avatar">JO</div>
+                                <div class="author-info">
+                                    <h4>James Ochieng</h4>
+                                    <p>Bondo Sub-County</p>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="testimonial reveal">
+                            <div class="stars">★★★★★</div>
+                            <p class="testimonial-text">"The weather forecasts are incredibly accurate. Last season, I avoided planting during the dry spell and saved on water costs."</p>
+                            <div class="testimonial-author">
+                                <div class="avatar">MK</div>
+                                <div class="author-info">
+                                    <h4>Mary Kipchoge</h4>
+                                    <p>Ugunja Sub-County</p>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="testimonial reveal">
+                            <div class="stars">★★★★★</div>
+                            <p class="testimonial-text">"The market prices tool is a game-changer. I now know when to plant and when to sell. My income jumped 35% this year."</p>
+                            <div class="testimonial-author">
+                                <div class="avatar">PM</div>
+                                <div class="author-info">
+                                    <h4>Peter Mwangi</h4>
+                                    <p>Alego Sub-County</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cta">
+                <div class="container">
+                    <div class="cta-shell reveal">
+                        <div>
+                            <div class="eyebrow">
+                                <i class="fas fa-leaf"></i>
+                                Ready for the next step
+                            </div>
+                            <h2>Start farming with a clearer next step</h2>
+                            <p>The landing page now pushes people toward action faster, with less scrolling, less guesswork, and a much clearer route into the product.</p>
+                        </div>
+
+                        <div class="cta-buttons">
+                            <a href="/signup.html" class="btn btn-primary" data-i18n="hero.createAccount">
+                                <i class="fas fa-user-plus"></i>
+                                Create Free Account
+                            </a>
+                            <a href="/recommendations.html" class="btn btn-secondary">
+                                <i class="fas fa-chart-line"></i>
+                                Explore Recommendations
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <div class="footer-shell">
+                    <div class="footer-top">
+                        <div class="footer-brand">
+                            <h3>Fahamu Shamba</h3>
+                            <p>Helping farmers across Siaya make more confident decisions with weather signals, crop guidance, market awareness, and practical farm intelligence.</p>
+                        </div>
+
+                        <div class="footer-col">
+                            <h4>Platform</h4>
+                            <ul>
+                                <li><a href="/recommendations.html">Recommendations</a></li>
+                                <li><a href="/market.html">Market Prices</a></li>
+                                <li><a href="/community.html">Community</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="footer-col">
+                            <h4>Access</h4>
+                            <ul>
+                                <li><a href="/signup.html">Create Account</a></li>
+                                <li><a href="/login.html">Login</a></li>
+                                <li><a href="/ussd-simulator.html">USSD Demo</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="footer-col">
+                            <h4>Support</h4>
+                            <ul>
+                                <li><a href="/feedback.html">Contact</a></li>
+                                <li><a href="/feedback.html">Feedback</a></li>
+                                <li><a href="/service-market.html">Services</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="footer-bottom">
+                        <p>&copy; 2025 Fahamu Shamba. Empowering Siaya farmers with smart digital tools.</p>
+                        <div class="footer-social">
+                            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- INSTRUCTIONS SECTION -->
-    <section style="background: white; padding: 40px 0;">
-        <div class="container">
-            <div class="instructions-banner">
-                <h3 data-i18n="instructions.title">🚀 Getting Started is Easy!</h3>
-                <p><strong data-i18n="instructions.subtitle">Choose your path:</strong></p>
-                <ul>
-                    <li data-i18n="instructions.new"><strong>New Farmer?</strong> Click the <strong style="color: #F57C00;">Sign Up</strong> button to create an account. You'll set up your profile in just 2 minutes.</li>
-                    <li data-i18n="instructions.existing"><strong>Already have an account?</strong> Click the <strong style="color: #2E7D32;">Login</strong> button to access your personalized dashboard.</li>
-                    <li data-i18n="instructions.first"><strong>First time here?</strong> Check out the <strong>Features</strong> section above to see what Fahamu Shamba offers.</li>
-                </ul>
-                <p data-i18n="instructions.after" style="margin-top: 12px; font-size: 0.9em; color: #666;">After logging in, you'll access your <strong>Farmer Dashboard</strong> where you can get crop recommendations, check weather forecasts, and track market prices.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA SECTION -->
-    <section class="cta" id="cta">
-        <div class="container">
-            <h2 data-i18n="cta.title">Ready to Transform Your Farming?</h2>
-            <p data-i18n="cta.subtitle">Join hundreds of farmers across Siaya County making smarter decisions with Fahamu Shamba.</p>
-            <div class="cta-buttons">
-                <a href="/signup.html" class="btn btn-primary" title="Create your free account now">
-                    <i class="fas fa-user-plus"></i> <span data-i18n="cta.createAccount">Create Free Account</span>
-                </a>
-                <a href="/login.html" class="btn btn-secondary" title="Log in to your existing account">
-                    <i class="fas fa-sign-in-alt"></i> <span data-i18n="cta.login">Log In to Dashboard</span>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h3 data-i18n="footer.about">About</h3>
-                    <ul>
-                        <li><a href="#" data-i18n="footer.aboutLinks.0">About Fahamu Shamba</a></li>
-                        <li><a href="#" data-i18n="footer.aboutLinks.1">Our Mission</a></li>
-                        <li><a href="#" data-i18n="footer.aboutLinks.2">Blog</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h3 data-i18n="footer.resources">Resources</h3>
-                    <ul>
-                        <li><a href="#" data-i18n="footer.resourceLinks.0">Crop Guide</a></li>
-                        <li><a href="#" data-i18n="footer.resourceLinks.1">Market Trends</a></li>
-                        <li><a href="#" data-i18n="footer.resourceLinks.2">Help Center</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h3 data-i18n="footer.legal">Legal</h3>
-                    <ul>
-                        <li><a href="#" data-i18n="footer.legalLinks.0">Privacy Policy</a></li>
-                        <li><a href="#" data-i18n="footer.legalLinks.1">Terms of Service</a></li>
-                        <li><a href="#" data-i18n="footer.legalLinks.2">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h3 data-i18n="footer.languages">Languages</h3>
-                    <ul>
-                        <li><a href="#">🇬🇧 English</a></li>
-                        <li><a href="#">🇰🇪 Kiswahili</a></li>
-                        <li><a href="#">🌍 Dholuo</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <div class="footer-social">
-                    <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
-                    <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                </div>
-                <p data-i18n="footer.copyright">&copy; 2025 Fahamu Shamba. All rights reserved. Empowering Siaya's farmers with AI-driven intelligence.</p>
-            </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
 
     <script>
-        // Language change function
-        function changeLanguage(lang) {
-            if (typeof translator !== 'undefined' && translator) {
-                translator.setLanguage(lang);
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('page-loader');
+            document.body.classList.add('loaded');
+
+            if (loader) {
+                setTimeout(() => {
+                    loader.classList.add('fade-out');
+                }, 220);
             }
-        }
-        
-        // Force Swahili on first visit for this page version, then keep translator preference.
-        const langInitKey = 'fahamu-language-init-v3';
-        const savedLang = localStorage.getItem('fahamuLanguage');
-        const hasInitializedLang = localStorage.getItem(langInitKey) === '1';
-        const supportedLangs = ['en', 'sw', 'luo'];
+        });
 
-        if (!hasInitializedLang) {
-            localStorage.setItem('fahamuLanguage', 'sw');
-            localStorage.setItem(langInitKey, '1');
-            window.addEventListener('load', () => changeLanguage('sw'));
-        } else if (savedLang && supportedLangs.includes(savedLang)) {
-            window.addEventListener('load', () => changeLanguage(savedLang));
-        } else {
-            localStorage.setItem('fahamuLanguage', 'sw');
-            window.addEventListener('load', () => changeLanguage('sw'));
-        }
-
-        // Smooth scroll for links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href !== '#') {
-                    e.preventDefault();
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+            anchor.addEventListener('click', (event) => {
+                const href = anchor.getAttribute('href');
+                if (href && href !== '#') {
+                    event.preventDefault();
                     const target = document.querySelector(href);
                     if (target) {
-                        target.scrollIntoView({ behavior: 'smooth' });
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 }
             });
         });
+
+        const langSelect = document.getElementById('headerLanguageSelect');
+        if (langSelect) {
+            langSelect.value = typeof getCurrentLanguage === 'function' ? getCurrentLanguage() : 'en';
+            langSelect.addEventListener('change', (event) => {
+                const nextLanguage = event.target.value;
+                if (typeof changeLanguage === 'function') {
+                    changeLanguage(nextLanguage);
+                }
+            });
+        }
+
+        const revealItems = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.18,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        revealItems.forEach((item, index) => {
+            item.style.transitionDelay = `${Math.min(index * 45, 220)}ms`;
+            revealObserver.observe(item);
+        });
     </script>
 </body>
 </html>
-

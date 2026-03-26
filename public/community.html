@@ -232,6 +232,50 @@
         .story-actions { display: flex; gap: 20px; margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border); }
         .story-action { display: flex; align-items: center; gap: 5px; color: var(--text-light); cursor: pointer; transition: color 0.3s; }
         .story-action:hover { color: var(--primary); }
+
+        .active-members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 15px;
+        }
+        .active-member-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(45,118,73,0.05), rgba(74,157,111,0.08));
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .active-member-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .active-member-name {
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        .active-member-meta {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        .presence-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            display: inline-block;
+            margin-right: 6px;
+            box-shadow: 0 0 0 4px rgba(39,174,96,0.15);
+        }
         
         /* Buttons */
         .btn-group { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -583,6 +627,20 @@
                 </div>
             </div>
         </div>
+
+        <div class="community-section">
+            <div class="section-title">
+                <i class="fas fa-signal"></i> Farmers Active Right Now
+            </div>
+            <div class="community-card">
+                <div id="activeMembersList" class="active-members-grid">
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="fas fa-user-friends"></i>
+                        <p>No active farmers visible yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <!-- Ask Question -->
         <div class="community-section">
@@ -737,6 +795,7 @@
     
     <script>
         let currentUser = null;
+        let presenceInterval = null;
         
         // Navigation functions
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
@@ -797,6 +856,18 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
                 return { success: false, message: error.message };
             }
         }
+
+        function getCurrentUserPhone() {
+            return currentUser?.phone || currentUser?.phoneNumber || currentUser?.phone_number || '';
+        }
+
+        function getCurrentUserName() {
+            return currentUser?.name || currentUser?.username || currentUser?.firstName || 'Farmer';
+        }
+
+        function getCurrentUserSubCounty() {
+            return currentUser?.subCounty || currentUser?.sub_county || currentUser?.location || '';
+        }
         
         // Load community stats
         async function loadCommunityStats() {
@@ -805,7 +876,48 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
                 document.getElementById('totalQuestions').textContent = result.stats?.totalQuestions || 0;
                 document.getElementById('totalAnswers').textContent = result.stats?.totalAnswers || 0;
                 document.getElementById('totalStories').textContent = result.stats?.approvedStories || 0;
-                document.getElementById('totalMembers').textContent = result.stats?.totalMembers || 0;
+                document.getElementById('totalMembers').textContent = result.stats?.activeMembers || 0;
+            }
+        }
+
+        async function updateCommunityPresence() {
+            const memberPhone = getCurrentUserPhone();
+            if (!memberPhone) return;
+
+            await apiCall('/api/community/presence', {
+                method: 'POST',
+                body: JSON.stringify({
+                    memberPhone,
+                    memberName: getCurrentUserName(),
+                    subCounty: getCurrentUserSubCounty(),
+                    currentPage: 'community',
+                    status: 'online'
+                })
+            });
+        }
+
+        async function loadActiveMembers() {
+            const result = await apiCall('/api/community/active-members?limit=12');
+            const container = document.getElementById('activeMembersList');
+
+            if (result.success && result.data && result.data.length > 0) {
+                container.innerHTML = result.data.map(member => `
+                    <div class="active-member-card">
+                        <div class="active-member-avatar">${(member.member_name || 'F').charAt(0).toUpperCase()}</div>
+                        <div>
+                            <div class="active-member-name"><span class="presence-dot"></span>${member.member_name || 'Farmer'}</div>
+                            <div class="active-member-meta">${member.sub_county || 'Sub-county not shared'}</div>
+                            <div class="active-member-meta">Active in community just now</div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="fas fa-user-friends"></i>
+                        <p>No active farmers visible yet.</p>
+                    </div>
+                `;
             }
         }
         
@@ -903,8 +1015,8 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
                     title, 
                     category, 
                     content: details,
-                    authorPhone: currentUser?.phone || '',
-                    authorName: currentUser?.name || 'Anonymous'
+                    authorPhone: getCurrentUserPhone(),
+                    authorName: getCurrentUserName()
                 })
             });
             
@@ -916,6 +1028,7 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
                 document.getElementById('questionDetails').value = '';
                 loadQuestions();
                 loadCommunityStats();
+                loadActiveMembers();
             } else {
                 showToast(result.message || 'Failed to post question', 'error');
             }
@@ -932,8 +1045,8 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
                 body: JSON.stringify({ 
                     title, 
                     content,
-                    authorPhone: currentUser?.phone || '',
-                    authorName: currentUser?.name || 'Anonymous'
+                    authorPhone: getCurrentUserPhone(),
+                    authorName: getCurrentUserName()
                 })
             });
             
@@ -943,6 +1056,9 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
                 document.getElementById('storyTitle').value = '';
                 document.getElementById('storyContent').value = '';
                 loadStories();
+                loadMyStories();
+                loadCommunityStats();
+                loadActiveMembers();
             } else {
                 showToast(result.message || 'Failed to submit story', 'error');
             }
@@ -1045,8 +1161,8 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
                 body: JSON.stringify({ 
                     questionId: parseInt(questionId), 
                     content,
-                    authorPhone: currentUser?.phone || '',
-                    authorName: currentUser?.name || 'Anonymous'
+                    authorPhone: getCurrentUserPhone(),
+                    authorName: getCurrentUserName()
                 })
             });
             
@@ -1058,6 +1174,7 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
                 // Update the questions list
                 loadQuestions();
                 loadCommunityStats();
+                loadActiveMembers();
             } else {
                 showToast(result.message || 'Failed to post answer', 'error');
             }
@@ -1065,7 +1182,7 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
         
         // Load my questions
         async function loadMyQuestions() {
-            const userPhone = currentUser?.phone;
+            const userPhone = getCurrentUserPhone();
             if (!userPhone) {
                 const container = document.getElementById('myQuestionsList');
                 container.innerHTML = `
@@ -1120,7 +1237,7 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
         
         // Load my stories
         async function loadMyStories() {
-            const userPhone = currentUser?.phone;
+            const userPhone = getCurrentUserPhone();
             if (!userPhone) {
                 const container = document.getElementById('myStoriesList');
                 container.innerHTML = `
@@ -1198,8 +1315,8 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
             if (cached) {
                 try {
                     currentUser = JSON.parse(cached);
-                    if (nameEl) nameEl.textContent = currentUser.name || currentUser.username || 'Farmer';
-                    if (phoneEl) phoneEl.textContent = currentUser.phone || '—';
+                    if (nameEl) nameEl.textContent = getCurrentUserName();
+                    if (phoneEl) phoneEl.textContent = getCurrentUserPhone() || '—';
                 } catch (e) {
                     if (nameEl) nameEl.textContent = 'Farmer';
                 }
@@ -1235,6 +1352,15 @@ function changeLanguage(lang) { setLanguage(lang); translatePage(lang); }
             loadStories();
             loadMyQuestions();
             loadMyStories();
+            updateCommunityPresence();
+            loadActiveMembers();
+
+            if (presenceInterval) clearInterval(presenceInterval);
+            presenceInterval = setInterval(() => {
+                updateCommunityPresence();
+                loadActiveMembers();
+                loadCommunityStats();
+            }, 30000);
         });
     </script>
 </body>

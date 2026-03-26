@@ -85,13 +85,18 @@ Developer tool to test all API endpoints:
 | `backend/server.js` | Main API server (Express.js) |
 | `backend/recommendation-engine.js` | AI/ML scoring algorithm |
 | `backend/demo-data.js` | Sample crops, soil, weather, prices |
-| `backend/public/farmer-dashboard.html` | Web interface for farmers |
-| `backend/public/ussd-simulator.html` | Phone menu simulator |
-| `backend/public/api-tester.html` | API testing tool |
+| `public/dashboard.html` | Web interface for farmers |
+| `public/ussd-simulator.html` | Phone menu simulator |
 | `QUICKSTART.md` | Quick start guide |
 | `MVP_README.md` | Complete documentation |
 | `PROJECT_STRUCTURE.md` | Code organization |
 | `MVP_SUMMARY.md` | Executive summary |
+
+## Runtime Note
+
+Use `backend/server.js` as the single backend entrypoint.
+
+The legacy `api/` directory is retired and should not be used as a separate deployment target.
 
 ---
 

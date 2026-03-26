@@ -1,37 +1,34 @@
 #!/usr/bin/env node
 
 /**
- * Create Default Admin User
- * Creates the admin account with credentials: cjoarogo@gmail.com / Jemo@721
+ * Create or Reset Default Admin User
+ * Ensures the admin account uses credentials: cjoarogo@gmail.com / Jemo@721
  * Usage: node create-default-admin.js
  */
 
-import sqlite3 from 'sqlite3';
+import Database from 'better-sqlite3';
 import { hashPassword } from './admin-auth.js';
 import * as adminDB from './admin-database.js';
 
-const db = new sqlite3.Database('./fahamu_shamba.db', (err) => {
-  if (err) {
-    console.error('❌ Error opening database:', err.message);
-    process.exit(1);
-  }
-});
+let db;
+
+try {
+  db = new Database('./fahamu_shamba.db');
+} catch (error) {
+  console.error('❌ Error opening database:', error.message);
+  process.exit(1);
+}
 
 const dbAsync = {
-  run: (sql, params = []) =>
-    new Promise((resolve, reject) => {
-      db.run(sql, params, function(err) {
-        if (err) return reject(err);
-        resolve(this);
-      });
-    }),
-  get: (sql, params = []) =>
-    new Promise((resolve, reject) => {
-      db.get(sql, params, (err, row) => {
-        if (err) return reject(err);
-        resolve(row);
-      });
-    })
+  run: async (sql, params = []) => {
+    const stmt = db.prepare(sql);
+    const result = stmt.run(...params);
+    return { lastID: result.lastInsertRowid, changes: result.changes };
+  },
+  get: async (sql, params = []) => {
+    const stmt = db.prepare(sql);
+    return stmt.get(...params);
+  }
 };
 
 async function main() {
@@ -44,39 +41,49 @@ async function main() {
     // Initialize database if needed
     adminDB.initializeAdminDatabase(db, dbAsync);
 
-    // Check if admin already exists
-    const existingAdmin = await dbAsync.get(
-      'SELECT id FROM admin_users WHERE email = ?',
-      ['cjoarogo@gmail.com']
-    );
-
-    if (existingAdmin) {
-      console.log('⚠️  Admin account already exists');
-      console.log('\nEmail:    cjoarogo@gmail.com');
-      console.log('Password: Jemo@721');
-      console.log('\nTo reset, run: sqlite3 fahamu_shamba.db');
-      console.log('Then: DELETE FROM admin_users WHERE email = "cjoarogo@gmail.com";\n');
-      db.close();
-      return;
-    }
-
-    console.log('⏳ Creating default admin account...\n');
-
     const email = 'cjoarogo@gmail.com';
     const password = 'Jemo@721';
     const passwordHash = hashPassword(password);
 
-    const result = await adminDB.createAdminUser(
-      dbAsync,
-      email,
-      passwordHash,
-      'System',
-      'Administrator',
-      'super_admin',
-      'setup-script'
+    // Check if admin already exists
+    const existingAdmin = await dbAsync.get(
+      'SELECT id FROM admin_users WHERE email = ?',
+      [email]
     );
 
-    console.log('✅ Admin account created successfully!\n');
+    if (existingAdmin) {
+      console.log('⚠️  Admin account already exists');
+      console.log('⏳ Resetting admin credentials to the requested defaults...\n');
+
+      await dbAsync.run(
+        `UPDATE admin_users
+         SET password_hash = ?,
+             first_name = ?,
+             last_name = ?,
+             role = ?,
+             status = 'active',
+             failed_login_attempts = 0,
+             updated_at = CURRENT_TIMESTAMP
+         WHERE email = ?`,
+        [passwordHash, 'System', 'Administrator', 'super_admin', email]
+      );
+
+      console.log('✅ Existing admin account updated successfully!\n');
+    } else {
+      console.log('⏳ Creating default admin account...\n');
+
+      await adminDB.createAdminUser(
+        dbAsync,
+        email,
+        passwordHash,
+        'System',
+        'Administrator',
+        'super_admin',
+        'setup-script'
+      );
+
+      console.log('✅ Admin account created successfully!\n');
+    }
     console.log('╔════════════════════════════════════════════════════════╗');
     console.log(`║  Email:    cjoarogo@gmail.com                          ║`);
     console.log(`║  Password: Jemo@721                                    ║`);

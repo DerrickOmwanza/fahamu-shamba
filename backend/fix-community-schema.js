@@ -96,6 +96,47 @@ async function fixSchema() {
     await client.query('CREATE INDEX IF NOT EXISTS idx_stories_status ON success_stories(status)');
     console.log('✅ Success stories table created\n');
 
+    // Create service_requests table
+    console.log('📋 Creating service_requests table...');
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS service_requests (
+        id SERIAL PRIMARY KEY,
+        farmer_phone VARCHAR(20) NOT NULL,
+        farmer_name VARCHAR(100),
+        sub_county VARCHAR(100),
+        location VARCHAR(255),
+        field_size VARCHAR(100),
+        crop VARCHAR(100),
+        service_type VARCHAR(100),
+        description TEXT,
+        status VARCHAR(20) DEFAULT 'open',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query('CREATE INDEX IF NOT EXISTS idx_service_requests_farmer ON service_requests(farmer_phone)');
+    await client.query('CREATE INDEX IF NOT EXISTS idx_service_requests_status ON service_requests(status)');
+    console.log('✅ Service requests table created\n');
+
+    // Create service_applications table
+    console.log('📋 Creating service_applications table...');
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS service_applications (
+        id SERIAL PRIMARY KEY,
+        request_id INTEGER NOT NULL REFERENCES service_requests(id) ON DELETE CASCADE,
+        provider_phone VARCHAR(20) NOT NULL,
+        provider_name VARCHAR(100),
+        contact_info VARCHAR(255),
+        availability VARCHAR(100),
+        offer_price VARCHAR(100),
+        message TEXT,
+        status VARCHAR(20) DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query('CREATE INDEX IF NOT EXISTS idx_service_apps_request ON service_applications(request_id)');
+    await client.query('CREATE INDEX IF NOT EXISTS idx_service_apps_provider ON service_applications(provider_phone)');
+    console.log('✅ Service applications table created\n');
+
     // Create discussion_topics table
     console.log('📋 Creating discussion_topics table...');
     await client.query(`

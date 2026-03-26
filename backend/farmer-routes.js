@@ -25,6 +25,14 @@ router.post('/farmers/register', sanitizeInput, async (req, res) => {
       farmSize,
       waterSource,
       budget,
+      isGroup,
+      groupName,
+      groupRegistrationNumber,
+      groupDescription,
+      leaderFirstName,
+      leaderLastName,
+      leaderPhone,
+      leaderEmail,
       preferredLanguage
     } = req.body;
 
@@ -45,6 +53,14 @@ router.post('/farmers/register', sanitizeInput, async (req, res) => {
       });
     }
 
+    // Validate subCounty as well, avoid crashes
+    if (!subCounty || typeof subCounty !== 'string' || subCounty.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Subcounty is required'
+      });
+    }
+
     // Register farmer
     const result = await farmerDB.registerFarmer(req.dbAsync, {
       phoneNumber,
@@ -56,6 +72,14 @@ router.post('/farmers/register', sanitizeInput, async (req, res) => {
       farmSize: farmSize || 0,
       waterSource: waterSource || '',
       budget: budget || 0,
+      isGroup: !!isGroup,
+      groupName: groupName || null,
+      groupRegistrationNumber: groupRegistrationNumber || null,
+      groupDescription: groupDescription || null,
+      leaderFirstName: leaderFirstName || null,
+      leaderLastName: leaderLastName || null,
+      leaderPhone: leaderPhone || null,
+      leaderEmail: leaderEmail || null,
       preferredLanguage: preferredLanguage || 'english'
     });
 

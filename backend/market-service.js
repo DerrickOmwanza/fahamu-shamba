@@ -14,7 +14,7 @@ let db;
 
 function getDb() {
   if (!db) {
-    db = new Database('./fahamu_shamba.db');
+    db = new Database(path.join(__dirname, 'fahamu_shamba.db'));
   }
   return db;
 }
@@ -683,4 +683,3 @@ export default {
   getMarketStats,
   updatePrice
 };
-

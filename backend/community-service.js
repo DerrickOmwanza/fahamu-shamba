@@ -108,7 +108,136 @@ export function initializeCommunityDatabase(dbConnection) {
   database.exec(`CREATE INDEX IF NOT EXISTS idx_answers_question ON community_answers(question_id)`);
   database.exec(`CREATE INDEX IF NOT EXISTS idx_stories_status ON success_stories(status)`);
 
+  // Service marketplace tables
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS service_requests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      farmer_phone TEXT NOT NULL,
+      farmer_name TEXT,
+      sub_county TEXT,
+      location TEXT,
+      field_size TEXT,
+      crop TEXT,
+      service_type TEXT,
+      description TEXT,
+      status TEXT DEFAULT 'open',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS service_applications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      request_id INTEGER NOT NULL,
+      provider_phone TEXT NOT NULL,
+      provider_name TEXT,
+      contact_info TEXT,
+      availability TEXT,
+      offer_price TEXT,
+      message TEXT,
+      status TEXT DEFAULT 'pending',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (request_id) REFERENCES service_requests(id)
+    )
+  `);
+
+  database.exec(`CREATE INDEX IF NOT EXISTS idx_service_requests_farmer ON service_requests(farmer_phone)`);
+  database.exec(`CREATE INDEX IF NOT EXISTS idx_service_requests_status ON service_requests(status)`);
+  database.exec(`CREATE INDEX IF NOT EXISTS idx_service_apps_request ON service_applications(request_id)`);
+  database.exec(`CREATE INDEX IF NOT EXISTS idx_service_apps_provider ON service_applications(provider_phone)`);
+
   console.log('✅ Community database tables initialized');
+}
+
+// ==================== SERVICE MARKETPLACE ====================
+
+export function postServiceRequest(data) {
+  const { farmerPhone, farmerName, subCounty, location, fieldSize, crop, serviceType, description } = data;
+  if (!farmerPhone || !location || !serviceType || !description) {
+    return { success: false, error: 'farmerPhone, location, serviceType and description are required' };
+  }
+
+  const stmt = getDb().prepare(`
+    INSERT INTO service_requests (farmer_phone, farmer_name, sub_county, location, field_size, crop, service_type, description)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  const result = stmt.run(farmerPhone, farmerName || 'Unknown', subCounty || '', location, fieldSize || '', crop || '', serviceType, description);
+
+  return { success: true, requestId: result.lastInsertRowid, message: 'Service request posted successfully' };
+}
+
+export function getServiceRequests(options = {}) {
+  const { page = 1, limit = 20, subCounty, status } = options;
+  const offset = (page - 1) * limit;
+
+  let query = 'SELECT * FROM service_requests WHERE 1=1';
+  const params = [];
+
+  if (subCounty) {
+    query += ' AND sub_county = ?';
+    params.push(subCounty);
+  }
+  if (status) {
+    query += ' AND status = ?';
+    params.push(status);
+  }
+
+  query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+  params.push(limit, offset);
+
+  const requests = getDb().prepare(query).all(...params);
+  const total = getDb().prepare(`SELECT COUNT(*) as total FROM service_requests WHERE 1=1${subCounty ? ' AND sub_county = ?' : ''}${status ? ' AND status = ?' : ''}`).get(...(subCounty ? (status ? [subCounty, status] : [subCounty]) : (status ? [status] : []))).total || 0;
+
+  return {
+    success: true,
+    data: requests,
+    pagination: {
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit)
+    }
+  };
+}
+
+export function applyToServiceRequest(data) {
+  const { requestId, providerPhone, providerName, contactInfo, availability, offerPrice, message } = data;
+  if (!requestId || !providerPhone || !contactInfo || !offerPrice) {
+    return { success: false, error: 'requestId, providerPhone, contactInfo and offerPrice are required' };
+  }
+
+  const request = getDb().prepare('SELECT * FROM service_requests WHERE id = ?').get(requestId);
+  if (!request) {
+    return { success: false, error: 'Service request not found' };
+  }
+
+  const stmt = getDb().prepare(`
+    INSERT INTO service_applications (request_id, provider_phone, provider_name, contact_info, availability, offer_price, message)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  stmt.run(requestId, providerPhone, providerName || 'No Name', contactInfo, availability || '', offerPrice, message || '');
+
+  return { success: true, message: 'Application submitted successfully' };
+}
+
+export function getServiceRequestApplications(requestId) {
+  if (!requestId) {
+    return { success: false, error: 'requestId is required' };
+  }
+
+  const applications = getDb().prepare('SELECT * FROM service_applications WHERE request_id = ? ORDER BY created_at DESC').all(requestId);
+  return { success: true, data: applications };
+}
+
+export function getProviderApplications(providerPhone) {
+  if (!providerPhone) {
+    return { success: false, error: 'providerPhone is required' };
+  }
+
+  const applications = getDb().prepare('SELECT * FROM service_applications WHERE provider_phone = ? ORDER BY created_at DESC').all(providerPhone);
+  return { success: true, data: applications };
 }
 
 // ==================== QUESTIONS & ANSWERS ====================

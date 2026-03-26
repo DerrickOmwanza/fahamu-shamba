@@ -19,8 +19,14 @@ export function initializeFarmerDatabase(db) {
       soil_type TEXT,
       farm_size REAL,
       water_source TEXT,
-      budget REAL,
-      preferred_language TEXT DEFAULT 'english',
+      budget REAL,      is_group BOOLEAN DEFAULT 0,
+      group_name TEXT,
+      group_registration_number TEXT,
+      group_description TEXT,
+      leader_first_name TEXT,
+      leader_last_name TEXT,
+      leader_phone TEXT,
+      leader_email TEXT,      preferred_language TEXT DEFAULT 'english',
       profile_complete BOOLEAN DEFAULT 0,
       last_recommendation TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -52,6 +58,14 @@ export async function registerFarmer(dbAsync, farmerData) {
       farmSize,
       waterSource,
       budget,
+      isGroup = false,
+      groupName = null,
+      groupRegistrationNumber = null,
+      groupDescription = null,
+      leaderFirstName = null,
+      leaderLastName = null,
+      leaderPhone = null,
+      leaderEmail = null,
       preferredLanguage = 'english'
     } = farmerData;
 
@@ -63,9 +77,11 @@ export async function registerFarmer(dbAsync, farmerData) {
     const result = await dbAsync.run(
       `INSERT INTO farmers (
         phone_number, first_name, last_name, email, sub_county, 
-        soil_type, farm_size, water_source, budget, preferred_language, 
-        profile_complete
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        soil_type, farm_size, water_source, budget, is_group,
+        group_name, group_registration_number, group_description,
+        leader_first_name, leader_last_name, leader_phone, leader_email,
+        preferred_language, profile_complete
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         phoneNumber,
         firstName || '',
@@ -76,6 +92,14 @@ export async function registerFarmer(dbAsync, farmerData) {
         farmSize || 0,
         waterSource || '',
         budget || 0,
+        isGroup ? 1 : 0,
+        groupName || null,
+        groupRegistrationNumber || null,
+        groupDescription || null,
+        leaderFirstName || null,
+        leaderLastName || null,
+        leaderPhone || null,
+        leaderEmail || null,
         preferredLanguage,
         1 // Profile complete on registration
       ]

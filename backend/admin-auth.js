@@ -1,8 +1,24 @@
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 
-const ADMIN_SECRET = process.env.ADMIN_JWT_SECRET || 'admin-secret-key-change-in-production';
-const REFRESH_SECRET = process.env.ADMIN_REFRESH_SECRET || 'refresh-secret-key-change-in-production';
+const isProduction = process.env.NODE_ENV === 'production';
+const ADMIN_SECRET = process.env.ADMIN_JWT_SECRET || 'dev-only-admin-jwt-secret';
+const REFRESH_SECRET = process.env.ADMIN_REFRESH_SECRET || 'dev-only-admin-refresh-secret';
+const PASSWORD_SALT = process.env.PASSWORD_SALT || 'dev-only-password-salt';
+
+if (isProduction) {
+  if (!process.env.ADMIN_JWT_SECRET) {
+    throw new Error('ADMIN_JWT_SECRET must be set in production');
+  }
+
+  if (!process.env.ADMIN_REFRESH_SECRET) {
+    throw new Error('ADMIN_REFRESH_SECRET must be set in production');
+  }
+
+  if (!process.env.PASSWORD_SALT) {
+    throw new Error('PASSWORD_SALT must be set in production');
+  }
+}
 const TOKEN_EXPIRY = '15m'; // Short-lived access token
 const REFRESH_EXPIRY = '7d'; // Longer-lived refresh token
 
@@ -22,8 +38,7 @@ export function generateAccessToken(adminId, email, role = 'admin') {
       adminId, 
       email, 
       role,
-      type: 'access',
-      iat: Date.now()
+      type: 'access'
     },
     ADMIN_SECRET,
     { expiresIn: TOKEN_EXPIRY }
@@ -38,8 +53,7 @@ export function generateRefreshToken(adminId, email) {
     { 
       adminId, 
       email,
-      type: 'refresh',
-      iat: Date.now()
+      type: 'refresh'
     },
     REFRESH_SECRET,
     { expiresIn: REFRESH_EXPIRY }
@@ -80,17 +94,44 @@ export function verifyRefreshToken(token) {
  * Hash password using SHA-256
  */
 export function hashPassword(password) {
-  return crypto
-    .createHash('sha256')
-    .update(password + process.env.PASSWORD_SALT || 'default-salt')
-    .digest('hex');
+  const derivedKey = crypto.scryptSync(password, PASSWORD_SALT, 64).toString('hex');
+  return `scrypt$${derivedKey}`;
 }
 
 /**
  * Verify password
  */
 export function verifyPassword(password, hash) {
-  return hashPassword(password) === hash;
+  if (!hash) {
+    return false;
+  }
+
+  // Backward-compatible support for legacy SHA-256 hashes.
+  if (!hash.startsWith('scrypt$')) {
+    const legacyHash = crypto
+      .createHash('sha256')
+      .update(`${password}${PASSWORD_SALT}`)
+      .digest('hex');
+
+    try {
+      return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(legacyHash));
+    } catch {
+      return false;
+    }
+  }
+
+  const [, storedDerivedKey] = hash.split('$');
+  if (!storedDerivedKey) {
+    return false;
+  }
+
+  const suppliedKey = crypto.scryptSync(password, PASSWORD_SALT, 64).toString('hex');
+
+  try {
+    return crypto.timingSafeEqual(Buffer.from(storedDerivedKey), Buffer.from(suppliedKey));
+  } catch {
+    return false;
+  }
 }
 
 /**

@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Console - Fahamu Shamba</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/js/chart.min.js" defer></script>
+    <style>
+        :root {
+            --forest-950: #142b1b;
+            --forest-900: #1b4228;
+            --forest-800: #2c6b41;
+            --forest-700: #3c8751;
+            --leaf-400: #86c77d;
+            --gold-500: #efb243;
+            --gold-300: #f8d996;
+            --rose-500: #ca5e49;
+            --sky-200: #d7eef2;
+            --mist-100: #eef5ee;
+            --mist-200: #e5efe5;
+            --cream-100: #fbf6e7;
+            --white: #ffffff;
+            --ink-900: #162019;
+            --ink-700: #445648;
+            --ink-500: #6d7d71;
+            --border: rgba(22, 32, 25, 0.09);
+            --shadow-sm: 0 12px 24px rgba(20, 42, 28, 0.08);
+            --shadow-md: 0 22px 48px rgba(20, 42, 28, 0.12);
+            --shadow-lg: 0 30px 80px rgba(20, 42, 28, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Manrope', sans-serif;
+            color: var(--ink-900);
+            background:
+                radial-gradient(circle at top left, rgba(239, 178, 67, 0.12), transparent 26%),
+                radial-gradient(circle at bottom right, rgba(44, 107, 65, 0.14), transparent 30%),
+                linear-gradient(180deg, #f7fbf4 0%, #edf4ec 54%, #f6f1e6 100%);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 12% 14%, rgba(255, 255, 255, 0.82), transparent 22%),
+                radial-gradient(circle at 84% 86%, rgba(60, 135, 81, 0.06), transparent 24%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .container {
+            width: min(1280px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: var(--shadow-sm);
+            color: var(--forest-900);
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow i {
+            color: var(--gold-500);
+        }
+
+        .app-shell {
+            min-height: 100vh;
+            padding: 22px;
+            background:
+                linear-gradient(0deg, rgba(105, 150, 73, 0.84), rgba(105, 150, 73, 0.84)),
+                url('/images/admin-console-bg.jpg') center/cover no-repeat fixed;
+        }
+
+        .auth-shell {
+            min-height: 100vh;
+            display: grid;
+            align-items: center;
+            padding: 28px 0;
+        }
+
+        .auth-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .hero-panel,
+        .auth-panel,
+        .panel {
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(14px);
+        }
+
+        .hero-panel {
+            padding: 34px;
+            border-radius: 38px;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at top right, rgba(248, 217, 150, 0.22), transparent 22%),
+                linear-gradient(135deg, rgba(20, 43, 27, 0.98) 0%, rgba(44, 107, 65, 0.92) 62%, rgba(74, 148, 93, 0.86) 100%);
+            color: var(--white);
+        }
+
+        .hero-panel h1 {
+            margin: 18px 0 14px;
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2.8rem, 6vw, 4.9rem);
+            line-height: 0.96;
+            max-width: 11ch;
+        }
+
+        .hero-panel p {
+            margin: 0;
+            max-width: 58ch;
+            color: rgba(255, 255, 255, 0.84);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .hero-security {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        .security-card {
+            padding: 18px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .security-card span {
+            display: block;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+
+        .security-card strong {
+            display: block;
+            font-size: 1.18rem;
+            line-height: 1.2;
+        }
+
+        .auth-panel {
+            padding: 30px;
+            border-radius: 34px;
+        }
+
+        .auth-panel h2 {
+            margin: 16px 0 8px;
+            color: var(--forest-950);
+            font-size: 1.45rem;
+        }
+
+        .auth-panel p {
+            margin: 0 0 18px;
+            color: var(--ink-700);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .stack {
+            display: grid;
+            gap: 14px;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .field label {
+            color: var(--forest-950);
+            font-size: 0.86rem;
+            font-weight: 800;
+        }
+
+        .field input,
+        .field textarea,
+        .field select {
+            width: 100%;
+            padding: 13px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(22, 32, 25, 0.12);
+            background: rgba(255, 255, 255, 0.96);
+            color: var(--ink-900);
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .field textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .field input:focus,
+        .field textarea:focus,
+        .field select:focus {
+            border-color: rgba(44, 107, 65, 0.6);
+            box-shadow: 0 0 0 4px rgba(44, 107, 65, 0.12);
+        }
+
+        .btn,
+        .ghost-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+            border-radius: 999px;
+            padding: 14px 18px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--forest-800), var(--forest-700));
+            color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .ghost-btn {
+            background: rgba(22, 32, 25, 0.06);
+            color: var(--forest-950);
+        }
+
+        .btn:hover,
+        .ghost-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .notice {
+            padding: 12px 14px;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
+
+        .notice.info {
+            background: rgba(215, 238, 242, 0.7);
+            color: var(--forest-900);
+        }
+
+        .notice.error {
+            background: rgba(255, 227, 222, 0.9);
+            color: #992d25;
+        }
+
+        .notice.success {
+            background: rgba(219, 244, 221, 0.82);
+            color: #176237;
+        }
+
+        .muted {
+            color: var(--ink-500);
+            font-size: 0.86rem;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 20px;
+            border-radius: 28px;
+            margin-bottom: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand img {
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            object-fit: cover;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .brand h1 {
+            margin: 0;
+            color: var(--forest-950);
+            font-size: 1.18rem;
+        }
+
+        .brand p {
+            margin: 4px 0 0;
+            color: var(--ink-500);
+            font-size: 0.82rem;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(22, 32, 25, 0.08);
+            box-shadow: var(--shadow-sm);
+            color: var(--forest-950);
+            font-size: 0.84rem;
+            font-weight: 800;
+        }
+
+        .chip.status-online {
+            color: #176237;
+        }
+
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 240px minmax(0, 1fr);
+            gap: 18px;
+            min-height: calc(100vh - 44px);
+        }
+
+        .admin-sidebar {
+            padding: 22px 18px;
+            border-radius: 0 0 0 0;
+            background: rgba(38, 56, 75, 0.94);
+            color: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+
+        .admin-sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #b4d860;
+            font-weight: 800;
+            font-size: 0.98rem;
+            margin-bottom: 26px;
+        }
+
+        .admin-sidebar-brand img {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            object-fit: cover;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .admin-nav {
+            display: grid;
+            gap: 8px;
+        }
+
+        .admin-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.78);
+            padding: 12px 14px;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.22s ease, color 0.22s ease, transform 0.22s ease;
+        }
+
+        .admin-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--white);
+            transform: translateX(2px);
+        }
+
+        .admin-nav-btn.active {
+            background: #2f6f31;
+            color: var(--white);
+        }
+
+        .admin-nav-btn i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .content-shell {
+            display: grid;
+            gap: 18px;
+        }
+
+        .workspace-card {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            box-shadow: var(--shadow-lg);
+            border-radius: 18px;
+        }
+
+        .workspace-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 18px 20px;
+        }
+
+        .workspace-header h2 {
+            margin: 0;
+            color: #25582d;
+            font-size: 1.1rem;
+        }
+
+        .workspace-header p {
+            margin: 4px 0 0;
+            color: var(--ink-500);
+            font-size: 0.82rem;
+        }
+
+        .workspace-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .admin-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #2d6a39;
+            color: var(--white);
+            font-weight: 900;
+        }
+
+        .workspace-main {
+            padding: 12px 18px 18px;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .section-panel {
+            padding: 20px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.97);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(22, 32, 25, 0.08);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 320px;
+            gap: 18px;
+        }
+
+        .config-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(22, 32, 25, 0.08);
+        }
+
+        .config-row:last-child {
+            border-bottom: none;
+        }
+
+        .config-copy strong {
+            display: block;
+            color: var(--forest-950);
+            margin-bottom: 4px;
+        }
+
+        .config-copy span {
+            color: var(--ink-700);
+            font-size: 0.9rem;
+        }
+
+        .toggle-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: var(--forest-950);
+        }
+
+        .toggle-wrap input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 340px;
+            gap: 20px;
+        }
+
+        .main-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .section-card {
+            padding: 24px;
+            border-radius: 32px;
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .section-head h2 {
+            margin: 0;
+            color: var(--forest-950);
+            font-size: 1.18rem;
+        }
+
+        .section-head p {
+            margin: 6px 0 0;
+            color: var(--ink-700);
+            font-size: 0.92rem;
+            max-width: 58ch;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            padding: 18px;
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 242, 0.9));
+            border: 1px solid rgba(22, 32, 25, 0.08);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-card span {
+            display: block;
+            color: var(--ink-500);
+            font-size: 0.76rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+
+        .stat-card strong {
+            display: block;
+            color: var(--forest-950);
+            font-size: 1.7rem;
+            margin-bottom: 6px;
+        }
+
+        .stat-card p {
+            margin: 0;
+            color: var(--ink-700);
+            font-size: 0.88rem;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .chart-card {
+            padding: 20px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid rgba(22, 32, 25, 0.08);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-card h3 {
+            margin: 0 0 12px;
+            color: var(--forest-950);
+            font-size: 1rem;
+        }
+
+        .chart-card canvas {
+            width: 100% !important;
+            height: 280px !important;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .list-card,
+        .form-card {
+            padding: 22px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid rgba(22, 32, 25, 0.08);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .list-card h3,
+        .form-card h3 {
+            margin: 0 0 14px;
+            color: var(--forest-950);
+            font-size: 1rem;
+        }
+
+        .list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .item {
+            padding: 16px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(243, 247, 242, 0.92));
+            border: 1px solid rgba(22, 32, 25, 0.08);
+        }
+
+        .item-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .item strong {
+            color: var(--forest-950);
+            font-size: 0.96rem;
+        }
+
+        .item p,
+        .item small {
+            margin: 0;
+            color: var(--ink-700);
+            line-height: 1.55;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag.info {
+            background: rgba(215, 238, 242, 0.8);
+            color: var(--forest-900);
+        }
+
+        .tag.warning {
+            background: rgba(248, 217, 150, 0.55);
+            color: #8a5a0f;
+        }
+
+        .tag.critical {
+            background: rgba(255, 227, 222, 0.86);
+            color: #a0392b;
+        }
+
+        .tag.success {
+            background: rgba(219, 244, 221, 0.8);
+            color: #176237;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 24px;
+            border: 1px solid rgba(22, 32, 25, 0.08);
+        }
+
+        table {
+            width: 100%;
+            min-width: 720px;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(22, 32, 25, 0.08);
+        }
+
+        th {
+            color: var(--ink-500);
+            font-size: 0.76rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+        }
+
+        td {
+            color: var(--ink-700);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .divider {
+            height: 1px;
+            margin: 18px 0;
+            background: rgba(22, 32, 25, 0.08);
+        }
+
+        .sidebar-stack {
+            display: grid;
+            gap: 20px;
+        }
+
+        .small-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .small-item {
+            padding: 14px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(243, 247, 242, 0.92));
+            border: 1px solid rgba(22, 32, 25, 0.08);
+        }
+
+        .small-item strong {
+            display: block;
+            color: var(--forest-950);
+            margin-bottom: 4px;
+            font-size: 0.92rem;
+        }
+
+        .small-item span {
+            color: var(--ink-700);
+            font-size: 0.86rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 1120px) {
+            .dashboard-grid,
+            .auth-grid,
+            .data-grid,
+            .chart-grid,
+            .config-grid,
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .stats-grid,
+            .hero-security {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                width: min(1280px, calc(100% - 22px));
+            }
+
+            .stats-grid,
+            .hero-security {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-panel,
+            .auth-panel,
+            .section-card,
+            .list-card,
+            .form-card,
+            .panel {
+                padding: 20px;
+            }
+
+            .topbar {
+                padding: 16px;
+            }
+
+            .topbar-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .app-shell {
+                padding: 12px;
+            }
+
+            .workspace-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .workspace-actions {
+                justify-content: flex-start;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="authView" class="auth-shell">
+        <div class="container auth-grid">
+            <section class="hero-panel">
+                <div class="eyebrow">
+                    <i class="fas fa-shield-halved"></i>
+                    High security admin access
+                </div>
+                <h1>Secure control for the whole platform.</h1>
+                <p>This console is built for administrators only. Access requires password verification, email OTP, session binding, CSRF protection, and short-lived access tokens that stay in session memory only.</p>
+
+                <div class="hero-security">
+                    <div class="security-card">
+                        <span>Authentication</span>
+                        <strong>Password + OTP</strong>
+                    </div>
+                    <div class="security-card">
+                        <span>Storage</span>
+                        <strong>Session only</strong>
+                    </div>
+                    <div class="security-card">
+                        <span>Protection</span>
+                        <strong>CSRF enforced</strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="auth-panel">
+                <div class="eyebrow">
+                    <i class="fas fa-lock"></i>
+                    Admin sign in
+                </div>
+                <h2 id="authTitle">Enter your admin credentials</h2>
+                <p id="authSubtitle">Nothing is stored in local storage. Session data is cleared when the browser tab closes.</p>
+
+                <div id="authNotice" class="notice info hidden"></div>
+
+                <form id="loginForm" class="stack">
+                    <div class="field">
+                        <label for="email">Admin Email</label>
+                        <input id="email" name="email" type="email" autocomplete="username" required>
+                    </div>
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <input id="password" name="password" type="password" autocomplete="current-password" required>
+                    </div>
+                    <button class="btn" type="submit">
+                        <i class="fas fa-arrow-right-to-bracket"></i>
+                        Continue to OTP
+                    </button>
+                </form>
+
+                <form id="otpForm" class="stack hidden">
+                    <div class="field">
+                        <label for="otp">One-Time Password</label>
+                        <input id="otp" name="otp" inputmode="numeric" pattern="[A-Za-z0-9]{6,8}" maxlength="8" autocomplete="one-time-code" required>
+                    </div>
+                    <button class="btn" type="submit">
+                        <i class="fas fa-shield"></i>
+                        Verify and open dashboard
+                    </button>
+                    <button id="backToLogin" class="ghost-btn" type="button">
+                        <i class="fas fa-arrow-left"></i>
+                        Back
+                    </button>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <div id="dashboardView" class="app-shell hidden">
+        <div class="admin-layout">
+            <aside class="admin-sidebar">
+                <div class="admin-sidebar-brand">
+                    <img src="/fahamu-logo.png" alt="Fahamu Shamba">
+                    <span><i class="fas fa-seedling"></i> Admin Panel</span>
+                </div>
+
+                <nav class="admin-nav">
+                    <button class="admin-nav-btn active" data-section="dashboardSection"><i class="fas fa-chart-line"></i><span>Dashboard</span></button>
+                    <button class="admin-nav-btn" data-section="farmersSection"><i class="fas fa-users"></i><span>Farmers</span></button>
+                    <button class="admin-nav-btn" data-section="alertsSection"><i class="fas fa-triangle-exclamation"></i><span>Alerts</span></button>
+                    <button class="admin-nav-btn" data-section="auditSection"><i class="fas fa-clipboard-list"></i><span>Audit Logs</span></button>
+                    <button id="securityNavButton" class="admin-nav-btn hidden" data-section="securitySection"><i class="fas fa-shield-halved"></i><span>Security Logs</span></button>
+                    <button id="adminsNavButton" class="admin-nav-btn hidden" data-section="adminsSection"><i class="fas fa-user-shield"></i><span>Admin Users</span></button>
+                    <button class="admin-nav-btn" data-section="configSection"><i class="fas fa-sliders"></i><span>System Config</span></button>
+                    <button id="sidebarLogoutButton" class="admin-nav-btn"><i class="fas fa-arrow-right-from-bracket"></i><span>Logout</span></button>
+                </nav>
+            </aside>
+
+            <div class="content-shell">
+                <section class="workspace-card">
+                    <div class="workspace-header">
+                        <div>
+                            <h2 id="workspaceTitle">Admin Dashboard</h2>
+                            <p id="adminMeta">Authenticated session</p>
+                        </div>
+
+                        <div class="workspace-actions">
+                            <div class="admin-avatar" id="adminAvatar">A</div>
+                            <div id="sessionStatus" class="chip status-online">
+                                <i class="fas fa-shield-check"></i>
+                                Secure session active
+                            </div>
+                            <div id="roleChip" class="chip">
+                                <i class="fas fa-user-shield"></i>
+                                Role
+                            </div>
+                            <button id="refreshButton" class="ghost-btn" type="button">
+                                <i class="fas fa-rotate-right"></i>
+                                Refresh
+                            </button>
+                            <button id="logoutButton" class="ghost-btn" type="button">
+                                <i class="fas fa-arrow-right-from-bracket"></i>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <div id="dashboardNotice" class="notice info hidden"></div>
+
+                <div class="workspace-main">
+                    <section id="dashboardSection" class="admin-section active">
+                        <div class="section-panel">
+                            <div class="section-head">
+                                <div>
+                                    <div class="eyebrow">
+                                        <i class="fas fa-chart-column"></i>
+                                        Platform overview
+                                    </div>
+                                    <h2>System health and operational metrics</h2>
+                                    <p>See total farmers, profile adoption, prediction usage, active alerts, and recent administrator activity in one place.</p>
+                                </div>
+                                <div class="section-actions">
+                                    <div class="chip">
+                                        <i class="fas fa-clock"></i>
+                                        <span id="lastUpdated">Waiting for first sync</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <span>Total Farmers</span>
+                                    <strong id="statFarmers">--</strong>
+                                    <p id="statFarmersCopy">Loading records.</p>
+                                </div>
+                                <div class="stat-card">
+                                    <span>Farmer Profiles</span>
+                                    <strong id="statProfiles">--</strong>
+                                    <p id="statProfilesCopy">Checking active profiles.</p>
+                                </div>
+                                <div class="stat-card">
+                                    <span>Predictions</span>
+                                    <strong id="statPredictions">--</strong>
+                                    <p id="statPredictionsCopy">Counting generated predictions.</p>
+                                </div>
+                                <div class="stat-card">
+                                    <span>Active Alerts</span>
+                                    <strong id="statAlerts">--</strong>
+                                    <p id="statAlertsCopy">Monitoring unresolved alerts.</p>
+                                </div>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <div class="chart-grid">
+                                <div class="chart-card">
+                                    <h3>Platform footprint</h3>
+                                    <canvas id="overviewChart"></canvas>
+                                </div>
+                                <div class="chart-card">
+                                    <h3>Alert severity mix</h3>
+                                    <canvas id="alertChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="farmersSection" class="admin-section">
+                        <div class="section-panel">
+                            <div class="section-head">
+                                <div>
+                                    <h2>Farmer records</h2>
+                                    <p>Review active farmer profiles and check which locations and records are entering the platform most recently.</p>
+                                </div>
+                            </div>
+                            <div class="list-card">
+                                <h3>Farmer profiles</h3>
+                                <div class="table-wrap">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Farmer ID</th>
+                                                <th>Name</th>
+                                                <th>Phone</th>
+                                                <th>Location</th>
+                                                <th>Created</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="profilesTable"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="alertsSection" class="admin-section">
+                        <div class="section-panel">
+                            <div class="section-head">
+                                <div>
+                                    <h2>System alerts</h2>
+                                    <p>Create and review alerts that need administrator action across auth, data, and operations.</p>
+                                </div>
+                            </div>
+                            <div class="data-grid">
+                                <div class="list-card">
+                                    <h3>Active system alerts</h3>
+                                    <div id="alertsList" class="list"></div>
+                                </div>
+                                <div class="form-card">
+                                    <h3>Create system alert</h3>
+                                    <form id="alertForm" class="stack">
+                                        <div class="field">
+                                            <label for="alertType">Alert Type</label>
+                                            <input id="alertType" name="alertType" placeholder="database, weather, auth..." required>
+                                        </div>
+                                        <div class="field">
+                                            <label for="alertSeverity">Severity</label>
+                                            <select id="alertSeverity" name="severity">
+                                                <option value="info">Info</option>
+                                                <option value="warning" selected>Warning</option>
+                                                <option value="critical">Critical</option>
+                                            </select>
+                                        </div>
+                                        <div class="field">
+                                            <label for="alertTitle">Title</label>
+                                            <input id="alertTitle" name="title" required>
+                                        </div>
+                                        <div class="field">
+                                            <label for="alertMessage">Message</label>
+                                            <textarea id="alertMessage" name="message"></textarea>
+                                        </div>
+                                        <button class="btn" type="submit">
+                                            <i class="fas fa-bell"></i>
+                                            Create alert
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="auditSection" class="admin-section">
+                        <div class="section-panel">
+                            <div class="section-head">
+                                <div>
+                                    <h2>Audit logs</h2>
+                                    <p>Inspect administrator activity for visibility into login, data access, and system actions.</p>
+                                </div>
+                            </div>
+                            <div class="list-card">
+                                <h3>Recent audit activity</h3>
+                                <div id="activityList" class="list"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="securitySection" class="admin-section hidden">
+                        <div class="section-panel">
+                            <div class="section-head">
+                                <div>
+                                    <h2>Security logs</h2>
+                                    <p>Super administrators can review high-risk events, failed attempts, and suspicious security patterns here.</p>
+                                </div>
+                            </div>
+                            <div class="list-card">
+                                <h3>Recent security events</h3>
+                                <div id="securityList" class="list"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="adminsSection" class="admin-section hidden">
+                        <div class="section-panel">
+                            <div class="section-head">
+                                <div>
+                                    <h2>Administrator accounts</h2>
+                                    <p>Manage administrator visibility and provision new users with temporary credentials under the super admin role policy.</p>
+                                </div>
+                            </div>
+                            <div class="data-grid">
+                                <div class="list-card">
+                                    <h3>Admin users</h3>
+                                    <div class="table-wrap">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Email</th>
+                                                    <th>Role</th>
+                                                    <th>Status</th>
+                                                    <th>MFA</th>
+                                                    <th>Last Login</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="adminsTable"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <section id="adminCreationCard" class="form-card hidden">
+                                    <h3>Create admin user</h3>
+                                    <form id="adminForm" class="stack">
+                                        <div class="field">
+                                            <label for="adminEmail">Email</label>
+                                            <input id="adminEmail" name="email" type="email" required>
+                                        </div>
+                                        <div class="field">
+                                            <label for="adminPassword">Temporary Password</label>
+                                            <input id="adminPassword" name="password" type="password" minlength="12" required>
+                                        </div>
+                                        <div class="field">
+                                            <label for="adminFirstName">First Name</label>
+                                            <input id="adminFirstName" name="firstName">
+                                        </div>
+                                        <div class="field">
+                                            <label for="adminLastName">Last Name</label>
+                                            <input id="adminLastName" name="lastName">
+                                        </div>
+                                        <div class="field">
+                                            <label for="adminRole">Role</label>
+                                            <select id="adminRole" name="role">
+                                                <option value="admin">Admin</option>
+                                                <option value="moderator">Moderator</option>
+                                                <option value="super_admin">Super Admin</option>
+                                            </select>
+                                        </div>
+                                        <button class="btn" type="submit">
+                                            <i class="fas fa-user-plus"></i>
+                                            Create secure admin
+                                        </button>
+                                    </form>
+                                </section>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="configSection" class="admin-section">
+                        <div class="section-panel">
+                            <div class="section-head">
+                                <div>
+                                    <h2>System configuration</h2>
+                                    <p>Security-centric defaults and operational settings are presented here in a layout similar to your reference dashboard.</p>
+                                </div>
+                            </div>
+                            <div class="config-grid">
+                                <div class="list-card">
+                                    <h3>System configuration</h3>
+                                    <div class="stack">
+                                        <div class="field">
+                                            <label for="smsProvider">SMS Provider</label>
+                                            <select id="smsProvider" disabled>
+                                                <option selected>Safaricom</option>
+                                            </select>
+                                        </div>
+                                        <div class="config-row">
+                                            <div class="config-copy">
+                                                <strong>Require MFA for all admins</strong>
+                                                <span>All administrator logins must complete OTP verification before any dashboard access is granted.</span>
+                                            </div>
+                                            <label class="toggle-wrap">
+                                                <input type="checkbox" checked disabled>
+                                                <span>Enforced</span>
+                                            </label>
+                                        </div>
+                                        <button class="btn" type="button" id="configSaveButton">
+                                            <i class="fas fa-floppy-disk"></i>
+                                            Save Configuration
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="list-card">
+                                    <h3>Security posture</h3>
+                                    <div class="small-list">
+                                        <div class="small-item">
+                                            <strong>Session-only storage</strong>
+                                            <span>Access, refresh, CSRF, and session identifiers remain in <code>sessionStorage</code>, not persistent local storage.</span>
+                                        </div>
+                                        <div class="small-item">
+                                            <strong>Bound session checks</strong>
+                                            <span>Authenticated admin routes require matching session ID and request fingerprint validation on the server.</span>
+                                        </div>
+                                        <div class="small-item">
+                                            <strong>Mutation hardening</strong>
+                                            <span>Alert creation, admin creation, and logout submit CSRF headers on every state-changing request.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'fahamu_admin_session';
+
+        const authView = document.getElementById('authView');
+        const dashboardView = document.getElementById('dashboardView');
+        const authNotice = document.getElementById('authNotice');
+        const dashboardNotice = document.getElementById('dashboardNotice');
+        const loginForm = document.getElementById('loginForm');
+        const otpForm = document.getElementById('otpForm');
+        const authTitle = document.getElementById('authTitle');
+        const authSubtitle = document.getElementById('authSubtitle');
+        const refreshButton = document.getElementById('refreshButton');
+        const logoutButton = document.getElementById('logoutButton');
+        const sidebarLogoutButton = document.getElementById('sidebarLogoutButton');
+        const navButtons = document.querySelectorAll('.admin-nav-btn[data-section]');
+        const adminSections = document.querySelectorAll('.admin-section');
+
+        let pendingEmail = '';
+        let sessionState = loadSession();
+        let overviewChart;
+        let alertChart;
+
+        function loadSession() {
+            try {
+                return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || 'null');
+            } catch {
+                return null;
+            }
+        }
+
+        function saveSession(nextState) {
+            sessionState = nextState;
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
+        }
+
+        function clearSession() {
+            sessionState = null;
+            sessionStorage.removeItem(STORAGE_KEY);
+        }
+
+        function showNotice(target, message, type = 'info') {
+            target.className = `notice ${type}`;
+            target.textContent = message;
+            target.classList.remove('hidden');
+        }
+
+        function hideNotice(target) {
+            target.classList.add('hidden');
+            target.textContent = '';
+        }
+
+        function setActiveSection(sectionId) {
+            adminSections.forEach((section) => {
+                section.classList.toggle('active', section.id === sectionId);
+            });
+
+            navButtons.forEach((button) => {
+                button.classList.toggle('active', button.dataset.section === sectionId);
+            });
+
+            const activeButton = document.querySelector(`.admin-nav-btn[data-section="${sectionId}"] span`);
+            const title = activeButton ? activeButton.textContent : 'Admin Dashboard';
+            document.getElementById('workspaceTitle').textContent = title;
+        }
+
+        function setAuthMode(mode) {
+            const isOtp = mode === 'otp';
+            loginForm.classList.toggle('hidden', isOtp);
+            otpForm.classList.toggle('hidden', !isOtp);
+            authTitle.textContent = isOtp ? 'Enter the email OTP' : 'Enter your admin credentials';
+            authSubtitle.textContent = isOtp
+                ? 'A one-time password was sent to the admin email address. The code expires quickly for security.'
+                : 'Nothing is stored in local storage. Session data is cleared when the browser tab closes.';
+        }
+
+        function renderAuthState(isAuthenticated) {
+            authView.classList.toggle('hidden', isAuthenticated);
+            dashboardView.classList.toggle('hidden', !isAuthenticated);
+        }
+
+        async function apiRequest(path, options = {}, retrying = false) {
+            if (!sessionState?.accessToken && path !== '/api/admin/login' && path !== '/api/admin/verify-otp') {
+                throw new Error('No authenticated admin session found.');
+            }
+
+            const method = options.method || 'GET';
+            const headers = new Headers(options.headers || {});
+
+            if (!(options.body instanceof FormData) && !headers.has('Content-Type') && options.body) {
+                headers.set('Content-Type', 'application/json');
+            }
+
+            if (sessionState?.accessToken) {
+                headers.set('Authorization', `Bearer ${sessionState.accessToken}`);
+            }
+
+            if (sessionState?.sessionId) {
+                headers.set('x-session-id', sessionState.sessionId);
+            }
+
+            if (!['GET', 'HEAD', 'OPTIONS'].includes(method) && sessionState?.csrfToken) {
+                headers.set('x-csrf-token', sessionState.csrfToken);
+            }
+
+            const response = await fetch(path, {
+                ...options,
+                method,
+                headers
+            });
+
+            if (response.status === 401 && sessionState?.refreshToken && !retrying && path !== '/api/admin/refresh-token') {
+                const refreshed = await refreshAccessToken();
+                if (refreshed) {
+                    return apiRequest(path, options, true);
+                }
+            }
+
+            const isJson = response.headers.get('content-type')?.includes('application/json');
+            const payload = isJson ? await response.json() : null;
+
+            if (!response.ok) {
+                throw new Error(payload?.message || `Request failed with status ${response.status}`);
+            }
+
+            return payload;
+        }
+
+        async function refreshAccessToken() {
+            if (!sessionState?.refreshToken || !sessionState?.sessionId) {
+                return false;
+            }
+
+            try {
+                const response = await fetch('/api/admin/refresh-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-session-id': sessionState.sessionId
+                    },
+                    body: JSON.stringify({ refreshToken: sessionState.refreshToken })
+                });
+
+                const payload = await response.json();
+                if (!response.ok || !payload?.accessToken) {
+                    return false;
+                }
+
+                saveSession({
+                    ...sessionState,
+                    accessToken: payload.accessToken
+                });
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        function formatDate(value) {
+            if (!value) return 'Never';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return String(value);
+            return date.toLocaleString();
+        }
+
+        function formatCount(value) {
+            return new Intl.NumberFormat().format(Number(value || 0));
+        }
+
+        function severityTag(severity = 'info') {
+            const normalized = String(severity).toLowerCase();
+            if (normalized === 'critical') return 'critical';
+            if (normalized === 'warning') return 'warning';
+            if (normalized === 'success') return 'success';
+            return 'info';
+        }
+
+        function updateIdentity(sessionPayload) {
+            const admin = sessionPayload.admin;
+            const fullName = [admin.firstName, admin.lastName].filter(Boolean).join(' ').trim() || admin.email;
+            document.getElementById('adminMeta').textContent = `${fullName} • ${admin.email} • MFA ${admin.mfaEnabled ? 'enabled' : 'required at login'}`;
+            document.getElementById('roleChip').innerHTML = `<i class="fas fa-user-shield"></i> ${admin.role.replace('_', ' ')}`;
+            document.getElementById('adminAvatar').textContent = (fullName[0] || admin.email[0] || 'A').toUpperCase();
+
+            const isSuperAdmin = admin.role === 'super_admin';
+            document.getElementById('adminCreationCard').classList.toggle('hidden', !isSuperAdmin);
+            document.getElementById('adminsSection').classList.toggle('hidden', !isSuperAdmin);
+            document.getElementById('securitySection').classList.toggle('hidden', !isSuperAdmin);
+            document.getElementById('adminsNavButton').classList.toggle('hidden', !isSuperAdmin);
+            document.getElementById('securityNavButton').classList.toggle('hidden', !isSuperAdmin);
+        }
+
+        function renderDashboardStats(statistics) {
+            document.getElementById('statFarmers').textContent = formatCount(statistics.totalFarmers);
+            document.getElementById('statFarmersCopy').textContent = `${formatCount(statistics.legacyFarmers)} legacy records and ${formatCount(statistics.farmerProfiles)} enhanced profiles.`;
+            document.getElementById('statProfiles').textContent = formatCount(statistics.farmerProfiles);
+            document.getElementById('statProfilesCopy').textContent = 'Enhanced farmer records currently marked active.';
+            document.getElementById('statPredictions').textContent = formatCount(statistics.totalPredictions);
+            document.getElementById('statPredictionsCopy').textContent = 'Prediction rows generated by the recommendation pipeline.';
+            document.getElementById('statAlerts').textContent = formatCount(statistics.activeAlerts);
+            document.getElementById('statAlertsCopy').textContent = statistics.activeAlerts > 0 ? 'There are unresolved system alerts requiring review.' : 'No unresolved alerts at the moment.';
+        }
+
+        function renderAlerts(alerts) {
+            const container = document.getElementById('alertsList');
+            if (!alerts.length) {
+                container.innerHTML = '<div class="item"><p>No active alerts right now.</p></div>';
+                return;
+            }
+
+            container.innerHTML = alerts.map((alert) => `
+                <article class="item">
+                    <div class="item-top">
+                        <strong>${alert.title}</strong>
+                        <span class="tag ${severityTag(alert.severity)}">${alert.severity || 'info'}</span>
+                    </div>
+                    <p>${alert.message || 'No additional alert message was supplied.'}</p>
+                    <small>${alert.alert_type || 'system'} • ${formatDate(alert.created_at)}</small>
+                </article>
+            `).join('');
+        }
+
+        function renderActivity(logs) {
+            const container = document.getElementById('activityList');
+            if (!logs.length) {
+                container.innerHTML = '<div class="item"><p>No recent audit activity found.</p></div>';
+                return;
+            }
+
+            container.innerHTML = logs.map((log) => `
+                <article class="item">
+                    <div class="item-top">
+                        <strong>${log.action}</strong>
+                        <span class="tag ${log.status === 'success' ? 'success' : 'warning'}">${log.status || 'unknown'}</span>
+                    </div>
+                    <p>${log.email || 'Unknown admin'} • ${log.resource_type || 'system'} • ${log.ip_address || 'No IP recorded'}</p>
+                    <small>${formatDate(log.created_at)}</small>
+                </article>
+            `).join('');
+        }
+
+        function renderProfiles(profiles) {
+            const tbody = document.getElementById('profilesTable');
+            if (!profiles.length) {
+                tbody.innerHTML = '<tr><td colspan="5">No active farmer profiles found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = profiles.map((profile) => `
+                <tr>
+                    <td>${profile.farmer_id || profile.id || 'N/A'}</td>
+                    <td>${[profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.full_name || 'Unnamed farmer'}</td>
+                    <td>${profile.phone_number || profile.phone || 'N/A'}</td>
+                    <td>${profile.sub_county || profile.ward || profile.location || 'N/A'}</td>
+                    <td>${formatDate(profile.created_at)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAdmins(admins) {
+            const tbody = document.getElementById('adminsTable');
+            if (!tbody) return;
+
+            if (!admins.length) {
+                tbody.innerHTML = '<tr><td colspan="5">No admin users found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = admins.map((admin) => `
+                <tr>
+                    <td>${admin.email}</td>
+                    <td>${admin.role}</td>
+                    <td>${admin.status}</td>
+                    <td>${admin.mfa_enabled ? 'Enabled' : 'Login OTP only'}</td>
+                    <td>${formatDate(admin.last_login)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderSecurity(logs) {
+            const container = document.getElementById('securityList');
+            if (!container) return;
+
+            if (!logs.length) {
+                container.innerHTML = '<div class="item"><p>No recent security events found.</p></div>';
+                return;
+            }
+
+            container.innerHTML = logs.map((log) => `
+                <article class="item">
+                    <div class="item-top">
+                        <strong>${log.event || log.type || 'security_event'}</strong>
+                        <span class="tag ${severityTag(log.severity)}">${log.severity || 'info'}</span>
+                    </div>
+                    <p>${log.details ? JSON.stringify(log.details) : 'No extra details recorded.'}</p>
+                    <small>${formatDate(log.timestamp || log.created_at)}</small>
+                </article>
+            `).join('');
+        }
+
+        function renderCharts(statistics, alerts) {
+            const overviewCtx = document.getElementById('overviewChart').getContext('2d');
+            const alertCtx = document.getElementById('alertChart').getContext('2d');
+
+            if (overviewChart) overviewChart.destroy();
+            if (alertChart) alertChart.destroy();
+
+            overviewChart = new Chart(overviewCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Farmers', 'Profiles', 'Predictions', 'Alerts'],
+                    datasets: [{
+                        data: [
+                            statistics.totalFarmers || 0,
+                            statistics.farmerProfiles || 0,
+                            statistics.totalPredictions || 0,
+                            statistics.activeAlerts || 0
+                        ],
+                        backgroundColor: ['#2c6b41', '#3c8751', '#efb243', '#ca5e49'],
+                        borderRadius: 12
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(22, 32, 25, 0.08)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            const severityMap = alerts.reduce((acc, alert) => {
+                const key = String(alert.severity || 'info').toLowerCase();
+                acc[key] = (acc[key] || 0) + 1;
+                return acc;
+            }, { info: 0, warning: 0, critical: 0 });
+
+            alertChart = new Chart(alertCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Info', 'Warning', 'Critical'],
+                    datasets: [{
+                        data: [severityMap.info || 0, severityMap.warning || 0, severityMap.critical || 0],
+                        backgroundColor: ['#7ec1d5', '#efb243', '#ca5e49'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        async function loadDashboard() {
+            hideNotice(dashboardNotice);
+
+            const [sessionPayload, dashboardPayload, profilesPayload, alertsPayload, auditPayload] = await Promise.all([
+                apiRequest('/api/admin/session'),
+                apiRequest('/api/admin/dashboard'),
+                apiRequest('/api/admin/farmer-profiles?limit=12&offset=0'),
+                apiRequest('/api/admin/system-alerts'),
+                apiRequest('/api/admin/audit-logs?limit=12&offset=0')
+            ]);
+
+            const dashboardData = dashboardPayload.data || {};
+            const statistics = dashboardData.statistics || {};
+            const alerts = alertsPayload.data || dashboardData.recentAlerts || [];
+            const activity = auditPayload.data || dashboardData.recentActivity || [];
+            const profiles = profilesPayload.data || [];
+
+            updateIdentity(sessionPayload.data);
+            renderDashboardStats(statistics);
+            renderAlerts(alerts);
+            renderActivity(activity);
+            renderProfiles(profiles);
+            renderCharts(statistics, alerts);
+            document.getElementById('lastUpdated').textContent = `Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+            const role = sessionPayload.data.admin.role;
+            if (role === 'super_admin') {
+                const [adminsPayload, securityPayload] = await Promise.all([
+                    apiRequest('/api/admin/admins'),
+                    apiRequest('/api/admin/security-logs?limit=12')
+                ]);
+                renderAdmins(adminsPayload.data || []);
+                renderSecurity(securityPayload.data || []);
+            }
+        }
+
+        async function bootstrapAuthenticatedView() {
+            renderAuthState(true);
+            try {
+                await loadDashboard();
+            } catch (error) {
+                clearSession();
+                renderAuthState(false);
+                setAuthMode('login');
+                showNotice(authNotice, error.message || 'Your admin session is no longer valid. Please sign in again.', 'error');
+            }
+        }
+
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            hideNotice(authNotice);
+
+            const form = new FormData(loginForm);
+            pendingEmail = String(form.get('email') || '').trim();
+            const password = String(form.get('password') || '');
+
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: pendingEmail, password })
+                });
+                const payload = await response.json();
+
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || 'Login failed');
+                }
+
+                setAuthMode('otp');
+                showNotice(authNotice, 'OTP sent. Check the admin email inbox and enter the code promptly.', 'info');
+            } catch (error) {
+                showNotice(authNotice, error.message || 'Unable to start admin login.', 'error');
+            }
+        });
+
+        otpForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            hideNotice(authNotice);
+
+            const otp = String(new FormData(otpForm).get('otp') || '').trim();
+
+            try {
+                const response = await fetch('/api/admin/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: pendingEmail, otp })
+                });
+                const payload = await response.json();
+
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || 'OTP verification failed');
+                }
+
+                saveSession({
+                    accessToken: payload.accessToken,
+                    refreshToken: payload.refreshToken,
+                    sessionId: payload.sessionId,
+                    csrfToken: payload.csrfToken,
+                    admin: payload.admin
+                });
+
+                await bootstrapAuthenticatedView();
+            } catch (error) {
+                showNotice(authNotice, error.message || 'Unable to verify OTP.', 'error');
+            }
+        });
+
+        document.getElementById('backToLogin').addEventListener('click', () => {
+            setAuthMode('login');
+            hideNotice(authNotice);
+        });
+
+        navButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                setActiveSection(button.dataset.section);
+            });
+        });
+
+        refreshButton.addEventListener('click', async () => {
+            try {
+                await loadDashboard();
+                showNotice(dashboardNotice, 'Dashboard refreshed successfully.', 'success');
+            } catch (error) {
+                showNotice(dashboardNotice, error.message || 'Unable to refresh dashboard.', 'error');
+            }
+        });
+
+        async function performLogout() {
+            try {
+                await apiRequest('/api/admin/logout', { method: 'POST' });
+            } catch {
+                // Intentionally ignore logout failures and clear the local session anyway.
+            } finally {
+                clearSession();
+                renderAuthState(false);
+                setAuthMode('login');
+                showNotice(authNotice, 'Admin session closed.', 'success');
+            }
+        }
+
+        logoutButton.addEventListener('click', performLogout);
+        sidebarLogoutButton.addEventListener('click', performLogout);
+
+        document.getElementById('alertForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            hideNotice(dashboardNotice);
+
+            const form = new FormData(event.currentTarget);
+            const payload = Object.fromEntries(form.entries());
+
+            try {
+                await apiRequest('/api/admin/system-alerts', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                event.currentTarget.reset();
+                await loadDashboard();
+                showNotice(dashboardNotice, 'System alert created.', 'success');
+            } catch (error) {
+                showNotice(dashboardNotice, error.message || 'Unable to create system alert.', 'error');
+            }
+        });
+
+        document.getElementById('adminForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            hideNotice(dashboardNotice);
+
+            const form = new FormData(event.currentTarget);
+            const payload = Object.fromEntries(form.entries());
+
+            try {
+                await apiRequest('/api/admin/admins', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                event.currentTarget.reset();
+                await loadDashboard();
+                showNotice(dashboardNotice, 'Admin user created securely.', 'success');
+            } catch (error) {
+                showNotice(dashboardNotice, error.message || 'Unable to create admin user.', 'error');
+            }
+        });
+
+        document.getElementById('configSaveButton').addEventListener('click', () => {
+            showNotice(dashboardNotice, 'Security defaults shown here are enforced by the backend admin flow. No unsafe client-side override was applied.', 'info');
+        });
+
+        if (sessionState?.accessToken && sessionState?.sessionId && sessionState?.csrfToken) {
+            bootstrapAuthenticatedView();
+        } else {
+            renderAuthState(false);
+            setAuthMode('login');
+        }
+    </script>
+</body>
+</html>

@@ -49,38 +49,48 @@ Smallholder farmers in Siaya County face **low yields and reduced incomes** due 
 |-------|-----------|
 | **Frontend** | HTML5, CSS3, JavaScript (with i18n JSON translations) |
 | **Backend** | Node.js / Express.js |
-| **Database** | PostgreSQL (Neon) / MySQL |
-| **Hosting** | Vercel (Frontend) / Cloud deployment (Backend) |
+| **Database** | PostgreSQL (Neon) / SQLite |
+| **Hosting** | Vercel via `backend/server.js` |
 | **APIs** | RESTful API design, Chart.js for data visualization |
 
 ---
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Node.js (v14 or higher)
-- npm or yarn
-- PostgreSQL or MySQL database
+### Runtime Source Of Truth
 
-### Installation
+The supported backend runtime is `backend/server.js`.
+
+The legacy `api/` directory is retired and should not be used as a separate deployment target.
+
+### Prerequisites
+- Node.js 18 or higher
+- npm
+- PostgreSQL via `DATABASE_URL` for production, or SQLite for local fallback
+
+### Web App Setup
 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/derrickomwanza/fahamu-shamba.git
-cd fahamu-shamba
+cd fahamu-shamba/backend
 
 # 2. Install dependencies
 npm install
 
 # 3. Set up environment variables
-cp .env.example .env
-# Edit .env with your database and API credentials
+cp ../.env.example .env
+# Edit .env with your secrets and API credentials
 
 # 4. Start the development server
 npm start
 ```
 
-The application will run at `http://localhost:3000`
+The web application will run at `http://localhost:5000`
+
+### Mobile App Setup
+
+The Expo mobile app lives in `frontend/FahamuShamba` and is a separate client application.
 
 ---
 
@@ -88,10 +98,10 @@ The application will run at `http://localhost:3000`
 
 ```
 fahamu-shamba/
-├── frontend/          # React/Vanilla JS frontend
-├── backend/           # Express.js API server
-├── api/               # Database models & queries
-├── public/            # Static assets
+├── backend/           # Canonical Express.js API server
+├── public/            # Static web app served by the backend
+├── frontend/          # Separate mobile/Expo client and helper scripts
+├── api/               # Retired legacy Vercel API prototype
 ├── docs/              # Documentation
 └── README.md          # This file
 ```
@@ -123,23 +133,24 @@ The platform uses the following key tables:
 
 ## 🔑 Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file in `backend/` from the root `.env.example`:
+
+```bash
+cd backend
+cp ../.env.example .env
+```
+
+Important variables:
 
 ```env
-# Database
-DB_HOST=your_database_host
-DB_PORT=5432
-DB_NAME=fahamu_shamba
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-
-# API Configuration
-API_PORT=3000
+PORT=5000
 NODE_ENV=development
-
-# Language Settings
-SUPPORTED_LANGUAGES=en,sw,dh
-DEFAULT_LANGUAGE=en
+JWT_SECRET=replace-with-a-long-random-secret
+ADMIN_JWT_SECRET=replace-with-a-long-random-admin-secret
+ADMIN_REFRESH_SECRET=replace-with-a-long-random-refresh-secret
+PASSWORD_SALT=replace-with-a-long-random-password-salt
+# DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
+OPENWEATHER_API_KEY=your_api_key_here
 ```
 
 ---

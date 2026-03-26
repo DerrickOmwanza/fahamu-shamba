@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service Marketplace | Fahamu Shamba</title>
+  <link rel="icon" href="/fahamu-logo.png" type="image/png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/sidebar.css" />
+  <link rel="stylesheet" href="/css/navbar.css" />
+  <link rel="stylesheet" href="/css/mobile-responsiveness-fixes.css" />
+  <style>
+    :root {
+      --sidebar-width: 260px;
+      --primary: #2d7649;
+      --primary-dark: #1e5631;
+      --primary-soft: #edf7ef;
+      --secondary: #f57c00;
+      --secondary-soft: #fff3e3;
+      --success: #1f9d55;
+      --warning: #d97706;
+      --danger: #c0392b;
+      --dark: #173224;
+      --text: #334155;
+      --text-light: #64748b;
+      --border: #dbe5dd;
+      --surface: #ffffff;
+      --background: linear-gradient(180deg, #f6f3ea 0%, #eef5ef 100%);
+      --shadow-sm: 0 10px 30px rgba(23, 50, 36, 0.08);
+      --shadow-lg: 0 20px 45px rgba(23, 50, 36, 0.12);
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Roboto, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    #sidebar-container {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease;
+    }
+
+    .main-content {
+      margin-left: var(--sidebar-width);
+      padding: 22px;
+      min-height: 100vh;
+      transition: margin-left 0.3s ease;
+    }
+
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(219, 229, 221, 0.8);
+      border-radius: 22px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 22px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(115deg, rgba(23, 50, 36, 0.92), rgba(45, 118, 73, 0.84)),
+        url('/images/admin-console-bg.jpg') center/cover;
+      color: #fff;
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 22px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -100px auto;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.14), transparent 68%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.95fr);
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      color: rgba(255, 255, 255, 0.88);
+      max-width: 700px;
+      font-size: 1.02rem;
+    }
+
+    .hero-points {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .hero-point {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-size: 0.93rem;
+    }
+
+    .hero-panel {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 22px;
+      padding: 20px;
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .hero-panel h2 {
+      font-size: 1.05rem;
+    }
+
+    .hero-panel ul {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-panel li {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .hero-panel i {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 22px;
+      margin-bottom: 22px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .section-title h2 {
+      color: var(--dark);
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+    }
+
+    .section-title p {
+      color: var(--text-light);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .metric-card {
+      background: linear-gradient(180deg, #ffffff, #f6fbf7);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .metric-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-light);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .metric-note {
+      color: var(--text-light);
+      font-size: 0.88rem;
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 22px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .info-card {
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #fff, #f8fbf7);
+    }
+
+    .info-card strong {
+      display: block;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+
+    .info-card p,
+    .info-card li {
+      color: var(--text-light);
+    }
+
+    .info-card ul {
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 6px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      color: var(--primary-dark);
+      font-weight: 700;
+      font-size: 0.93rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #cad8ce;
+      border-radius: 14px;
+      font-size: 0.96rem;
+      color: var(--text);
+      background: #fff;
+      font-family: inherit;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(45, 118, 73, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .form-note {
+      color: var(--text-light);
+      font-size: 0.86rem;
+      margin-top: 8px;
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(23, 50, 36, 0.12);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #eef3ef;
+      color: var(--primary-dark);
+      border: 1px solid var(--border);
+    }
+
+    .btn-accent {
+      background: var(--secondary);
+      color: #fff;
+    }
+
+    .status-message {
+      min-height: 20px;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .filters-row {
+      display: grid;
+      grid-template-columns: 1.3fr repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .request-list,
+    .application-list,
+    .farmer-request-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .request-card {
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: linear-gradient(180deg, #fff, #f7fbf8);
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .request-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: start;
+    }
+
+    .request-title {
+      color: var(--dark);
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .request-subtitle {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip,
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .chip {
+      background: #edf5ee;
+      color: var(--primary-dark);
+      border: 1px solid #d8e6da;
+    }
+
+    .badge-open {
+      background: #e7f7ed;
+      color: var(--success);
+    }
+
+    .badge-matched {
+      background: #fff3df;
+      color: var(--warning);
+    }
+
+    .badge-closed {
+      background: #eef2f5;
+      color: #64748b;
+    }
+
+    .request-meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .meta-box {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .meta-box span {
+      display: block;
+      color: var(--text-light);
+      font-size: 0.78rem;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    .meta-box strong {
+      color: var(--dark);
+      font-size: 0.96rem;
+    }
+
+    .request-description {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #f8fbf7;
+      border: 1px solid #e2ece4;
+      color: var(--text);
+    }
+
+    .inline-note {
+      color: var(--text-light);
+      font-size: 0.88rem;
+    }
+
+    .application-panel {
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      display: none;
+    }
+
+    .application-panel.active {
+      display: block;
+    }
+
+    .application-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fff;
+      display: grid;
+      gap: 10px;
+    }
+
+    .application-card strong {
+      color: var(--dark);
+    }
+
+    .application-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .farmer-request-card {
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: #fff;
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .farmer-apps {
+      display: grid;
+      gap: 12px;
+    }
+
+    .empty-state {
+      padding: 28px 18px;
+      text-align: center;
+      border: 1px dashed #cfdccf;
+      border-radius: 20px;
+      background: #fbfdfb;
+      color: var(--text-light);
+    }
+
+    .empty-state i {
+      font-size: 1.8rem;
+      color: #9db1a0;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 9999;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 14px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.2s ease;
+    }
+
+    .toast.success {
+      background: var(--success);
+    }
+
+    .toast.error {
+      background: var(--danger);
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(10px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .metrics-grid,
+      .request-meta,
+      .application-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .workspace-grid,
+      .hero-grid,
+      .filters-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .main-content {
+        margin-left: 0 !important;
+        padding: 16px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .metrics-grid,
+      .mini-grid,
+      .form-grid,
+      .request-meta,
+      .application-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero,
+      .section {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="sidebar-container"></div>
+  <div class="main-content">
+    <header class="top-nav">
+      <div class="nav-left">
+        <button class="nav-hamburger" onclick="toggleMobileSidebar()" aria-label="Open menu">
+          <i class="fas fa-bars"></i>
+        </button>
+        <button class="nav-back-btn" onclick="goToDashboard()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back</span>
+        </button>
+      </div>
+      <div class="nav-center">
+        <h1 class="nav-page-title active">Service Marketplace</h1>
+      </div>
+      <div class="nav-right">
+        <div class="nav-profile" onclick="goToProfile()">
+          <div class="nav-profile-avatar" id="navProfileAvatar">👤</div>
+          <span class="nav-profile-name" id="navProfileName">Farmer</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <h1>Book farm help quickly and let trusted providers come to you.</h1>
+          <p>Farmers can post work such as ploughing, spraying, irrigation support, or general maintenance. Providers can browse open requests, apply with price and availability, and contact the farmer directly once matched.</p>
+          <div class="hero-points">
+            <span class="hero-point"><i class="fas fa-seedling"></i> Farmers post real service needs</span>
+            <span class="hero-point"><i class="fas fa-tractor"></i> Providers apply with price and timing</span>
+            <span class="hero-point"><i class="fas fa-phone-alt"></i> Contact details stay visible for follow-up</span>
+          </div>
+        </div>
+        <aside class="hero-panel">
+          <h2>How to use this page</h2>
+          <ul>
+            <li>
+              <i class="fas fa-plus"></i>
+              <div>
+                <strong>Step 1: Post your work</strong>
+                <div>Share the service you need, where the farm is, and what should be done.</div>
+              </div>
+            </li>
+            <li>
+              <i class="fas fa-handshake"></i>
+              <div>
+                <strong>Step 2: Providers apply</strong>
+                <div>Service providers send their phone, price, availability, and a short message.</div>
+              </div>
+            </li>
+            <li>
+              <i class="fas fa-comments"></i>
+              <div>
+                <strong>Step 3: Get in touch</strong>
+                <div>Farmers review applicants and call or message the provider they want to work with.</div>
+              </div>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="metrics-grid">
+      <article class="metric-card">
+        <div class="metric-label"><i class="fas fa-briefcase"></i> Open requests</div>
+        <div class="metric-value" id="metricOpenRequests">0</div>
+        <div class="metric-note">Jobs farmers are still looking to fill.</div>
+      </article>
+      <article class="metric-card">
+        <div class="metric-label"><i class="fas fa-paper-plane"></i> Applications sent</div>
+        <div class="metric-value" id="metricApplications">0</div>
+        <div class="metric-note">Applications already submitted by providers.</div>
+      </article>
+      <article class="metric-card">
+        <div class="metric-label"><i class="fas fa-user-check"></i> My posted jobs</div>
+        <div class="metric-value" id="metricMyRequests">0</div>
+        <div class="metric-note">Requests you created from this account.</div>
+      </article>
+      <article class="metric-card">
+        <div class="metric-label"><i class="fas fa-users"></i> Providers interested</div>
+        <div class="metric-value" id="metricApplicants">0</div>
+        <div class="metric-note">Total applicants across your service requests.</div>
+      </article>
+    </section>
+
+    <div class="workspace-grid">
+      <div class="stack">
+        <section class="section">
+          <div class="section-header">
+            <div class="section-title">
+              <h2>Post a service request</h2>
+              <p>Use simple details so providers know what work you need and how to reach you.</p>
+            </div>
+            <button class="btn btn-secondary" type="button" onclick="fillUserDefaults()">
+              <i class="fas fa-user"></i>
+              Use my saved profile
+            </button>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="reqFarmerName">Farmer name</label>
+              <input id="reqFarmerName" placeholder="Your name" />
+            </div>
+            <div class="form-group">
+              <label for="reqFarmerPhone">Phone number</label>
+              <input id="reqFarmerPhone" placeholder="07XX XXX XXX" />
+            </div>
+            <div class="form-group">
+              <label for="reqSubCounty">Sub-county</label>
+              <input id="reqSubCounty" placeholder="Bondo, Ugunja, Gem..." />
+            </div>
+            <div class="form-group">
+              <label for="reqLocation">Village or farm location</label>
+              <input id="reqLocation" placeholder="Village, ward, or landmark" />
+            </div>
+            <div class="form-group">
+              <label for="reqFieldSize">Field size</label>
+              <input id="reqFieldSize" placeholder="Example: 2 acres" />
+            </div>
+            <div class="form-group">
+              <label for="reqCrop">Crop or farm activity</label>
+              <input id="reqCrop" placeholder="Example: maize, tomatoes, pasture" />
+            </div>
+            <div class="form-group">
+              <label for="reqServiceType">Service needed</label>
+              <select id="reqServiceType">
+                <option value="Ploughing">Ploughing</option>
+                <option value="Land Preparation">Land Preparation</option>
+                <option value="Planting Support">Planting Support</option>
+                <option value="Spraying">Spraying</option>
+                <option value="Weed Management">Weed Management</option>
+                <option value="Irrigation Support">Irrigation Support</option>
+                <option value="Harvesting">Harvesting</option>
+                <option value="Transport">Transport</option>
+                <option value="General Farm Maintenance">General Farm Maintenance</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reqTimeline">When is the work needed?</label>
+              <input id="reqTimeline" placeholder="Today, this week, before rain..." />
+            </div>
+            <div class="form-group full">
+              <label for="reqDescription">What should the provider know?</label>
+              <textarea id="reqDescription" rows="4" placeholder="Describe the work clearly. Example: Need tractor ploughing for 2 acres in Ugunja before Monday. The field was used last season for maize."></textarea>
+            </div>
+          </div>
+
+          <div class="form-note">Clear details help the right provider apply faster. Phone number and location make follow-up easier.</div>
+          <div class="actions-row">
+            <button class="btn btn-primary" id="postRequestBtn" type="button">
+              <i class="fas fa-bullhorn"></i>
+              Publish Request
+            </button>
+            <button class="btn btn-secondary" type="button" onclick="resetRequestForm()">
+              <i class="fas fa-rotate-left"></i>
+              Clear Form
+            </button>
+          </div>
+          <div id="requestMessage" class="status-message"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <div class="section-title">
+              <h2>Browse available farm service jobs</h2>
+              <p>Providers can search by service type, crop, place, or keyword, then apply directly.</p>
+            </div>
+            <button class="btn btn-secondary" type="button" onclick="loadMarketplaceData()">
+              <i class="fas fa-rotate"></i>
+              Refresh
+            </button>
+          </div>
+
+          <div class="filters-row">
+            <div class="form-group">
+              <label for="searchFilter">Search</label>
+              <input id="searchFilter" placeholder="Search crop, village, service, or description" />
+            </div>
+            <div class="form-group">
+              <label for="serviceFilter">Service type</label>
+              <select id="serviceFilter">
+                <option value="">All services</option>
+                <option value="Ploughing">Ploughing</option>
+                <option value="Land Preparation">Land Preparation</option>
+                <option value="Planting Support">Planting Support</option>
+                <option value="Spraying">Spraying</option>
+                <option value="Weed Management">Weed Management</option>
+                <option value="Irrigation Support">Irrigation Support</option>
+                <option value="Harvesting">Harvesting</option>
+                <option value="Transport">Transport</option>
+                <option value="General Farm Maintenance">General Farm Maintenance</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="statusFilter">Status</label>
+              <select id="statusFilter">
+                <option value="">All statuses</option>
+                <option value="open">Open</option>
+                <option value="matched">Matched</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="subCountyFilter">Sub-county</label>
+              <input id="subCountyFilter" placeholder="Example: Ugunja" />
+            </div>
+          </div>
+
+          <div class="request-list" id="requestsList"></div>
+          <div id="noRequests" class="empty-state" style="display:none;">
+            <i class="fas fa-tractor"></i>
+            <p>No matching service requests yet. Try a different filter or come back later.</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="section">
+          <div class="section-title" style="margin-bottom:16px;">
+            <h2>Helpful tips for farmers and providers</h2>
+            <p>The clearer the request, the easier it is to match quickly and safely.</p>
+          </div>
+          <div class="mini-grid">
+            <div class="info-card">
+              <strong>For farmers</strong>
+              <ul>
+                <li>Write the exact job: ploughing, spraying, harvesting, transport, or maintenance.</li>
+                <li>Add the farm location and timing so providers know whether they can reach you.</li>
+                <li>Check applicant phone numbers and price before agreeing to the work.</li>
+              </ul>
+            </div>
+            <div class="info-card">
+              <strong>For providers</strong>
+              <ul>
+                <li>Apply only if you can truly do the work in the stated area and time.</li>
+                <li>Share your working phone number and a fair, easy-to-understand price.</li>
+                <li>Use a short message to explain your experience or equipment.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <div class="section-title">
+              <h2>My posted requests</h2>
+              <p>Farmers can review all applicants here and contact the best match.</p>
+            </div>
+          </div>
+          <div class="farmer-request-list" id="myRequestsList"></div>
+          <div id="noMyRequests" class="empty-state" style="display:none;">
+            <i class="fas fa-seedling"></i>
+            <p>You have not posted any service requests yet.</p>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <div class="section-title">
+              <h2>My provider applications</h2>
+              <p>Track where you applied, your offer price, and the farmer contact details.</p>
+            </div>
+          </div>
+          <div class="application-list" id="applicationsList"></div>
+          <div id="noApplications" class="empty-state" style="display:none;">
+            <i class="fas fa-paper-plane"></i>
+            <p>No provider applications found for this account yet.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/sidebar.js" defer></script>
+  <script src="/js/navbar.js" defer></script>
+  <script>
+    const currentUser = (() => {
+      const cached = localStorage.getItem('user');
+      if (cached) {
+        try {
+          const user = JSON.parse(cached);
+          return {
+            name: user.name || user.username || user.firstName || 'Farmer',
+            phone: user.phone || user.phone_number || user.phoneNumber || '',
+            subCounty: user.subCounty || user.sub_county || user.location || '',
+            profilePhoto: user.profile_photo || ''
+          };
+        } catch (error) {
+          console.error('Error parsing current user:', error);
+        }
+      }
+      return {
+        name: 'Guest User',
+        phone: '',
+        subCounty: '',
+        profilePhoto: ''
+      };
+    })();
+
+    function goToDashboard() {
+      window.location.href = '/dashboard.html';
+    }
+
+    function goToProfile() {
+      window.location.href = '/profile.html';
+    }
+
+    async function apiCall(path, options = {}) {
+      const token = localStorage.getItem('token');
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      try {
+        const response = await fetch('/api' + path, {
+          ...options,
+          headers: {
+            ...headers,
+            ...(options.headers || {})
+          }
+        });
+        return await response.json();
+      } catch (error) {
+        console.error('Service marketplace API error:', error);
+        return { success: false, error: error.message };
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3200);
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return 'Unknown date';
+      const date = new Date(dateString);
+      return Number.isNaN(date.getTime()) ? 'Unknown date' : date.toLocaleString();
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function statusBadgeClass(status) {
+      if (status === 'matched') return 'badge badge-matched';
+      if (status === 'closed') return 'badge badge-closed';
+      return 'badge badge-open';
+    }
+
+    function fillUserDefaults() {
+      document.getElementById('reqFarmerName').value = currentUser.name || '';
+      document.getElementById('reqFarmerPhone').value = currentUser.phone || '';
+      document.getElementById('reqSubCounty').value = currentUser.subCounty || '';
+    }
+
+    function resetRequestForm() {
+      document.getElementById('reqFarmerName').value = '';
+      document.getElementById('reqFarmerPhone').value = '';
+      document.getElementById('reqSubCounty').value = '';
+      document.getElementById('reqLocation').value = '';
+      document.getElementById('reqFieldSize').value = '';
+      document.getElementById('reqCrop').value = '';
+      document.getElementById('reqServiceType').value = 'Ploughing';
+      document.getElementById('reqTimeline').value = '';
+      document.getElementById('reqDescription').value = '';
+      document.getElementById('requestMessage').textContent = '';
+    }
+
+    function buildDescriptionWithTimeline(description, timeline) {
+      if (!timeline) return description;
+      return `${description}\nNeeded: ${timeline}`;
+    }
+
+    async function submitServiceRequest() {
+      const payload = {
+        farmerPhone: document.getElementById('reqFarmerPhone').value.trim() || currentUser.phone,
+        farmerName: document.getElementById('reqFarmerName').value.trim() || currentUser.name,
+        subCounty: document.getElementById('reqSubCounty').value.trim(),
+        location: document.getElementById('reqLocation').value.trim(),
+        fieldSize: document.getElementById('reqFieldSize').value.trim(),
+        crop: document.getElementById('reqCrop').value.trim(),
+        serviceType: document.getElementById('reqServiceType').value,
+        description: buildDescriptionWithTimeline(
+          document.getElementById('reqDescription').value.trim(),
+          document.getElementById('reqTimeline').value.trim()
+        )
+      };
+
+      const messageEl = document.getElementById('requestMessage');
+      if (!payload.farmerPhone || !payload.location || !payload.serviceType || !payload.description) {
+        messageEl.textContent = 'Add your phone number, location, service type, and a clear description before posting.';
+        messageEl.style.color = '#c0392b';
+        return;
+      }
+
+      const result = await apiCall('/community/service-requests', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      if (result.success) {
+        messageEl.textContent = 'Your request is now live. Providers can start applying.';
+        messageEl.style.color = '#1f9d55';
+        showToast('Service request posted successfully.');
+        resetRequestForm();
+        fillUserDefaults();
+        await loadMarketplaceData();
+      } else {
+        messageEl.textContent = result.error || 'Failed to publish the request.';
+        messageEl.style.color = '#c0392b';
+        showToast(result.error || 'Failed to publish the request.', 'error');
+      }
+    }
+
+    function requestFilters() {
+      const params = new URLSearchParams();
+      params.set('limit', '50');
+
+      const search = document.getElementById('searchFilter').value.trim();
+      const serviceType = document.getElementById('serviceFilter').value.trim();
+      const status = document.getElementById('statusFilter').value.trim();
+      const subCounty = document.getElementById('subCountyFilter').value.trim();
+
+      if (search) params.set('search', search);
+      if (serviceType) params.set('serviceType', serviceType);
+      if (status) params.set('status', status);
+      if (subCounty) params.set('subCounty', subCounty);
+
+      return params.toString();
+    }
+
+    function renderRequests(requests) {
+      const list = document.getElementById('requestsList');
+      const empty = document.getElementById('noRequests');
+
+      if (!requests.length) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      list.innerHTML = requests.map((request) => `
+        <article class="request-card">
+          <div class="request-top">
+            <div>
+              <div class="request-title">${escapeHtml(request.service_type || 'Service request')}</div>
+              <div class="request-subtitle">Posted by ${escapeHtml(request.farmer_name || 'Farmer')} • ${formatDate(request.created_at)}</div>
+            </div>
+            <div class="chip-row">
+              <span class="${statusBadgeClass(request.status)}">${escapeHtml((request.status || 'open').toUpperCase())}</span>
+              <span class="chip"><i class="fas fa-users"></i> ${request.applications_count || 0} applicants</span>
+            </div>
+          </div>
+
+          <div class="request-meta">
+            <div class="meta-box">
+              <span>Crop / activity</span>
+              <strong>${escapeHtml(request.crop || 'Not specified')}</strong>
+            </div>
+            <div class="meta-box">
+              <span>Location</span>
+              <strong>${escapeHtml(request.location || 'Not specified')}</strong>
+            </div>
+            <div class="meta-box">
+              <span>Sub-county</span>
+              <strong>${escapeHtml(request.sub_county || 'Not specified')}</strong>
+            </div>
+            <div class="meta-box">
+              <span>Field size</span>
+              <strong>${escapeHtml(request.field_size || 'Not shared')}</strong>
+            </div>
+          </div>
+
+          <div class="request-description">${escapeHtml(request.description || 'No additional details.')}</div>
+          <div class="inline-note">Farmer phone: <strong>${escapeHtml(request.farmer_phone || 'Not available')}</strong></div>
+
+          <div class="actions-row">
+            <button class="btn btn-primary" type="button" onclick="toggleApplyPanel(${request.id})">
+              <i class="fas fa-paper-plane"></i>
+              Apply For This Job
+            </button>
+          </div>
+
+          <div class="application-panel" id="applyPanel_${request.id}">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="providerName_${request.id}">Provider name</label>
+                <input id="providerName_${request.id}" value="${escapeHtml(currentUser.name || '')}" placeholder="Your name" />
+              </div>
+              <div class="form-group">
+                <label for="providerPhone_${request.id}">Provider phone</label>
+                <input id="providerPhone_${request.id}" value="${escapeHtml(currentUser.phone || '')}" placeholder="Working phone number" />
+              </div>
+              <div class="form-group">
+                <label for="contactInfo_${request.id}">Best contact</label>
+                <input id="contactInfo_${request.id}" placeholder="Phone, WhatsApp, or email" />
+              </div>
+              <div class="form-group">
+                <label for="availability_${request.id}">Availability</label>
+                <input id="availability_${request.id}" placeholder="Today, tomorrow morning, this week..." />
+              </div>
+              <div class="form-group">
+                <label for="offerPrice_${request.id}">Offer price</label>
+                <input id="offerPrice_${request.id}" placeholder="Example: KSh 3,500 per acre" />
+              </div>
+              <div class="form-group full">
+                <label for="message_${request.id}">Short message to the farmer</label>
+                <textarea id="message_${request.id}" rows="3" placeholder="Say what equipment or experience you have and why you are a good fit."></textarea>
+              </div>
+            </div>
+            <div class="actions-row">
+              <button class="btn btn-accent" type="button" onclick="submitApplication(${request.id})">
+                <i class="fas fa-check"></i>
+                Send Application
+              </button>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function toggleApplyPanel(requestId) {
+      const panel = document.getElementById(`applyPanel_${requestId}`);
+      panel.classList.toggle('active');
+    }
+
+    async function loadServiceRequests() {
+      const query = requestFilters();
+      const result = await apiCall(`/community/service-requests?${query}`);
+      if (!result.success || !Array.isArray(result.data)) {
+        renderRequests([]);
+        return [];
+      }
+      renderRequests(result.data);
+      return result.data;
+    }
+
+    async function submitApplication(requestId) {
+      const payload = {
+        providerName: document.getElementById(`providerName_${requestId}`).value.trim() || currentUser.name,
+        providerPhone: document.getElementById(`providerPhone_${requestId}`).value.trim() || currentUser.phone,
+        contactInfo: document.getElementById(`contactInfo_${requestId}`).value.trim(),
+        availability: document.getElementById(`availability_${requestId}`).value.trim(),
+        offerPrice: document.getElementById(`offerPrice_${requestId}`).value.trim(),
+        message: document.getElementById(`message_${requestId}`).value.trim()
+      };
+
+      if (!payload.providerPhone || !payload.contactInfo || !payload.offerPrice) {
+        showToast('Add your phone, contact information, and offer price before applying.', 'error');
+        return;
+      }
+
+      const result = await apiCall(`/community/service-requests/${requestId}/applications`, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      if (result.success) {
+        showToast('Application submitted successfully.');
+        await loadMarketplaceData();
+      } else {
+        showToast(result.error || 'Application failed.', 'error');
+      }
+    }
+
+    function renderProviderApplications(applications) {
+      const list = document.getElementById('applicationsList');
+      const empty = document.getElementById('noApplications');
+
+      if (!applications.length) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      list.innerHTML = applications.map((application) => `
+        <article class="application-card">
+          <div class="request-top">
+            <div>
+              <div class="request-title">${escapeHtml(application.service_type || 'Service')} for ${escapeHtml(application.crop || 'farm work')}</div>
+              <div class="request-subtitle">${escapeHtml(application.location || 'Location not shared')} • ${escapeHtml(application.sub_county || 'Sub-county not shared')}</div>
+            </div>
+            <span class="${statusBadgeClass(application.request_status)}">${escapeHtml((application.request_status || 'open').toUpperCase())}</span>
+          </div>
+
+          <div class="application-grid">
+            <div class="meta-box">
+              <span>Your offer</span>
+              <strong>${escapeHtml(application.offer_price || 'Not stated')}</strong>
+            </div>
+            <div class="meta-box">
+              <span>Availability</span>
+              <strong>${escapeHtml(application.availability || 'Not stated')}</strong>
+            </div>
+            <div class="meta-box">
+              <span>Farmer contact</span>
+              <strong>${escapeHtml(application.farmer_phone || 'Not shared')}</strong>
+            </div>
+          </div>
+
+          <div class="request-description">${escapeHtml(application.message || 'No provider message shared.')}</div>
+          <div class="inline-note">
+            Farmer: <strong>${escapeHtml(application.farmer_name || 'Farmer')}</strong> • Applied on ${formatDate(application.created_at)}
+          </div>
+          <div class="inline-note">
+            Request details: ${escapeHtml(application.request_description || 'No extra request description provided.')}
+          </div>
+        </article>
+      `).join('');
+    }
+
+    async function loadProviderApplications() {
+      if (!currentUser.phone) {
+        renderProviderApplications([]);
+        return [];
+      }
+
+      const result = await apiCall(`/community/service-applications?providerPhone=${encodeURIComponent(currentUser.phone)}`);
+      if (!result.success || !Array.isArray(result.data)) {
+        renderProviderApplications([]);
+        return [];
+      }
+
+      renderProviderApplications(result.data);
+      return result.data;
+    }
+
+    function renderFarmerRequests(requests) {
+      const list = document.getElementById('myRequestsList');
+      const empty = document.getElementById('noMyRequests');
+
+      if (!requests.length) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      list.innerHTML = requests.map((request) => `
+        <article class="farmer-request-card">
+          <div class="request-top">
+            <div>
+              <div class="request-title">${escapeHtml(request.service_type || 'Service request')}</div>
+              <div class="request-subtitle">${escapeHtml(request.location || 'Location not shared')} • ${formatDate(request.created_at)}</div>
+            </div>
+            <div class="chip-row">
+              <span class="${statusBadgeClass(request.status)}">${escapeHtml((request.status || 'open').toUpperCase())}</span>
+              <span class="chip"><i class="fas fa-users"></i> ${request.applications_count || 0} applicants</span>
+            </div>
+          </div>
+
+          <div class="request-description">${escapeHtml(request.description || 'No additional details.')}</div>
+
+          <div class="farmer-apps">
+            ${(request.applications && request.applications.length > 0) ? request.applications.map((application) => `
+              <div class="application-card">
+                <div class="request-top">
+                  <div>
+                    <strong>${escapeHtml(application.provider_name || 'Provider')}</strong>
+                    <div class="request-subtitle">Applied on ${formatDate(application.created_at)}</div>
+                  </div>
+                  <span class="chip"><i class="fas fa-coins"></i> ${escapeHtml(application.offer_price || 'Price not stated')}</span>
+                </div>
+                <div class="application-grid">
+                  <div class="meta-box">
+                    <span>Phone</span>
+                    <strong>${escapeHtml(application.provider_phone || 'Not shared')}</strong>
+                  </div>
+                  <div class="meta-box">
+                    <span>Best contact</span>
+                    <strong>${escapeHtml(application.contact_info || 'Not shared')}</strong>
+                  </div>
+                  <div class="meta-box">
+                    <span>Availability</span>
+                    <strong>${escapeHtml(application.availability || 'Not stated')}</strong>
+                  </div>
+                </div>
+                <div class="request-description">${escapeHtml(application.message || 'No provider message shared.')}</div>
+              </div>
+            `).join('') : `
+              <div class="empty-state">
+                <i class="fas fa-user-clock"></i>
+                <p>No providers have applied to this request yet.</p>
+              </div>
+            `}
+          </div>
+        </article>
+      `).join('');
+    }
+
+    async function loadMyRequests() {
+      if (!currentUser.phone) {
+        renderFarmerRequests([]);
+        return [];
+      }
+
+      const result = await apiCall(`/community/my-service-requests?farmerPhone=${encodeURIComponent(currentUser.phone)}`);
+      if (!result.success || !Array.isArray(result.data)) {
+        renderFarmerRequests([]);
+        return [];
+      }
+
+      renderFarmerRequests(result.data);
+      return result.data;
+    }
+
+    function updateMetrics(allRequests, providerApplications, myRequests) {
+      const openRequests = allRequests.filter((request) => (request.status || 'open') === 'open').length;
+      const totalApplicants = myRequests.reduce((sum, request) => sum + (request.applications_count || 0), 0);
+
+      document.getElementById('metricOpenRequests').textContent = openRequests;
+      document.getElementById('metricApplications').textContent = providerApplications.length;
+      document.getElementById('metricMyRequests').textContent = myRequests.length;
+      document.getElementById('metricApplicants').textContent = totalApplicants;
+    }
+
+    async function loadMarketplaceData() {
+      const [requests, providerApplications, myRequests] = await Promise.all([
+        loadServiceRequests(),
+        loadProviderApplications(),
+        loadMyRequests()
+      ]);
+
+      updateMetrics(requests || [], providerApplications || [], myRequests || []);
+    }
+
+    function wireFilters() {
+      ['searchFilter', 'serviceFilter', 'statusFilter', 'subCountyFilter'].forEach((id) => {
+        document.getElementById(id).addEventListener('input', () => {
+          loadServiceRequests().then((requests) => {
+            const openRequests = (requests || []).filter((request) => (request.status || 'open') === 'open').length;
+            document.getElementById('metricOpenRequests').textContent = openRequests;
+          });
+        });
+        document.getElementById(id).addEventListener('change', () => {
+          loadServiceRequests().then((requests) => {
+            const openRequests = (requests || []).filter((request) => (request.status || 'open') === 'open').length;
+            document.getElementById('metricOpenRequests').textContent = openRequests;
+          });
+        });
+      });
+    }
+
+    function loadUserData() {
+      const nameEl = document.getElementById('navProfileName');
+      const avatarEl = document.getElementById('navProfileAvatar');
+
+      if (nameEl) {
+        nameEl.textContent = currentUser.name || 'Farmer';
+      }
+
+      if (avatarEl && currentUser.profilePhoto) {
+        avatarEl.innerHTML = `<img src="${currentUser.profilePhoto}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+      } else if (avatarEl) {
+        avatarEl.textContent = (currentUser.name || 'F').charAt(0).toUpperCase();
+      }
+
+      fillUserDefaults();
+    }
+
+    document.getElementById('postRequestBtn').addEventListener('click', submitServiceRequest);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadUserData();
+      wireFilters();
+      loadMarketplaceData();
+      setTimeout(() => {
+        const sidebar = document.getElementById('sidebar-container');
+        if (sidebar) sidebar.style.opacity = '1';
+      }, 1);
+    });
+  </script>
+</body>
+</html>
