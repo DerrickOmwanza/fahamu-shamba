@@ -10,12 +10,27 @@ let transporter = null;
  * Initialize email transporter
  */
 export function initializeEmailService() {
+  const emailUser = process.env.EMAIL_USER;
+  const emailPassword = process.env.EMAIL_PASSWORD;
+  const hasEmailConfig =
+    !!emailUser &&
+    !!emailPassword &&
+    emailUser !== 'your-email@gmail.com' &&
+    emailPassword !== 'your-app-password';
+
+  if (!hasEmailConfig) {
+    transporter = null;
+    console.warn('⚠️  Email service not configured: EMAIL_USER and EMAIL_PASSWORD are missing');
+    console.warn('   OTP codes will be logged to console instead');
+    return;
+  }
+
   // Gmail configuration
   transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER || 'your-email@gmail.com',
-      pass: process.env.EMAIL_PASSWORD || 'your-app-password'
+      user: emailUser,
+      pass: emailPassword
     }
   });
 

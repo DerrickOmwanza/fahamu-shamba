@@ -20,7 +20,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #87ceeb 0%, #4a9d6f 100%);
+            background: url('/images/irewolede-PvwdlXqo85k-unsplash.jpg') center/cover no-repeat fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -28,6 +28,17 @@
             padding: 20px;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
+            position: relative;
+            color: #fff;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(16, 58, 35, 0.55);
+            z-index: 0;
+            pointer-events: none;
         }
         body.loaded {
             opacity: 1;
@@ -75,12 +86,14 @@
             100% { transform: rotate(360deg); }
         }
         .container {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 40px;
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
         }
         .logo {
             text-align: center;

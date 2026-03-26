@@ -8,6 +8,9 @@ if (typeof DEFAULT_LANGUAGE === 'undefined') {
 if (typeof STORAGE_KEY === 'undefined') {
     var STORAGE_KEY = 'fahamuShamba_language';
 }
+if (typeof LANGUAGE_STORAGE_KEYS === 'undefined') {
+    var LANGUAGE_STORAGE_KEYS = ['fahamuShamba_language', 'fahamuLanguage', 'fahamu_language', 'fs_language'];
+}
 
 if (typeof translations === 'undefined') {
     var translations = {
@@ -73,6 +76,7 @@ if (typeof translations === 'undefined') {
     recommended: 'Recommended',
     available: 'Available',
     recommendations: 'Recommendations',
+    soil_map: 'Siaya Soil Map',
     updated: 'Last Updated',
     today: 'Today',
     name: 'Name',
@@ -92,6 +96,10 @@ if (typeof translations === 'undefined') {
     weather: 'Weather',
     market_prices: 'Market Prices',
     community: 'Community',
+    feedback: 'Feedback',
+    settings: 'Settings',
+    my_profile: 'My Profile',
+    service_marketplace: 'Service Marketplace',
     
     // Recommendations
     get_recommendations: 'Generate Recommendations',
@@ -186,6 +194,7 @@ if (typeof translations === 'undefined') {
     recommended: 'Linarekomendwa',
     available: 'Ilipatikana',
     recommendations: 'Mapendekezo',
+    soil_map: 'Ramani ya Udongo ya Siaya',
     updated: 'Ilisasishwa Mwisho',
     today: 'Leo',
     name: 'Jina',
@@ -205,6 +214,10 @@ if (typeof translations === 'undefined') {
     weather: 'Tabia Nchi',
     market_prices: 'Bei za Soko',
     community: 'Jamii',
+    feedback: 'Maoni',
+    settings: 'Mipangilio',
+    my_profile: 'Wasifu Wangu',
+    service_marketplace: 'Soko la Huduma',
     
     // Recommendations
     get_recommendations: 'Pata Mapendekezo',
@@ -299,6 +312,7 @@ if (typeof translations === 'undefined') {
     recommended: 'Gilaore',
     available: 'Ni nitie',
     recommendations: 'Ranyisi',
+    soil_map: 'Ramani mar Udongo e Siaya',
     updated: 'Ilisasishwa Mwisho',
     today: 'Kawuono',
     name: 'Nyingʼ',
@@ -318,6 +332,10 @@ if (typeof translations === 'undefined') {
     weather: 'Lofta',
     market_prices: 'Tan Sokh',
     community: 'Oganda',
+    feedback: 'Duoko',
+    settings: 'Ter',
+    my_profile: 'Profaila Mara',
+    service_marketplace: 'Chiro mar Tich',
     
     // Recommendations
     get_recommendations: 'Kod Gieso',
@@ -359,11 +377,39 @@ function getBrowserLanguage() {
   return 'english';
 }
 
+function normalizeLanguageCode(lang) {
+  const normalized = String(lang || '').toLowerCase().trim();
+  const aliases = {
+    english: 'english',
+    en: 'english',
+    sw: 'swahili',
+    swahili: 'swahili',
+    kiswahili: 'swahili',
+    luo: 'luo',
+    dholuo: 'luo'
+  };
+  return aliases[normalized] || DEFAULT_LANGUAGE;
+}
+
+function persistLanguageAcrossProject(lang) {
+  const normalized = normalizeLanguageCode(lang);
+  const shortCode = normalized === 'english' ? 'en' : normalized === 'swahili' ? 'sw' : 'luo';
+
+  LANGUAGE_STORAGE_KEYS.forEach((key) => {
+    const value = key === STORAGE_KEY ? normalized : shortCode;
+    localStorage.setItem(key, value);
+    sessionStorage.setItem(key, value);
+  });
+}
+
 // Get current language
 function getCurrentLanguage() {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored && SUPPORTED_LANGUAGES.includes(stored)) {
-    return stored;
+  for (const key of LANGUAGE_STORAGE_KEYS) {
+    const stored = localStorage.getItem(key) || sessionStorage.getItem(key);
+    const normalized = normalizeLanguageCode(stored);
+    if (stored && SUPPORTED_LANGUAGES.includes(normalized)) {
+      return normalized;
+    }
   }
   
   // If no language is stored, detect from browser settings
@@ -378,10 +424,11 @@ function getCurrentLanguage() {
 
 // Set language preference
 function setLanguage(lang) {
-  if (SUPPORTED_LANGUAGES.includes(lang)) {
-    localStorage.setItem(STORAGE_KEY, lang);
+  const normalized = normalizeLanguageCode(lang);
+  if (SUPPORTED_LANGUAGES.includes(normalized)) {
+    persistLanguageAcrossProject(normalized);
     // Dispatch custom event so pages can listen for language changes
-    window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }));
+    window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: normalized } }));
     return true;
   }
   return false;

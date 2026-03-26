@@ -1,47 +1,74 @@
 /**
  * Market Prices API for Fahamu Shamba
- * Provides market prices in the format expected by the frontend
- * Uses demo data as fallback since database connectivity is complex
+ * Provides live market prices plus frontend-friendly grouped data
  */
 
 import express from 'express';
+import { getLiveSiayaMarketSnapshot } from './live-market-source.js';
 
 const router = express.Router();
 
-// Get market prices in frontend-compatible format
-router.get('/api/market/prices', (req, res) => {
+router.get('/api/market/live/prices', async (req, res) => {
   try {
-    // Generate demo prices for all 6 sub-counties
-    const crops = ['Maize', 'Beans', 'Rice', 'Sorghum', 'Groundnuts', 'Cassava', 'Sweet Potatoes', 'Tomatoes', 'Kales', 'Cowpeas'];
-    
-    const prices = crops.map(crop => {
-      const basePrice = crop === 'Maize' ? 65 : 
-                       crop === 'Beans' ? 85 :
-                       crop === 'Rice' ? 120 :
-                       crop === 'Sorghum' ? 95 :
-                       crop === 'Groundnuts' ? 110 :
-                       crop === 'Cassava' ? 35 :
-                       crop === 'Sweet Potatoes' ? 40 :
-                       crop === 'Tomatoes' ? 75 :
-                       crop === 'Kales' ? 50 : 70;
-      
-      return {
-        crop: crop,
-        alego: basePrice + 0,
-        bondo: basePrice + 0,
-        gem: basePrice + 1,
-        rarieda: basePrice + 1,
-        ugenya: basePrice + 0,
-        ugunja: basePrice + 3,
-        trend: 'stable'
-      };
+    const snapshot = await getLiveSiayaMarketSnapshot({
+      forceRefresh: req.query.refresh === '1'
+    });
+
+    res.json(snapshot);
+  } catch (error) {
+    console.error('Error fetching live market prices:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch live market prices'
+    });
+  }
+});
+
+// Get market prices in frontend-compatible format
+router.get('/api/market/prices', async (req, res) => {
+  try {
+    const snapshot = await getLiveSiayaMarketSnapshot({
+      forceRefresh: req.query.refresh === '1'
+    });
+    const grouped = new Map();
+
+    snapshot.prices.forEach((row) => {
+      if (!grouped.has(row.crop)) {
+        grouped.set(row.crop, {
+          crop: row.crop,
+          alego: 0,
+          bondo: 0,
+          gem: 0,
+          rarieda: 0,
+          ugenya: 0,
+          ugunja: 0,
+          trend: row.signal === 'good' ? 'up' : row.signal === 'low' ? 'down' : 'stable'
+        });
+      }
+
+      const subCounty = String(row.subCounty || '').toLowerCase();
+      const bucket = grouped.get(row.crop);
+      if (subCounty.includes('alego')) bucket.alego = row.retailPrice || row.wholesalePrice || 0;
+      if (subCounty.includes('bondo')) bucket.bondo = row.retailPrice || row.wholesalePrice || 0;
+      if (subCounty.includes('gem')) bucket.gem = row.retailPrice || row.wholesalePrice || 0;
+      if (subCounty.includes('rarieda')) bucket.rarieda = row.retailPrice || row.wholesalePrice || 0;
+      if (subCounty.includes('ugenya')) bucket.ugenya = row.retailPrice || row.wholesalePrice || 0;
+      if (subCounty.includes('ugunja')) bucket.ugunja = row.retailPrice || row.wholesalePrice || 0;
     });
 
     res.json({
       success: true,
-      prices: prices,
-      timestamp: new Date().toISOString(),
-      message: 'Market prices loaded successfully'
+      prices: Array.from(grouped.values()),
+      timestamp: snapshot.observedAt || snapshot.fetchedAt,
+      message: snapshot.isFallback ? 'Showing fallback local prices' : 'Live market prices loaded successfully',
+      meta: {
+        provider: snapshot.provider,
+        sourceUrl: snapshot.sourceUrl,
+        observedAt: snapshot.observedAt,
+        fetchedAt: snapshot.fetchedAt,
+        isFallback: snapshot.isFallback,
+        notes: snapshot.notes
+      }
     });
     
   } catch (error) {

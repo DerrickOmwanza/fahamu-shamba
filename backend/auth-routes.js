@@ -6,7 +6,46 @@ const router = express.Router();
 
 // Initialize auth routes with database instance
 export function initAuthRoutes(db, dbAsync = null) {
-  const JWT_SECRET = process.env.JWT_SECRET || 'farmer_secret_key_change_in_production';
+  const isProduction = process.env.NODE_ENV === 'production';
+  const JWT_SECRET = process.env.JWT_SECRET || 'dev-only-jwt-secret';
+
+  if (isProduction && !process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET must be set in production');
+  }
+
+  const safeGetUserColumns = async (sqlWithPhoto, sqlWithoutPhoto, params = []) => {
+    try {
+      const user = await dbHelper.get(sqlWithPhoto, params);
+      return user ? { ...user, profile_photo: user.profile_photo || null } : null;
+    } catch (error) {
+      if (!error.message?.includes('no such column: profile_photo')) {
+        throw error;
+      }
+
+      const user = await dbHelper.get(sqlWithoutPhoto, params);
+      return user ? { ...user, profile_photo: null } : null;
+    }
+  };
+
+  const safeAllUsersWithPhoto = async () => {
+    try {
+      const users = await dbHelper.all(
+        'SELECT id, phone, username, password_hash, name, preferred_language, profile_photo FROM users',
+        []
+      );
+      return users.map(user => ({ ...user, profile_photo: user.profile_photo || null }));
+    } catch (error) {
+      if (!error.message?.includes('no such column: profile_photo')) {
+        throw error;
+      }
+
+      const users = await dbHelper.all(
+        'SELECT id, phone, username, password_hash, name, preferred_language FROM users',
+        []
+      );
+      return users.map(user => ({ ...user, profile_photo: null }));
+    }
+  };
   
   // Use dbAsync if provided (PostgreSQL), otherwise create wrapper for SQLite
   const dbHelper = dbAsync || {
@@ -51,6 +90,13 @@ export function initAuthRoutes(db, dbAsync = null) {
     return await bcryptjs.compare(password, hash);
   };
 
+  // Helper: Check if account is locked
+  const isAccountLocked = (user) => {
+    if (!user || !user.lockout_until) return false;
+    const lockoutUntil = new Date(user.lockout_until);
+    return lockoutUntil > new Date();
+  };
+
   // Helper: Generate JWT token
   const generateToken = (user) => {
     return jwt.sign({ 
@@ -72,9 +118,19 @@ export function initAuthRoutes(db, dbAsync = null) {
     return phoneRegex.test(phone.replace(/\s/g, ''));
   };
 
+  // Security constants
+  const MAX_LOGIN_ATTEMPTS = 5;
+  const LOCKOUT_DURATION_MINUTES = 15;
+
   // Helper: Validate password strength
   const isStrongPassword = (password) => {
-    return password.length >= 6; // Minimum 6 chars for MVP
+    if (!password || typeof password !== 'string') return false;
+    const lengthCheck = password.length >= 10;
+    const upperCheck = /[A-Z]/.test(password);
+    const lowerCheck = /[a-z]/.test(password);
+    const numberCheck = /[0-9]/.test(password);
+    const symbolCheck = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
+    return lengthCheck && upperCheck && lowerCheck && numberCheck && symbolCheck;
   };
 
   const isValidUsername = (username) => /^[a-zA-Z0-9._-]{3,30}$/.test((username || '').trim());
@@ -144,7 +200,7 @@ export function initAuthRoutes(db, dbAsync = null) {
 
       // Create user
       const result = await dbHelper.run(
-        'INSERT INTO users (phone, username, password_hash, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
+        'INSERT INTO users (phone, username, password_hash, password_changed_at, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
         [normalizedPhone, normalizedUsername, passwordHash]
       );
 
@@ -261,15 +317,16 @@ export function initAuthRoutes(db, dbAsync = null) {
       console.log(`Login attempt with username: ${usernameIdentifier}`);
 
       // Find user by username only (matching create account page)
-      let user = await dbHelper.get(
+      let user = await safeGetUserColumns(
         'SELECT id, phone, username, password_hash, name, preferred_language, profile_photo FROM users WHERE username = ?',
+        'SELECT id, phone, username, password_hash, name, preferred_language FROM users WHERE username = ?',
         [usernameIdentifier]
       );
        
       // If not found, try case-insensitive search as fallback
       if (!user) {
         console.log(`Trying case-insensitive search for: ${usernameIdentifier}`);
-        const allUsers = await dbHelper.all('SELECT id, phone, username, password_hash, name, preferred_language, profile_photo FROM users', []);
+        const allUsers = await safeAllUsersWithPhoto();
         const fallbackUser = allUsers.find(u => u.username && u.username.toLowerCase() === usernameIdentifier);
         if (fallbackUser) {
           console.log(`Found user via case-insensitive search: ${fallbackUser.username}`);
@@ -287,17 +344,49 @@ export function initAuthRoutes(db, dbAsync = null) {
 
       console.log(`User found: ${user.id}, username: ${user.username}, phone: ${user.phone}`);
 
+      // Enforce account lockout
+      if (isAccountLocked(user)) {
+        return res.status(423).json({
+          status: 'error',
+          message: `Account locked due to repeated failed login attempts. Try again after ${new Date(user.lockout_until).toLocaleString()}`
+        });
+      }
+
+      // Prevent login for deactivated users
+      if (user.is_active === 0 || user.is_active === '0' || user.is_active === false) {
+        return res.status(403).json({
+          status: 'error',
+          message: 'User account is deactivated. Contact support.'
+        });
+      }
+
       // Verify password
       const isPasswordValid = await verifyPassword(password, user.password_hash);
 
       console.log(`Password valid: ${isPasswordValid}`);
 
       if (!isPasswordValid) {
+        const failedAttempts = (user.failed_login_attempts || 0) + 1;
+        const lockoutUntil = failedAttempts >= MAX_LOGIN_ATTEMPTS
+          ? new Date(Date.now() + LOCKOUT_DURATION_MINUTES * 60 * 1000).toISOString()
+          : null;
+
+        await dbHelper.run(
+          'UPDATE users SET failed_login_attempts = ?, lockout_until = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+          [failedAttempts, lockoutUntil, user.id]
+        );
+
         return res.status(401).json({
           status: 'error',
           message: 'Invalid username or password'
         });
       }
+
+      // Reset failed login count and refresh last_login
+      await dbHelper.run(
+        'UPDATE users SET failed_login_attempts = 0, lockout_until = NULL, last_login = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [user.id]
+      );
 
       // Generate token with user data (fetch farm first, then use it)
       const farm = await dbHelper.get('SELECT location, ward, farm_size, farm_size_unit FROM farms WHERE user_id = ?', [user.id]);
@@ -363,7 +452,11 @@ export function initAuthRoutes(db, dbAsync = null) {
       let user = null;
       let farm = null;
       try {
-        user = await dbHelper.get('SELECT id, phone, username, name, profile_photo FROM users WHERE id = ?', [decoded.userId]);
+        user = await safeGetUserColumns(
+          'SELECT id, phone, username, name, profile_photo FROM users WHERE id = ?',
+          'SELECT id, phone, username, name FROM users WHERE id = ?',
+          [decoded.userId]
+        );
         
         if (user) {
           farm = await dbHelper.get('SELECT location, ward, farm_size, farm_size_unit FROM farms WHERE user_id = ?', [user.id]);
@@ -566,10 +659,22 @@ export function initAuthRoutes(db, dbAsync = null) {
       }
 
       // Update profile photo in database
-      const result = await dbHelper.run(
-        'UPDATE users SET profile_photo = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-        [profile_photo, decoded.userId]
-      );
+      let result;
+      try {
+        result = await dbHelper.run(
+          'UPDATE users SET profile_photo = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+          [profile_photo, decoded.userId]
+        );
+      } catch (error) {
+        if (!error.message?.includes('no such column: profile_photo')) {
+          throw error;
+        }
+
+        return res.status(409).json({
+          status: 'error',
+          message: 'Profile photo storage is not initialized yet. Restart the server and try again.'
+        });
+      }
 
       if (result.changes > 0) {
         return res.json({

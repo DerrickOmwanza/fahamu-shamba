@@ -6,7 +6,8 @@
 
 class TranslationManager {
   constructor() {
-    this.currentLanguage = localStorage.getItem('fahamuLanguage') || 'en';
+    this.storageKeys = ['fahamuLanguage', 'fahamuShamba_language', 'fahamu_language', 'fs_language'];
+    this.currentLanguage = this.resolveStoredLanguage();
     this.translations = {};
     this.supportedLanguages = ['en', 'sw', 'luo'];
     this.languageNames = {
@@ -14,6 +15,45 @@ class TranslationManager {
       sw: '🇰🇪 Kiswahili',
       luo: '🌍 Dholuo'
     };
+  }
+
+  normalizeLanguageCode(lang) {
+    const normalized = String(lang || '').toLowerCase().trim();
+    const aliases = {
+      en: 'en',
+      english: 'en',
+      sw: 'sw',
+      swahili: 'sw',
+      kiswahili: 'sw',
+      luo: 'luo',
+      dholuo: 'luo'
+    };
+    return aliases[normalized] || 'en';
+  }
+
+  resolveStoredLanguage() {
+    for (const key of this.storageKeys) {
+      const value = localStorage.getItem(key) || sessionStorage.getItem(key);
+      if (value) {
+        return this.normalizeLanguageCode(value);
+      }
+    }
+    return 'en';
+  }
+
+  persistLanguage(lang) {
+    const normalized = this.normalizeLanguageCode(lang);
+    const legacyNames = {
+      en: 'english',
+      sw: 'swahili',
+      luo: 'luo'
+    };
+
+    this.storageKeys.forEach((key) => {
+      const storedValue = key === 'fahamuShamba_language' ? legacyNames[normalized] : normalized;
+      localStorage.setItem(key, storedValue);
+      sessionStorage.setItem(key, storedValue);
+    });
   }
 
   /**
@@ -34,6 +74,28 @@ class TranslationManager {
       // Fallback to English if loading fails
       this.currentLanguage = 'en';
     }
+  }
+
+  initLanguageSelects() {
+    const selects = document.querySelectorAll('.language-select');
+    selects.forEach((select) => {
+      if (select.tagName === 'SELECT') {
+        select.value = this.currentLanguage;
+        select.addEventListener('change', (event) => {
+          const chosen = event.target.value;
+          this.setLanguage(chosen);
+        });
+      }
+    });
+  }
+
+  updateLanguageSelects() {
+    const selects = document.querySelectorAll('.language-select');
+    selects.forEach((select) => {
+      if (select.tagName === 'SELECT') {
+        select.value = this.currentLanguage;
+      }
+    });
   }
 
   /**
@@ -59,18 +121,20 @@ class TranslationManager {
    * Change language and update page
    */
   setLanguage(lang) {
-    if (!this.supportedLanguages.includes(lang)) {
+    const normalized = this.normalizeLanguageCode(lang);
+    if (!this.supportedLanguages.includes(normalized)) {
       console.error(`Unsupported language: ${lang}`);
       return;
     }
 
-    this.currentLanguage = lang;
-    localStorage.setItem('fahamuLanguage', lang);
+    this.currentLanguage = normalized;
+    this.persistLanguage(normalized);
     this.updatePageContent();
     this.updateLanguageButtons();
+    this.updateLanguageSelects();
     
     // Dispatch custom event for other parts of app to listen to
-    window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }));
+    window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: normalized } }));
   }
 
   /**
@@ -143,6 +207,7 @@ class TranslationManager {
 
 // Create global instance
 const translator = new TranslationManager();
+window.translator = translator;
 
 /**
  * Initialize translations on page load
@@ -151,9 +216,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   await translator.loadTranslations();
   translator.updatePageContent();
   translator.updateLanguageButtons();
+  translator.initLanguageSelects();
 });
 
 // Helper function for use in HTML
 function changeLanguage(lang) {
   translator.setLanguage(lang);
+}
+
+function getCurrentLanguage() {
+  return translator.getLanguage();
+}
+
+function setLanguage(lang) {
+  translator.setLanguage(lang);
+}
+
+function translatePage(lang) {
+  translator.updatePageContent(lang);
+}
+
+function initializeLanguage() {
+  translator.updatePageContent();
+  translator.updateLanguageButtons();
+  translator.initLanguageSelects();
 }

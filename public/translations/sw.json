@@ -2,16 +2,33 @@
   "nav": {
     "login": "Ingia",
     "signup": "Jisajili",
-    "ussd": "Jaribio la USSD"
+    "createAccount": "Fungua Akaunti",
+    "ussd": "Jaribio la USSD",
+    "farmInsights": "Maelezo ya Shamba",
+    "getStarted": "Anza Sasa",
+    "languageLabel": "Lugha",
+    "analysis": "Uchambuzi"
   },
   "header": {
-    "tagline": "Ukulima Njia Rahisi"
+    "tagline": "Kilimo bora kwa Siaya"
   },
   "hero": {
     "headline": "Ukulima Njia Rahisi",
     "subtext": "Pata mapendekezo ya binafsi ya mazao na habari za soko.",
     "learnMore": "Jifunze Zaidi",
-    "createAccount": "Unda Akaunti Bila Gharama"
+    "createAccount": "Unda Akaunti Bila Gharama",
+    "signIn": "Ingia"
+  },
+  "analysis": {
+    "title": "Dashibodi ya Uchambuzi wa Shamba",
+    "subtitle": "Habari za tabia nchi kwa wakati halisi, mwelekeo wa soko na ufahamu unaotabirika kwa Kaunti ya Siaya.",
+    "heroHeadline": "Maelezo ya Shamba la Siaya: Tabia Nchi, Bei za Soko, na Matarajio ya Mwelekeo",
+    "heroSubtitle": "Mabadiliko ya moja kwa moja kutoka kaunti 5; inasasishwa kila dakika.",
+    "tabs": {
+      "weather": "Tabia Nchi",
+      "market": "Mwelekeo wa Soko",
+      "analysis": "Uchambuzi"
+    }
   },
   "features": {
     "title": "Kwa Nini Chagua Fahamu Shamba?",

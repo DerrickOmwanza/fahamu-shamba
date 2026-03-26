@@ -53,6 +53,7 @@ app.get('/', (req, res) => sendPublicPage(res, 'index.html'));
 app.get('/landing', (req, res) => sendPublicPage(res, 'landing-page.html'));
 app.get('/login', (req, res) => sendPublicPage(res, 'login.html'));
 app.get('/signup', (req, res) => sendPublicPage(res, 'signup.html'));
+app.get('/farmer-registration', (req, res) => sendPublicPage(res, 'signup.html'));
 app.get('/dashboard', (req, res) => sendPublicPage(res, 'dashboard.html'));
 app.get('/farmer-dashboard', (req, res) => sendPublicPage(res, 'dashboard.html'));
 app.get('/profile', (req, res) => sendPublicPage(res, 'profile.html'));
@@ -63,7 +64,10 @@ app.get('/community-market', (req, res) => sendPublicPage(res, 'community-market
 app.get('/market', (req, res) => sendPublicPage(res, 'market.html'));
 app.get('/market-trends', (req, res) => sendPublicPage(res, 'market-trends.html'));
 app.get('/market-trends.html', (req, res) => sendPublicPage(res, 'market-trends.html'));
+app.get('/service-market', (req, res) => sendPublicPage(res, 'service-market.html'));
+app.get('/service-market.html', (req, res) => sendPublicPage(res, 'service-market.html'));
 app.get('/recommendations', (req, res) => sendPublicPage(res, 'recommendations.html'));
+app.get('/soil-map', (req, res) => sendPublicPage(res, 'soil-map.html'));
 app.get('/crop-prediction', (req, res) => sendPublicPage(res, 'crop-prediction.html'));
 app.get('/crop-details', (req, res) => sendPublicPage(res, 'crop-details.html'));
 app.get('/settings', (req, res) => sendPublicPage(res, 'settings.html'));
@@ -74,12 +78,7 @@ app.get('/api-tester', (req, res) => {
     message: 'API tester page is not included in current public build.'
   });
 });
-app.get('/admin', (req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Admin web page is not included in current public build.'
-  });
-});
+app.get('/admin', (req, res) => sendPublicPage(res, 'admin.html'));
 app.get('/farmer-profile-dashboard', (req, res) => {
   res.status(404).json({
     success: false,
@@ -196,7 +195,7 @@ if (!USE_POSTGRES) {
 // Initialize community and feedback databases with the main db connection
 console.log('👥 Initializing community service...');
 try {
-  communityService.initializeCommunityDatabase(db, dbAsync);
+  await communityService.initializeCommunityDatabase(db, dbAsync);
   console.log('✅ Community service initialized (async/PostgreSQL ready)');
 } catch (error) {
   console.error('⚠️ Error initializing community service:', error.message);
@@ -2161,7 +2160,17 @@ app.post('/api/recommend', (req, res) => {
 // Analyze complete farm conditions
 app.post('/api/analyze-farm', (req, res) => {
   try {
-    const { subCounty, soilType, season, budget = 5000, farmSize = 1, waterSource = 'Rainfall' } = req.body;
+    const {
+      subCounty,
+      soilType,
+      season,
+      budget = 5000,
+      farmSize = 1,
+      waterSource = 'Rainfall',
+      selectedWard = null,
+      selectedRegionLabel = null,
+      climateSnapshot = null
+    } = req.body;
 
     if (!subCounty || !soilType || !season) {
       return res.status(400).json({
@@ -2181,7 +2190,15 @@ app.post('/api/analyze-farm', (req, res) => {
 
     res.json({
       success: true,
-      data: analysis
+      data: {
+        ...analysis,
+        locationContext: {
+          subCounty,
+          selectedWard,
+          selectedRegionLabel,
+          climateSnapshot
+        }
+      }
     });
   } catch (error) {
     console.error('Farm analysis error:', error);
@@ -2223,6 +2240,61 @@ app.post('/api/soil-assessment', (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error assessing soil',
+      error: error.message
+    });
+  }
+});
+
+// Geological soil profile by sub-county
+app.get('/api/geological-soil/:subCounty', (req, res) => {
+  try {
+    const requestedSubCounty = (req.params.subCounty || '').toLowerCase();
+    const locationAliases = {
+      rarieda: 'bondo',
+      ugenya: 'ugunja'
+    };
+    const lookupSubCounty = locationAliases[requestedSubCounty] || requestedSubCounty;
+    const soilProfiles = demoData.soilData[lookupSubCounty];
+
+    if (!soilProfiles) {
+      return res.status(404).json({
+        success: false,
+        message: 'Geological soil data not found for this location'
+      });
+    }
+
+    const scoreSoil = (profile) => {
+      const pHScore = 7 - Math.abs(6.5 - profile.pH);
+      return (pHScore * 10) + (profile.nitrogen * 20) + profile.phosphorus + (profile.potassium / 10) + (profile.organicMatter * 15);
+    };
+
+    const entries = Object.entries(soilProfiles).map(([soilType, profile]) => ({
+      soilType,
+      ...profile,
+      qualityScore: Math.round(scoreSoil(profile) * 10) / 10
+    })).sort((a, b) => b.qualityScore - a.qualityScore);
+
+    const dominantSoil = entries[0];
+
+    res.json({
+      success: true,
+      data: {
+        subCounty: requestedSubCounty,
+        lookupSubCounty,
+        source: 'Geological Soil Data API',
+        dominantSoilType: dominantSoil.soilType,
+        recommendedSoilType: dominantSoil.soilType,
+        soilProfiles: entries,
+        advisory: dominantSoil.organicMatter < 2.5
+          ? 'Organic matter is relatively low. Add compost or manure for better yields.'
+          : 'Soil profile is favorable for productive cropping with balanced inputs.'
+      }
+    });
+  } catch (error) {
+    console.error('Geological soil data error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching geological soil data',
       error: error.message
     });
   }

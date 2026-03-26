@@ -57,7 +57,20 @@ export function requireRole(requiredRole) {
       });
     }
 
-    if (req.admin.role !== requiredRole && requiredRole !== 'any') {
+    if (requiredRole === 'any') {
+      return next();
+    }
+
+    const roleRank = {
+      moderator: 1,
+      admin: 2,
+      super_admin: 3
+    };
+
+    const currentRank = roleRank[req.admin.role] || 0;
+    const requiredRank = roleRank[requiredRole] || 0;
+
+    if (currentRank < requiredRank) {
       logAuditEvent(
         req.admin.adminId,
         req.admin.email,
@@ -86,7 +99,7 @@ export function verifyCSRFToken(req, res, next) {
   }
 
   const csrfToken = req.headers['x-csrf-token'];
-  const sessionCSRF = req.session?.csrfToken;
+  const sessionCSRF = req.adminSession?.csrfToken;
 
   if (!csrfToken || csrfToken !== sessionCSRF) {
     logSecurityEvent('csrf_token_mismatch', {
@@ -234,7 +247,15 @@ export function validateSession(sessionStore) {
 
     const sessionId = req.headers['x-session-id'];
     if (!sessionId) {
-      return next();
+      logSecurityEvent('missing_admin_session', {
+        adminId: req.admin.adminId,
+        endpoint: req.path,
+        ipAddress: getClientIP(req)
+      }, 'warning');
+      return res.status(401).json({
+        success: false,
+        message: 'Session ID required'
+      });
     }
 
     const session = sessionStore.get(sessionId);
@@ -249,9 +270,26 @@ export function validateSession(sessionStore) {
       });
     }
 
+    const requestIP = getClientIP(req);
+    const requestAgent = req.headers['user-agent'] || 'unknown';
+
+    if ((session.ipAddress && session.ipAddress !== requestIP) || (session.userAgent && session.userAgent !== requestAgent)) {
+      sessionStore.delete(sessionId);
+      logSecurityEvent('session_fingerprint_mismatch', {
+        adminId: req.admin.adminId,
+        endpoint: req.path,
+        ipAddress: requestIP
+      }, 'critical');
+      return res.status(401).json({
+        success: false,
+        message: 'Session fingerprint mismatch'
+      });
+    }
+
     // Update session last activity
     session.lastActivity = Date.now();
     sessionStore.set(sessionId, session);
+    req.adminSession = session;
 
     next();
   };

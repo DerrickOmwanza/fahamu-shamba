@@ -5,6 +5,7 @@ import {
   generateMFAToken,
   generateAccessToken,
   generateRefreshToken,
+  verifyRefreshToken,
   generateSessionId,
   generateCSRFToken,
   loginLimiter,
@@ -14,6 +15,7 @@ import {
   authenticateAdmin,
   requireRole,
   verifyCSRFToken,
+  validateSession,
   getClientIP,
   sanitizeInput
 } from './admin-middleware.js';
@@ -188,7 +190,13 @@ router.post('/admin/verify-otp', sanitizeInput, async (req, res) => {
     const sessionId = generateSessionId();
     const csrfToken = generateCSRFToken();
     await adminDB.createAdminSession(req.dbAsync, admin.id, sessionId, csrfToken, ipAddress, req.headers['user-agent']);
-    sessionStore.set(sessionId, { adminId: admin.id, lastActivity: Date.now() });
+    sessionStore.set(sessionId, {
+      adminId: admin.id,
+      lastActivity: Date.now(),
+      csrfToken,
+      ipAddress,
+      userAgent: req.headers['user-agent'] || 'unknown'
+    });
 
     // Update last login
     await adminDB.updateAdminLastLogin(req.dbAsync, admin.id);
@@ -207,6 +215,7 @@ router.post('/admin/verify-otp', sanitizeInput, async (req, res) => {
       accessToken,
       refreshToken,
       sessionId,
+      csrfToken,
       admin: {
         id: admin.id,
         email: admin.email,
@@ -230,20 +239,42 @@ router.post('/admin/verify-otp', sanitizeInput, async (req, res) => {
 router.post('/admin/refresh-token', async (req, res) => {
   try {
     const { refreshToken } = req.body;
+    const sessionId = req.headers['x-session-id'];
+    const session = sessionId ? sessionStore.get(sessionId) : null;
 
-    if (!refreshToken) {
+    if (!refreshToken || !sessionId || !session) {
       return res.status(400).json({
         success: false,
-        message: 'Refresh token required'
+        message: 'Refresh token and session required'
       });
     }
 
-    // This would verify the refresh token (implementation depends on your setup)
-    // For now, we'll accept it and generate new tokens
+    const decoded = verifyRefreshToken(refreshToken);
+    if (!decoded || decoded.adminId !== session.adminId) {
+      logSecurityEvent('invalid_refresh_token_attempt', {
+        sessionId,
+        ipAddress: getClientIP(req)
+      }, 'warning');
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid refresh token'
+      });
+    }
+
+    const admin = await adminDB.getAdminById(req.dbAsync, decoded.adminId);
+    if (!admin) {
+      return res.status(401).json({
+        success: false,
+        message: 'Admin session no longer valid'
+      });
+    }
+
+    const accessToken = generateAccessToken(admin.id, admin.email, admin.role);
+
     res.json({
       success: true,
-      message: 'Token refreshed'
-      // Return new access token
+      message: 'Token refreshed',
+      accessToken
     });
   } catch (error) {
     res.status(500).json({
@@ -253,11 +284,13 @@ router.post('/admin/refresh-token', async (req, res) => {
   }
 });
 
+router.use('/admin', authenticateAdmin, validateSession(sessionStore));
+
 /**
  * POST /api/admin/logout
  * Admin logout
  */
-router.post('/admin/logout', authenticateAdmin, async (req, res) => {
+router.post('/admin/logout', verifyCSRFToken, async (req, res) => {
   try {
     const sessionId = req.headers['x-session-id'];
     if (sessionId) {
@@ -275,6 +308,46 @@ router.post('/admin/logout', authenticateAdmin, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Logout failed'
+    });
+  }
+});
+
+/**
+ * GET /api/admin/session
+ * Get current admin session metadata
+ */
+router.get('/admin/session', async (req, res) => {
+  try {
+    const admin = await adminDB.getAdminById(req.dbAsync, req.admin.adminId);
+    const permissions = await adminDB.getAdminPermissions(req.dbAsync, req.admin.role);
+
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: 'Admin not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        admin: {
+          id: admin.id,
+          email: admin.email,
+          firstName: admin.first_name,
+          lastName: admin.last_name,
+          role: admin.role,
+          mfaEnabled: !!admin.mfa_enabled,
+          lastLogin: admin.last_login,
+          status: admin.status
+        },
+        permissions
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to load session'
     });
   }
 });
@@ -386,7 +459,7 @@ router.get('/admin/security-logs', authenticateAdmin, requireRole('super_admin')
  * POST /api/admin/system-alerts
  * Create system alert
  */
-router.post('/admin/system-alerts', authenticateAdmin, requireRole('admin'), sanitizeInput, async (req, res) => {
+router.post('/admin/system-alerts', requireRole('admin'), verifyCSRFToken, sanitizeInput, async (req, res) => {
   try {
     const { alertType, severity, title, message } = req.body;
 
@@ -455,7 +528,7 @@ router.get('/admin/system-alerts', authenticateAdmin, async (req, res) => {
  * PUT /api/admin/system-alerts/:alertId
  * Resolve system alert
  */
-router.put('/admin/system-alerts/:alertId', authenticateAdmin, requireRole('admin'), async (req, res) => {
+router.put('/admin/system-alerts/:alertId', requireRole('admin'), verifyCSRFToken, async (req, res) => {
   try {
     const { alertId } = req.params;
     await adminDB.resolveSystemAlert(req.dbAsync, alertId);
@@ -485,7 +558,7 @@ router.put('/admin/system-alerts/:alertId', authenticateAdmin, requireRole('admi
  * GET /api/admin/admins
  * Get all admin users
  */
-router.get('/admin/admins', authenticateAdmin, requireRole('super_admin'), async (req, res) => {
+router.get('/admin/admins', requireRole('super_admin'), async (req, res) => {
   try {
     const admins = await adminDB.getAllAdmins(req.dbAsync);
     logDataAccess(req.admin.adminId, req.admin.email, 'admin_users', admins.length, getClientIP(req));
@@ -506,7 +579,7 @@ router.get('/admin/admins', authenticateAdmin, requireRole('super_admin'), async
  * POST /api/admin/admins
  * Create new admin user
  */
-router.post('/admin/admins', authenticateAdmin, requireRole('super_admin'), sanitizeInput, async (req, res) => {
+router.post('/admin/admins', requireRole('super_admin'), verifyCSRFToken, sanitizeInput, async (req, res) => {
   try {
     const { email, password, firstName, lastName, role } = req.body;
 

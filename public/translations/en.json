@@ -2,16 +2,22 @@
   "nav": {
     "login": "Login",
     "signup": "Sign Up",
-    "ussd": "USSD Demo"
+    "createAccount": "Create Account",
+    "ussd": "USSD Demo",
+    "farmInsights": "Farm Insights",
+    "getStarted": "Get Started",
+    "languageLabel": "Language",
+    "analysis": "Analysis"
   },
   "header": {
-    "tagline": "Smart Farming Made Simple"
+    "tagline": "Smart farming for Siaya"
   },
   "hero": {
     "headline": "Smart Farming Made Simple",
     "subtext": "Get personalized crop recommendations and market insights.",
     "learnMore": "Learn More",
-    "createAccount": "Create Free Account"
+    "createAccount": "Create Free Account",
+    "signIn": "Sign In"
   },
   "features": {
     "title": "Why Choose Fahamu Shamba?",
@@ -38,6 +44,17 @@
     "languages": {
       "name": "Multiple Languages",
       "desc": "Access Fahamu Shamba in English, Swahili, or Dholuo—your choice."
+    }
+  },
+  "analysis": {
+    "title": "Farm Analytics Dashboard",
+    "subtitle": "Real-time weather updates, market trends and predictive insights for Siaya County.",
+    "heroHeadline": "Siaya Farm Insights: Weather, Market Price, and Trend Forecasts",
+    "heroSubtitle": "Live updates from 5 sub-counties; automatically refreshes every minute.",
+    "tabs": {
+      "weather": "Weather",
+      "market": "Market Trend",
+      "analysis": "Analysis"
     }
   },
   "howItWorks": {

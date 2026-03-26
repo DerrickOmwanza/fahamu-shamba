@@ -35,14 +35,19 @@ export function initializeAuthTables(db) {
           password_hash VARCHAR(255),
           name VARCHAR(100),
           email VARCHAR(100),
+          profile_photo TEXT,
           preferred_language VARCHAR(20) DEFAULT 'english',
+          failed_login_attempts INTEGER DEFAULT 0,
+          lockout_until DATETIME,
+          last_login DATETIME,
+          password_changed_at DATETIME,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
           is_active BOOLEAN DEFAULT 1
         );
       `);
       console.log('✅ users table created');
-      userColumns = ['id', 'phone', 'username', 'password_hash', 'name', 'email', 'preferred_language', 'created_at', 'updated_at', 'is_active'];
+      userColumns = ['id', 'phone', 'username', 'password_hash', 'name', 'email', 'profile_photo', 'preferred_language', 'created_at', 'updated_at', 'is_active'];
     }
 
     // Backward-compatible migration: Add missing columns to existing users table
@@ -63,6 +68,53 @@ export function initializeAuthTables(db) {
         console.log('✅ Added preferred_language column to existing users table');
       } catch (e) {
         console.log('⚠️  Could not add preferred_language column:', e.message);
+      }
+    }
+
+    // Add profile_photo column if it doesn't exist
+    if (!userColumns.includes('profile_photo')) {
+      try {
+        db.exec(`ALTER TABLE users ADD COLUMN profile_photo TEXT;`);
+        console.log('✅ Added profile_photo column to existing users table');
+      } catch (e) {
+        console.log('⚠️  Could not add profile_photo column:', e.message);
+      }
+    }
+
+    // Add failed login / lockout / login tracking columns if they don't exist
+    if (!userColumns.includes('failed_login_attempts')) {
+      try {
+        db.exec(`ALTER TABLE users ADD COLUMN failed_login_attempts INTEGER DEFAULT 0;`);
+        console.log('✅ Added failed_login_attempts column to users table');
+      } catch (e) {
+        console.log('⚠️  Could not add failed_login_attempts column:', e.message);
+      }
+    }
+
+    if (!userColumns.includes('lockout_until')) {
+      try {
+        db.exec(`ALTER TABLE users ADD COLUMN lockout_until DATETIME;`);
+        console.log('✅ Added lockout_until column to users table');
+      } catch (e) {
+        console.log('⚠️  Could not add lockout_until column:', e.message);
+      }
+    }
+
+    if (!userColumns.includes('last_login')) {
+      try {
+        db.exec(`ALTER TABLE users ADD COLUMN last_login DATETIME;`);
+        console.log('✅ Added last_login column to users table');
+      } catch (e) {
+        console.log('⚠️  Could not add last_login column:', e.message);
+      }
+    }
+
+    if (!userColumns.includes('password_changed_at')) {
+      try {
+        db.exec(`ALTER TABLE users ADD COLUMN password_changed_at DATETIME;`);
+        console.log('✅ Added password_changed_at column to users table');
+      } catch (e) {
+        console.log('⚠️  Could not add password_changed_at column:', e.message);
       }
     }
 

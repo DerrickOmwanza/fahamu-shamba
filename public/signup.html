@@ -19,7 +19,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #87ceeb 0%, #4a9d6f 100%);
+            background: url('/images/irewolede-PvwdlXqo85k-unsplash.jpg') center/cover no-repeat fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -27,6 +27,17 @@
             padding: 20px;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
+            position: relative;
+            color: #fff;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(16, 58, 35, 0.55);
+            z-index: 0;
+            pointer-events: none;
         }
         body.loaded {
             opacity: 1;
@@ -74,14 +85,16 @@
             100% { transform: rotate(360deg); }
         }
         .container {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 40px;
             width: 100%;
             max-width: 450px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             max-height: 90vh;
             overflow-y: auto;
+            position: relative;
+            z-index: 1;
         }
         .logo {
             text-align: center;
@@ -102,6 +115,30 @@
         }
         .form-group {
             margin-bottom: 15px;
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .type-btn {
+            flex: 1;
+            border: 2px solid #2E7D32;
+            background: rgba(46, 125, 50, 0.1);
+            color: #2E7D32;
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .type-btn.active {
+            background: #2E7D32;
+            color: #fff;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
         }
         label {
             display: block;
@@ -283,21 +320,67 @@
         <h2 data-i18n="create_account"></h2>
         <form id="signupForm">
             <div class="form-group">
-                <label data-i18n="full_name"></label>
-                <input type="text" id="name" data-i18n-placeholder="enter_full_name" required>
+                <label>Registration Type</label>
+                <div class="toggle-buttons">
+                    <button type="button" class="type-btn active" data-type="individual" onclick="selectRegistrationType('individual')">Individual Registration</button>
+                    <button type="button" class="type-btn" data-type="group" onclick="selectRegistrationType('group')">Group Registration</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label data-i18n="username"></label>
-                <input type="text" id="username" data-i18n-placeholder="enter_username" required>
+
+            <div id="individualFields" class="registration-section">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" id="firstName" placeholder="First name" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="lastName" placeholder="Last name" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="phone" placeholder="07XXXXXXXX" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="email@example.com">
+                </div>
             </div>
-            <div class="form-group">
-                <label data-i18n="phone_number"></label>
-                <input type="tel" id="phone" data-i18n-placeholder="example_phone" required>
+
+            <div id="groupFields" class="registration-section" style="display:none;">
+                <div class="form-group">
+                    <label>Group Name</label>
+                    <input type="text" id="groupName" placeholder="Group name">
+                </div>
+                <div class="form-group">
+                    <label>Group Registration Number</label>
+                    <input type="text" id="groupRegistrationNumber" placeholder="Registration number">
+                </div>
+                <div class="form-group">
+                    <label>Group Description</label>
+                    <textarea id="groupDescription" placeholder="Brief group description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Leader First Name</label>
+                    <input type="text" id="leaderFirstName" placeholder="Leader first name">
+                </div>
+                <div class="form-group">
+                    <label>Leader Last Name</label>
+                    <input type="text" id="leaderLastName" placeholder="Leader last name">
+                </div>
+                <div class="form-group">
+                    <label>Leader Phone</label>
+                    <input type="tel" id="leaderPhone" placeholder="07XXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label>Leader Email</label>
+                    <input type="email" id="leaderEmail" placeholder="leader@example.com">
+                </div>
             </div>
+
             <div class="form-group">
-                <label data-i18n="sub_county"></label>
+                <label>Sub-county</label>
                 <select id="subcounty" required>
-                    <option value="" data-i18n="select_sub_county"></option>
+                    <option value="">Select sub-county</option>
                     <option value="bondo">Bondo</option>
                     <option value="ugenya">Ugenya</option>
                     <option value="ugunja">Ugunja</option>
@@ -313,8 +396,36 @@
                  </select>
              </div>
             <div class="form-group">
+                <label>Soil Type</label>
+                <select id="soilType" required>
+                    <option value="">Choose soil type</option>
+                    <option value="loam">Loam</option>
+                    <option value="sandy">Sandy</option>
+                    <option value="clay">Clay</option>
+                    <option value="silt">Silt</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Water Source</label>
+                <select id="waterSource" required>
+                    <option value="">Choose water source</option>
+                    <option value="rain">Rain</option>
+                    <option value="irrigation">Irrigation</option>
+                    <option value="river">River</option>
+                    <option value="borehole">Borehole</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Estimated Budget (Ksh)</label>
+                <input type="number" id="budget" placeholder="Estimated budget" min="0" required>
+            </div>
+            <div class="form-group">
                 <label data-i18n="farm_size"></label>
                 <input type="number" id="farmSize" data-i18n-placeholder="example_farm_size" required>
+            </div>
+            <div class="form-group">
+                <label>Profile Photo (optional)</label>
+                <input type="file" id="profilePhoto" accept="image/*">
             </div>
             <div class="form-group">
                 <label data-i18n="password"></label>
@@ -432,6 +543,14 @@
             if (subcountySelect) {
                 subcountySelect.addEventListener('change', updateWardDropdown);
             }
+
+            // Set registration mode from URL query if provided
+            const queryMode = new URLSearchParams(window.location.search).get('mode');
+            if (queryMode === 'group') {
+                selectRegistrationType('group');
+            } else {
+                selectRegistrationType('individual');
+            }
          });
         
         // Language functions
@@ -497,25 +616,55 @@
             return phone;
         }
 
+        let selectedRegistrationType = 'individual';
+
+        function selectRegistrationType(type) {
+            selectedRegistrationType = type;
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === type);
+            });
+            document.getElementById('individualFields').style.display = type === 'individual' ? 'block' : 'none';
+            document.getElementById('groupFields').style.display = type === 'group' ? 'block' : 'none';
+        }
+
         document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const name = document.getElementById('name').value;
-            const username = document.getElementById('username').value;
-            const phone = normalizeKenyaPhone(document.getElementById('phone').value);
-            const subcounty = document.getElementById('subcounty').value;
-            const ward = document.getElementById('ward').value;
-            const farmSize = document.getElementById('farmSize').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
+            const isGroup = selectedRegistrationType === 'group';
+            const firstName = document.getElementById('firstName')?.value.trim() || '';
+            const lastName = document.getElementById('lastName')?.value.trim() || '';
+            const phone = normalizeKenyaPhone(document.getElementById('phone')?.value || '');
+            const email = document.getElementById('email')?.value.trim() || '';
+            const groupName = document.getElementById('groupName')?.value.trim() || '';
+            const groupRegistrationNumber = document.getElementById('groupRegistrationNumber')?.value.trim() || '';
+            const groupDescription = document.getElementById('groupDescription')?.value.trim() || '';
+            const leaderFirstName = document.getElementById('leaderFirstName')?.value.trim() || '';
+            const leaderLastName = document.getElementById('leaderLastName')?.value.trim() || '';
+            const leaderPhone = normalizeKenyaPhone(document.getElementById('leaderPhone')?.value || '');
+            const leaderEmail = document.getElementById('leaderEmail')?.value.trim() || '';
+            const subcounty = document.getElementById('subcounty')?.value.trim() || '';
+            const ward = document.getElementById('ward')?.value.trim() || '';
+            const farmSize = document.getElementById('farmSize')?.value.trim() || '';
+            const password = document.getElementById('password')?.value || '';
+            const confirmPassword = document.getElementById('confirmPassword')?.value || '';
+
             if (password !== confirmPassword) {
-                showToast(t('passwords_do_not_match'), 'error'); // Assumes 'passwords_do_not_match' key exists
+                showToast(t('passwords_do_not_match'), 'error');
                 return;
             }
-            
-            if (!username) {
-                showToast(t('username_required'), 'error'); // Assumes 'username_required' key exists
+
+            if (!isGroup && (!firstName || !lastName || !phone)) {
+                showToast('First name, last name, and phone are required for individual registration.', 'error');
+                return;
+            }
+
+            if (isGroup && (!groupName || !groupRegistrationNumber || !leaderFirstName || !leaderLastName || !leaderPhone)) {
+                showToast('Group name, registration number and leader contact are required for group registration.', 'error');
+                return;
+            }
+
+            if (!subcounty) {
+                showToast('Subcounty is required.', 'error');
                 return;
             }
 
@@ -525,38 +674,40 @@
                 submitBtn.disabled = true;
                 submitBtn.textContent = t('loading');
 
-                const registerRes = await fetch('/api/auth/register', {
+                const payload = {
+                    isGroup,
+                    phoneNumber: isGroup ? leaderPhone : phone,
+                    firstName: isGroup ? null : firstName,
+                    lastName: isGroup ? null : lastName,
+                    email: isGroup ? leaderEmail : email,
+                    subCounty,
+                    ward,
+                    farmSize: Number(farmSize) || 0,
+                    soilType: document.getElementById('soilType') ? document.getElementById('soilType').value : '',
+                    waterSource: document.getElementById('waterSource') ? document.getElementById('waterSource').value : '',
+                    budget: Number(document.getElementById('budget') ? document.getElementById('budget').value : 0) || 0,
+                    preferredLanguage: getCurrentLanguage(),
+                    groupName: isGroup ? groupName : null,
+                    groupRegistrationNumber: isGroup ? groupRegistrationNumber : null,
+                    groupDescription: isGroup ? groupDescription : null,
+                    leaderFirstName: isGroup ? leaderFirstName : null,
+                    leaderLastName: isGroup ? leaderLastName : null,
+                    leaderPhone: isGroup ? leaderPhone : null,
+                    leaderEmail: isGroup ? leaderEmail : null,
+                    password
+                };
+
+                const registerRes = await fetch('/api/farmers/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone, username, password })
+                    body: JSON.stringify(payload)
                 });
+
                 const registerData = await registerRes.json();
-                if (!registerRes.ok || registerData.status !== 'success') {
-                    throw new Error(registerData.message || t('registration_failed')); // Assumes 'registration_failed'
+                if (!registerRes.ok || !registerData.success) {
+                    throw new Error(registerData.message || t('registration_failed'));
                 }
 
-                // Get current language preference
-                const currentLanguage = getCurrentLanguage();
-                
-                const profileRes = await fetch('/api/auth/register-profile', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId: registerData.userId,
-                        name,
-                        location: subcounty,
-                        ward,
-                        farm_size: Number(farmSize) || null,
-                        preferred_language: currentLanguage
-                    })
-                });
-                const profileData = await profileRes.json();
-                if (!profileRes.ok || profileData.status !== 'success') {
-                    throw new Error(profileData.message || t('profile_setup_failed'));
-                }
-
-                localStorage.setItem('token', profileData.token);
-                localStorage.setItem('user', JSON.stringify(profileData.user || {}));
                 showToast(t('registration_success'), 'success');
                 setTimeout(() => {
                     window.location.href = '/login.html';
